@@ -10,6 +10,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { getState } from "@/lib/admin/state";
 import { successResponse, serverErrorResponse } from "@/lib/api-response";
+import { getClientIpFromHeaders } from "@/lib/client-ip";
+import { getRuntimeHealth } from "@/lib/runtime-health";
 
 export const dynamic = "force-dynamic";
 
@@ -127,73 +129,41 @@ async function checkSmtp(): Promise<ServiceCheck> {
   }
 }
 
-async function checkNextjs(): Promise<ServiceCheck> {
+// In-process runtime probe. A serverless function must not call its own HTTP
+// endpoint: the nested invocation added a cold-start hop and read a stale env
+// name (NEXT_PUBLIC_URL), so the check reported "unreachable" on a healthy app.
+function checkNextjs(): ServiceCheck {
   const start = Date.now();
-  try {
-    const base = process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000";
-    const res = await fetch(`${base}/api/health`, {
-      signal: AbortSignal.timeout(3_000),
-    });
-    if (!res.ok) {
-      // Own health-endpoint status: a control string the route wrote, safe to expose.
-      return {
-        status: "error",
-        latencyMs: Date.now() - start,
-        message: `Health endpoint ${res.status}`,
-      };
-    }
-    return { status: "ok", latencyMs: Date.now() - start };
-  } catch (err) {
-    return fail(start, err, "Health endpoint unreachable");
-  }
+  const { ok } = getRuntimeHealth();
+  return ok
+    ? { status: "ok", latencyMs: Date.now() - start }
+    : { status: "error", latencyMs: Date.now() - start, message: "Runtime uptime unavailable" };
 }
 
 const BOT_HEARTBEAT_THRESHOLD_MS = 2 * 60 * 60 * 1000; // 2 hours
 
+// The bot is a separate long-running process (discord-bot/, Gateway), so the web
+// app holds no bot token and cannot probe Discord on its behalf. Liveness comes
+// only from the heartbeat the bot writes. Control strings below are this route's
+// own text, safe to expose.
 async function checkDiscord(db: SupabaseClient<any>): Promise<ServiceCheck> {
   const start = Date.now();
-  // Control string written by this route — safe to expose.
-  if (!process.env.DISCORD_BOT_TOKEN) {
-    return {
-      status: "error",
-      latencyMs: Date.now() - start,
-      message: "Bot token not configured",
-    };
-  }
-
   try {
-    let res: Response;
-    try {
-      res = await fetch("https://discord.com/api/v10/users/@me", {
-        headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
-        signal: AbortSignal.timeout(5_000),
-      });
-    } catch (err) {
-      return fail(start, err, "Discord API unreachable");
+    const hb = await withTimeout(
+      db.from("bot_heartbeats").select("last_seen").eq("service", "discord").maybeSingle(),
+      3_000,
+      "Heartbeat timeout",
+    );
+    if (hb.error) throw hb.error;
+    if (!hb.data) {
+      return { status: "error", latencyMs: Date.now() - start, message: "No bot heartbeat recorded" };
     }
-    if (!res.ok) {
-      // HTTP status of the upstream check: control string, no internal detail.
+    const ageMs = Date.now() - new Date(hb.data.last_seen as string).getTime();
+    if (ageMs > BOT_HEARTBEAT_THRESHOLD_MS) {
       return {
         status: "error",
         latencyMs: Date.now() - start,
-        message: `Discord API ${res.status}`,
-      };
-    }
-
-    const hb = await db.from("bot_heartbeats").select("last_seen").eq("service", "discord").single();
-    if (hb.error || !hb.data) {
-      return {
-        status: "degraded",
-        latencyMs: Date.now() - start,
-        message: "Bot heartbeat not found — bot may not be running",
-      };
-    }
-    const lastSeen = new Date(hb.data.last_seen).getTime();
-    if (Date.now() - lastSeen > BOT_HEARTBEAT_THRESHOLD_MS) {
-      return {
-        status: "degraded",
-        latencyMs: Date.now() - start,
-        message: `Bot last seen ${Math.round((Date.now() - lastSeen) / 3_600_000)}h ago`,
+        message: `Bot last seen ${Math.round(ageMs / 3_600_000)}h ago`,
       };
     }
     return { status: "ok", latencyMs: Date.now() - start };
@@ -261,8 +231,65 @@ async function buildStats(
 let statsCache: { data: Record<keyof typeof RANGE_MS, RangeStats>; at: number } | null = null;
 const STATS_TTL = 60_000;
 
-export async function GET() {
+// Whole-payload cache. proxy.ts forces `Cache-Control: no-store`, so in-process
+// reuse is the only way to keep burst traffic off Supabase/Stripe/SMTP.
+let probesCache: {
+  checks: Record<Service, ServiceCheck>;
+  stats: Record<keyof typeof RANGE_MS, RangeStats>;
+  at: number;
+} | null = null;
+const STATUS_TTL = 30_000;
+
+// Per-IP burst guard. In-process on purpose: src/lib/rate-limiter.ts is
+// Supabase-backed and fail-open, so it cannot short-circuit before the probes
+// it exists to protect, and it would add the round trip it is meant to save.
+const RATE_LIMIT_MAX = 30;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_CLIENTS = 5_000;
+const recentHits = new Map<string, number[]>();
+
+function takeStatusSlot(ip: string, now: number): { allowed: boolean; retryAfter: number } {
+  const hits = (recentHits.get(ip) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (hits.length >= RATE_LIMIT_MAX) {
+    recentHits.set(ip, hits);
+    const retryAfterMs = RATE_LIMIT_WINDOW_MS - (now - hits[0]);
+    return { allowed: false, retryAfter: Math.max(1, Math.ceil(retryAfterMs / 1000)) };
+  }
+  hits.push(now);
+  if (!recentHits.has(ip) && recentHits.size >= RATE_LIMIT_MAX_CLIENTS) {
+    // Bound the map: drop the oldest tracked client before inserting a new one.
+    const oldest = recentHits.keys().next();
+    if (!oldest.done) recentHits.delete(oldest.value);
+  }
+  recentHits.set(ip, hits);
+  return { allowed: true, retryAfter: 0 };
+}
+
+async function collectChecks(db: SupabaseClient<any>): Promise<Record<Service, ServiceCheck>> {
+  const [supabaseCheck, stripeCheck, smtpCheck, discordCheck] = await Promise.all([
+    checkSupabase(db),
+    checkStripe(),
+    checkSmtp(),
+    checkDiscord(db),
+  ]);
+  return {
+    supabase: supabaseCheck,
+    stripe: stripeCheck,
+    smtp: smtpCheck,
+    discord: discordCheck,
+    nextjs: checkNextjs(),
+  };
+}
+
+export async function GET(request: Request) {
   const start = Date.now();
+  const slot = takeStatusSlot(getClientIpFromHeaders(request.headers), start);
+  if (!slot.allowed) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(slot.retryAfter) } },
+    );
+  }
 
   try {
     const supabase = getSupabaseAdmin();
@@ -270,44 +297,35 @@ export async function GET() {
     const db = supabase as unknown as SupabaseClient<any>;
     const state = getState();
 
-    const [supabaseCheck, stripeCheck, smtpCheck, discordCheck] = await Promise.all([
-      checkSupabase(db),
-      checkStripe(),
-      checkSmtp(),
-      checkDiscord(db),
-    ]);
+    let snapshot = probesCache && start - probesCache.at < STATUS_TTL ? probesCache : null;
 
-    const checks: Record<Service, ServiceCheck> = {
-      supabase: supabaseCheck,
-      stripe: stripeCheck,
-      smtp: smtpCheck,
-      discord: discordCheck,
-      nextjs: await checkNextjs(),
-    };
+    if (!snapshot) {
+      const checks = await collectChecks(db);
 
-    const { error: persistErr } = await db.from("health_checks").insert(
-      (Object.entries(checks) as [Service, ServiceCheck][]).map(([service, c]) => ({
-        service,
-        status: c.status,
-        latency_ms: c.latencyMs,
-        details: c.message ? { message: c.message } : {},
-      })),
-    );
-    if (persistErr) console.error("[Status] Persist failed:", persistErr);
+      const { error: persistErr } = await db.from("health_checks").insert(
+        (Object.entries(checks) as [Service, ServiceCheck][]).map(([service, c]) => ({
+          service,
+          status: c.status,
+          latency_ms: c.latencyMs,
+          details: c.message ? { message: c.message } : {},
+        })),
+      );
+      if (persistErr) console.error("[Status] Persist failed:", persistErr);
 
-    const now = Date.now();
-    if (!statsCache || now - statsCache.at > STATS_TTL) {
-      const fresh = await buildStats(db);
-      statsCache = { data: fresh, at: now };
+      const statsAt = Date.now();
+      if (!statsCache || statsAt - statsCache.at > STATS_TTL) {
+        statsCache = { data: await buildStats(db), at: statsAt };
+      }
+      snapshot = { checks, stats: statsCache.data, at: statsAt };
+      probesCache = snapshot;
     }
-    const stats = statsCache.data;
 
     const uptimeSeconds = Math.floor(
       (Date.now() - new Date(state.uptimeStart).getTime()) / 1000,
     );
 
     const allOk =
-      SERVICES.every((s) => checks[s].status === "ok") && !state.maintenanceMode;
+      SERVICES.every((s) => snapshot.checks[s].status === "ok") && !state.maintenanceMode;
 
     const data = {
       status: allOk ? ("operational" as const) : ("degraded" as const),
@@ -317,8 +335,8 @@ export async function GET() {
       lastCommand: state.lastCommand,
       lastCommandBy: state.lastCommandBy,
       lastCommandAt: state.lastCommandAt,
-      checks,
-      stats,
+      checks: snapshot.checks,
+      stats: snapshot.stats,
       totalLatencyMs: Date.now() - start,
       timestamp: new Date().toISOString(),
     };

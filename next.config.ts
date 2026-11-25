@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  poweredByHeader: false,
   allowedDevOrigins: ["calculatorai.click"],
 
   // Security headers applied to all routes

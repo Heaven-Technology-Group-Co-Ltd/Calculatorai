@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import useSWR from "swr";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
 import { ErrorState } from "../ui/ErrorState";
@@ -17,22 +17,11 @@ interface Refund {
 
 export function RefundTable() {
   const { t } = useDashboardT();
-  const [refunds, setRefunds] = useState<Refund[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const load = () => {
-    setLoading(true);
-    setError(false);
-    fetcher("/api/finance/refunds")
-      .then((data) => setRefunds(Array.isArray(data) ? data : []))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
+  const { data, error, isLoading: loading, mutate } = useSWR<Refund[]>(
+    "/api/finance/refunds",
+    fetcher,
+  );
+  const refunds = Array.isArray(data) ? data : [];
 
   return (
     <Panel>
@@ -41,7 +30,7 @@ export function RefundTable() {
       </h3>
       {loading && <Skeleton variant="chart" height={200} />}
       {error && (
-        <ErrorState message={t("dashboard.error.loadRefundsFailed")} onRetry={load} />
+        <ErrorState message={t("dashboard.error.loadRefundsFailed")} onRetry={() => void mutate()} />
       )}
       {!loading && !error && (
         <div className={tableStyles.tableWrap}>

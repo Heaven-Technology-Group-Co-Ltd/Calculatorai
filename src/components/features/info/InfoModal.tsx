@@ -17,18 +17,41 @@ import {
   GUIDE_TIPS,
 } from "./InfoModal.data";
 import styles from "./InfoModal.module.css";
+import { useSyncExternalStore } from "react";
 import { useBackdropClose } from "@/lib/dialog-backdrop";
 
+const MOBILE_QUERY = "(max-width: 767px)";
+
+function subscribeViewport(onChange: () => void) {
+  const mql = window.matchMedia(MOBILE_QUERY);
+  mql.addEventListener("change", onChange);
+  return () => mql.removeEventListener("change", onChange);
+}
+
+function getIsNarrowViewport() {
+  return window.matchMedia(MOBILE_QUERY).matches;
+}
+
+function getIsNarrowServerSnapshot() {
+  return false;
+}
+
 function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
-  const [deviceTab, setDeviceTab] = useState<GuideDeviceCategory>("all");
+  // Derived during render from the live viewport: the default tab follows the
+  // screen, and a manual pick overrides it until the modal closes.
+  const isNarrow = useSyncExternalStore(
+    subscribeViewport,
+    getIsNarrowViewport,
+    getIsNarrowServerSnapshot,
+  );
+  const [tabChoice, setTabChoice] = useState<GuideDeviceCategory | null>(null);
+  const deviceTab = tabChoice ?? (isNarrow ? "mobile" : "pc");
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => {
-    if (show) {
-      const isMobileWidth = typeof window !== "undefined" && window.innerWidth < 768;
-      setDeviceTab(isMobileWidth ? "mobile" : "pc");
-    }
-  }, [show]);
+  const handleClose = () => {
+    setTabChoice(null);
+    onClose();
+  };
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -49,7 +72,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
     };
   }, [show]);
 
-  const backdropClose = useBackdropClose(onClose);
+  const backdropClose = useBackdropClose(handleClose);
 
 
   const filteredSteps = GUIDE_STEPS.filter((step) => {
@@ -70,7 +93,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
     const next = e.key === "ArrowRight"
       ? (idx + 1) % deviceTabIds.length
       : (idx - 1 + deviceTabIds.length) % deviceTabIds.length;
-    setDeviceTab(deviceTabIds[next]);
+    setTabChoice(deviceTabIds[next]);
     document.getElementById(`info-device-tab-${deviceTabIds[next]}`)?.focus();
   };
 
@@ -85,7 +108,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
       onClick={backdropClose.onClick}
       onCancel={(e) => {
         e.preventDefault();
-        onClose();
+        handleClose();
       }}
     >
       <div className="modal-header">
@@ -103,7 +126,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
         <button
           type="button"
           className="modal-close"
-          onClick={() => onClose()}
+          onClick={() => handleClose()}
           aria-label={lang === "th" ? "ปิด" : "Close"}
         >
           <X size={16} />
@@ -117,7 +140,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
             type="button"
             id="info-device-tab-all"
             className={`${styles.deviceTab} ${deviceTab === "all" ? styles.deviceTabActive : ""}`}
-            onClick={() => setDeviceTab("all")}
+            onClick={() => setTabChoice("all")}
             role="tab"
             aria-selected={deviceTab === "all"}
             aria-controls="info-device-panel"
@@ -130,7 +153,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
             type="button"
             id="info-device-tab-pc"
             className={`${styles.deviceTab} ${deviceTab === "pc" ? styles.deviceTabActive : ""}`}
-            onClick={() => setDeviceTab("pc")}
+            onClick={() => setTabChoice("pc")}
             role="tab"
             aria-selected={deviceTab === "pc"}
             aria-controls="info-device-panel"
@@ -143,7 +166,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
             type="button"
             id="info-device-tab-mobile"
             className={`${styles.deviceTab} ${deviceTab === "mobile" ? styles.deviceTabActive : ""}`}
-            onClick={() => setDeviceTab("mobile")}
+            onClick={() => setTabChoice("mobile")}
             role="tab"
             aria-selected={deviceTab === "mobile"}
             aria-controls="info-device-panel"
@@ -208,7 +231,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
       </div>
 
       <div className="m-info-footer">
-        <button type="button" className="m-info-btn" onClick={() => onClose()}>
+        <button type="button" className="m-info-btn" onClick={() => handleClose()}>
           {INFO_TRANSLATIONS.guideGotIt[lang]}
         </button>
       </div>
