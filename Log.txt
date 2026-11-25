@@ -1001,3 +1001,9 @@ HANDOFF AUDIT #3 — รายการ | ผ่าน/ไม่ผ่าน | �
   - พบไฟล์ที่มีการแก้ไขซ้อนทับกันระหว่างสาย audit กับกิ่ง preserve/security-wip-20261024 ถึง 127 ไฟล์
   - ห้ามทำ fast-forward หรือ auto-merge ต้องทำ manual 3-way reconciliation เท่านั้น
 • รายงานฉบับเต็มและหลักฐานดิบ: ../review-aetox.md และ math-calculator-vault/03-Sessions/2026-10-25--ui-ux-audit-v3-final-review.md
+
+
+[2026-11-25 14:45] NETLIFY PRODUCTION DEPLOY FIX (Deploy 6b068e2f772f568e70148218)
+• Problem: Production deploy failed with exit code 2 during the 'building site' stage.
+• Root cause: Netlify Build's post-build secret scanning core step (`secrets_scanning`) flagged false-positive matches for `SMTP_USER` and `SMTP_HOST` because non-credential environment variables were marked with `is_secret: true` in site settings. The scanner treated the literal values of `SMTP_USER` ("resend") and `SMTP_HOST` ("smtp.resend.com") as leaked secrets when they occurred across UI components, logs, and compiled server bundles, causing the build to fail with a severityCode 2 (`user-error`).
+• Fix: Added `netlify.toml` configuring `[build.environment]` with `SECRETS_SCAN_OMIT_KEYS = "SMTP_USER,SMTP_HOST,SMTP_FROM,SMTP_PORT,NEXTAUTH_URL,SUPABASE_URL,GOOGLE_CLIENT_ID"`, omitting non-sensitive metadata from secret scanning while maintaining protection for genuine secrets (passwords, tokens, API keys). Also explicitly declared build settings and `@netlify/plugin-nextjs`.

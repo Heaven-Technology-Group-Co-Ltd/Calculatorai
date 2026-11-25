@@ -1,0 +1,9 @@
+[build]
+  command = "pnpm --filter calculate_project... run build"
+  publish = ".next"
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SMTP_USER,SMTP_HOST,SMTP_FROM,SMTP_PORT,NEXTAUTH_URL,SUPABASE_URL,GOOGLE_CLIENT_ID"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
