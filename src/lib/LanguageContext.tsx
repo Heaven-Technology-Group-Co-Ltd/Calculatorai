@@ -1,10 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useCallback, useEffect, useSyncExternalStore } from "react";
 import type { Lang } from "@/types/locale";
 import { uiTranslations } from "@/lib/translations";
 import type { UiTranslationKey } from "@/lib/translations";
-import { restoreLocale } from "@/lib/locale-storage";
+import {
+  getLocaleSnapshot,
+  getServerLocaleSnapshot,
+  setLocale,
+  subscribeLocale,
+} from "@/lib/locale-storage";
 
 type LanguageContextType = {
   language: Lang;
@@ -25,25 +30,18 @@ const BCP47_LANG: Record<Lang, string> = {
 };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Lang>("en");
-
-  useEffect(() => {
-    try {
-      setLanguageState(restoreLocale(window.sessionStorage));
-    } catch {
-      setLanguageState("en");
-    }
-  }, []);
+  const language = useSyncExternalStore(
+    subscribeLocale,
+    getLocaleSnapshot,
+    getServerLocaleSnapshot,
+  );
 
   useEffect(() => {
     document.documentElement.lang = BCP47_LANG[language];
   }, [language]);
 
   const setLanguage = useCallback((lang: Lang) => {
-    setLanguageState(lang);
-    try {
-      window.sessionStorage.setItem("pref-lang", lang);
-    } catch { /* Keep in-memory selection when storage is unavailable. */ }
+    setLocale(lang);
   }, []);
 
   const t = useCallback((key: UiTranslationKey) => uiTranslations[key][language], [language]);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import useSWR from "swr";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
 import { ErrorState } from "../ui/ErrorState";
@@ -17,25 +17,11 @@ interface Invoice {
 
 export function InvoiceTable() {
   const { t } = useDashboardT();
-  const [data, setData] = useState<Invoice[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const load = () => {
-    setLoading(true);
-    setError(false);
-    fetcher("/api/finance/invoices")
-      .then((res) => {
-        setData((res as Invoice[]) ?? []);
-        setLoading(false);
-      })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
+  // SWR keeps the fetch lifecycle out of an effect, matching the dashboard hooks.
+  const { data = [], error, isLoading: loading, mutate } = useSWR<Invoice[]>(
+    "/api/finance/invoices",
+    fetcher,
+  );
 
   return (
     <Panel>
@@ -51,7 +37,7 @@ export function InvoiceTable() {
         </>
       )}
       {error && (
-        <ErrorState message={t("dashboard.error.loadInvoicesFailed")} onRetry={load} />
+        <ErrorState message={t("dashboard.error.loadInvoicesFailed")} onRetry={() => void mutate()} />
       )}
       {!loading && !error && (
         <div className={tableStyles.tableWrapper}>

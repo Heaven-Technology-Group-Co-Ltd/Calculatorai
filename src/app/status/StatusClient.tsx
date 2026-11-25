@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { AlertTriangle, CheckCircle, Clock, RefreshCw, Wrench } from "lucide-react";
+import useSWR from "swr";
 import { LiveRegion } from "@/components/LiveRegion";
+import { fetcher } from "@/lib/fetcher";
 import { RANGES, SERVICES, SERVICE_META } from "./constants";
 import type { BucketStats, HistoryData, Incident, Range, StatusData } from "./types";
 import { formatBucketLabel } from "./utils";
@@ -16,67 +18,46 @@ import { ServiceCard } from "./components/ServiceCard";
 import { SystemInfo } from "./components/SystemInfo";
 import styles from "./StatusClient.module.css";
 
+const REFRESH_INTERVAL_MS = 3_600_000;
+
 export function StatusClient() {
   const [range, setRange] = useState<Range>("24h");
-  const [status, setStatus] = useState<StatusData | null>(null);
-  const [history, setHistory] = useState<HistoryData | null>(null);
-  const [statusError, setStatusError] = useState<string | null>(null);
-  const [historyError, setHistoryError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [announcement, setAnnouncement] = useState<string | null>(null);
-  const firstLoad = useRef(true);
+  // SWR owns the fetch lifecycle (mount, range change, hourly refresh, focus
+  // revalidation), so the page keeps no effect-driven state machine.
+  const {
+    data: status,
+    error: statusFetchError,
+    isLoading,
+    isValidating,
+    mutate: refreshStatus,
+  } = useSWR<StatusData>("/api/status", fetcher, {
+    refreshInterval: REFRESH_INTERVAL_MS,
+    keepPreviousData: true,
+  });
+  const {
+    data: history,
+    error: historyFetchError,
+    mutate: refreshHistory,
+  } = useSWR<HistoryData>(`/api/status/history?range=${range}`, fetcher, {
+    refreshInterval: REFRESH_INTERVAL_MS,
+    keepPreviousData: true,
+  });
 
-  const load = useCallback(async (r: Range) => {
-    if (firstLoad.current) setLoading(true);
-    else setRefreshing(true);
-    let failed = false;
-    try {
-      const [sRes, hRes] = await Promise.all([
-        fetch("/api/status"),
-        fetch(`/api/status/history?range=${r}`),
-      ]);
-      const sJson = await sRes.json();
-      const hJson = await hRes.json();
-      if (sJson.success) {
-        setStatus(sJson.data);
-        setStatusError(null);
-      } else {
-        failed = true;
-        setStatusError(sJson.error ?? "Status check failed");
-      }
-      if (hJson.success) {
-        setHistory(hJson.data);
-        setHistoryError(null);
-      } else {
-        failed = true;
-        setHistoryError(hJson.error ?? "History unavailable");
-      }
-    } catch {
-      failed = true;
-      setStatusError("Failed to fetch status");
-    } finally {
-      const isFirstLoad = firstLoad.current;
-      firstLoad.current = false;
-      setLoading(false);
-      setRefreshing(false);
-      setLastUpdated(new Date());
-      if (!isFirstLoad) {
-        setAnnouncement(
-          failed
-            ? `Status refresh failed at ${new Date().toLocaleTimeString()}`
-            : `Status refreshed at ${new Date().toLocaleTimeString()}`
-        );
-      }
-    }
-  }, []);
+  const loading = isLoading && !status;
+  const refreshing = isValidating && !isLoading;
+  const statusError = statusFetchError?.message ?? null;
+  const historyError = historyFetchError?.message ?? null;
+  const lastUpdated = status ? new Date(status.timestamp) : null;
+  const announcement = statusError
+    ? "Status refresh failed"
+    : lastUpdated
+      ? `Status refreshed at ${lastUpdated.toLocaleTimeString()}`
+      : null;
 
-  useEffect(() => {
-    load(range);
-    const id = setInterval(() => load(range), 3_600_000);
-    return () => clearInterval(id);
-  }, [range, load]);
+  const refresh = useCallback(() => {
+    void refreshStatus();
+    void refreshHistory();
+  }, [refreshStatus, refreshHistory]);
 
   const overall = status?.stats[range];
 
@@ -179,7 +160,7 @@ export function StatusClient() {
           <AlertTriangle size={48} color="#ef4444" />
           <h2 className={styles.stateText}>Unable to fetch status</h2>
           <p className={styles.stateText}>{statusError}</p>
-          <button className={styles.retryBtn} onClick={() => load(range)}>
+          <button className={styles.retryBtn} onClick={refresh}>
             <RefreshCw size={16} /> Retry
           </button>
         </div>
@@ -266,7 +247,7 @@ export function StatusClient() {
           </div>
           <button
             className={styles.refreshBtn}
-            onClick={() => load(range)}
+            onClick={refresh}
             disabled={refreshing}
             aria-label="Refresh status"
           >

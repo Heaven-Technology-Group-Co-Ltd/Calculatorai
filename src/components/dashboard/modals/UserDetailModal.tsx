@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { Skeleton } from "../ui/Skeleton";
 import { ErrorState } from "../ui/ErrorState";
@@ -35,9 +36,13 @@ interface UserDetailModalProps {
 
 export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
   const { t } = useDashboardT();
-  const [detail, setDetail] = useState<DetailedUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const { data, error, isLoading: loading, mutate } = useSWR<DetailedUser>(
+    `/api/users/${user.id}`,
+    fetcher,
+  );
+  // /api/users/[id] answers either the bare record or a `{ data }` wrapper.
+  const detail =
+    ((data as unknown as { data?: DetailedUser })?.data ?? data ?? null) as DetailedUser | null;
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -54,19 +59,6 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
   }, []);
 
   const backdropClose = useBackdropClose(onClose);
-
-  const load = () => {
-    setLoading(true);
-    setError(false);
-    fetcher(`/api/users/${user.id}`)
-      .then((data) => setDetail(data?.data ?? data ?? null))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    load();
-  }, [user.id]);
 
   const statusClass =
     user.status === "active"
@@ -102,7 +94,7 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
           </div>
         )}
         {error && (
-          <ErrorState message={t("dashboard.error.loadUserDetailsFailed")} onRetry={load} />
+          <ErrorState message={t("dashboard.error.loadUserDetailsFailed")} onRetry={() => void mutate()} />
         )}
         {!loading && !error && detail && (
           <>

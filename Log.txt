@@ -1007,3 +1007,14 @@ HANDOFF AUDIT #3 — รายการ | ผ่าน/ไม่ผ่าน | �
 • Problem: Production deploy failed with exit code 2 during the 'building site' stage.
 • Root cause: Netlify Build's post-build secret scanning core step (`secrets_scanning`) flagged false-positive matches for `SMTP_USER` and `SMTP_HOST` because non-credential environment variables were marked with `is_secret: true` in site settings. The scanner treated the literal values of `SMTP_USER` ("resend") and `SMTP_HOST` ("smtp.resend.com") as leaked secrets when they occurred across UI components, logs, and compiled server bundles, causing the build to fail with a severityCode 2 (`user-error`).
 • Fix: Added `netlify.toml` configuring `[build.environment]` with `SECRETS_SCAN_OMIT_KEYS = "SMTP_USER,SMTP_HOST,SMTP_FROM,SMTP_PORT,NEXTAUTH_URL,SUPABASE_URL,GOOGLE_CLIENT_ID"`, omitting non-sensitive metadata from secret scanning while maintaining protection for genuine secrets (passwords, tokens, API keys). Also explicitly declared build settings and `@netlify/plugin-nextjs`.
+
+[2026-11-25 16:25] WEB-HC-FIX1 ปิด CLS-01..07 — /api/status พูดความจริง + API 404 เป็น JSON + Netlify IaC + lint error 6 → 0
+• /api/status checkNextjs: เลิกยิง HTTP หา /api/health ของตัวเอง (เดิมพังเพราะอ่าน env ผิดชื่อ NEXT_PUBLIC_URL) → getRuntimeHealth() in-process (src/lib/runtime-health.ts ใหม่, /api/health ใช้ตัวเดียวกัน)
+• /api/status checkDiscord: เลิก gate ด้วย DISCORD_BOT_TOKEN ของ web (bot เป็น process แยก ถือ token เอง) → อ่าน bot_heartbeats อย่างเดียว: fresh ≤2h = ok · stale >2h = error "Bot last seen Nh ago" · ไม่มีแถว = error "No bot heartbeat recorded"
+• /api/status: payload cache 30s + per-IP 30 req/60s → 429 + Retry-After ก่อนยิง probe ใดๆ; เลือก in-memory เพราะ src/lib/rate-limiter.ts เป็น Supabase + fail-open
+• src/app/api/[...path]/route.ts ใหม่: GET/POST/PUT/PATCH/DELETE/OPTIONS/HEAD → 404 JSON (เดิม client ได้ HTML 9351 ไบต์)
+• next.config.ts poweredByHeader:false · .nvmrc=24 · package.json engines node >=24 <25, pnpm >=11 · netlify.toml +NODE_VERSION=24 (ไม่แตะ build command เดิมที่ deploy ผ่านอยู่)
+• lint react-hooks/set-state-in-effect 6 → 0: StatusClient/InvoiceTable/RefundTable/UserDetailModal ใช้ SWR (มี dependency อยู่แล้ว); InfoModal = useSyncExternalStore(matchMedia) + derived tab; LanguageContext = external store + useSyncExternalStore (server snapshot "en")
+• gate: tsc 0 · eslint exit 0 (0 errors / 15 warnings; base 6/16) · vitest 21 ไฟล์ / 100 tests (base 19/87) · next build 0 · discord-bot tsc 0 · suppression เพิ่มใน diff = 0
+• เพดาน lint error = 0 (เดิมล็อก 6) ห้ามเพิ่ม; ยังเหลือ eslint-disable เดิม 4 จุดใน FormulaCard/SplashGate/useHistory/VerifyClient (ไม่ใช่ของรอบนี้)
+• baseline: สเปกเขียน d2b754b แต่ HEAD จริงตอนเริ่มคือ b437d02 (merge ที่ได้ netlify.toml + Log.txt + Report) — ไฟล์ต้องห้าม (discord-bot/, src/lib/auth-options.ts, supabase/migrations/) diff = 0

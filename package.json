@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@11.0.9",
+  "engines": {
+    "node": ">=24.0.0 <25.0.0",
+    "pnpm": ">=11.0.0"
+  },
   "scripts": {
     "dev": "concurrently -n next,bot -c cyan,magenta \"next dev\" \"dotenv -e discord-bot/.env -- pnpm --filter admin-discord-bot dev\"",
     "dev:web": "next dev",
