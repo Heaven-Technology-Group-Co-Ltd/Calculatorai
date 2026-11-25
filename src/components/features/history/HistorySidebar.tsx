@@ -20,29 +20,31 @@ function HistoryItem({
 }) {
   const onClick = useCallback(() => onRestore(item), [item, onRestore]);
   const onDeleteClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onDeleteItem(item.id);
-    },
+    () => onDeleteItem(item.id),
     [item.id, onDeleteItem]
   );
 
   return (
-    <div className="hs-item" onClick={onClick}>
-      <div className={styles.itemRow}>
+    <div className={`hs-item ${styles.itemCard}`}>
+      <button
+        type="button"
+        className={styles.itemRestoreBtn}
+        onClick={onClick}
+      >
         <div className="hs-item-title">{item.calcTitle}</div>
-        <button
-          onClick={onDeleteClick}
-          className={`modal-close ${styles.itemDeleteBtn}`}
-          aria-label="Delete"
-        >
-          <Trash2 size={12} />
-        </button>
-      </div>
-      <div className="hs-item-result">{item.result}</div>
-      <div className="hs-item-time">
-        {new Date(item.ts).toLocaleString()}
-      </div>
+        <div className="hs-item-result">{item.result}</div>
+        <div className="hs-item-time">
+          {new Date(item.ts).toLocaleString()}
+        </div>
+      </button>
+      <button
+        type="button"
+        onClick={onDeleteClick}
+        className={`modal-close ${styles.itemDeleteBtn}`}
+        aria-label="Delete"
+      >
+        <Trash2 size={12} />
+      </button>
     </div>
   );
 }

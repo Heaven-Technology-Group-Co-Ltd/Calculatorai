@@ -2,8 +2,8 @@ import { CalcVar } from "@/types/formulas";
 
 export function formatNum(n: number): string {
   if (Number.isNaN(n)) return "—";
-  if (!isFinite(n)) return "Infinity";
-  const p = parseFloat(n.toPrecision(10));
+  if (!Number.isFinite(n)) return "Infinity";
+  const p = Number.parseFloat(n.toPrecision(10));
   if (Number.isInteger(p)) return p.toLocaleString("en-US");
   return p.toLocaleString("en-US", {
     minimumFractionDigits: 0,
@@ -54,7 +54,7 @@ export function validateInputs(
     const normalized = normalizeInput(raw);
     const val = Number(normalized);
 
-    if (raw === "" || isNaN(val)) {
+    if (raw === "" || Number.isNaN(val)) {
       return { parsed: {}, rawSaved: {}, error: errorMessages.invalidInput };
     }
     parsed[v.id] = val;

@@ -11,9 +11,11 @@ vi.mock("@supabase/supabase-js", () => ({
 
 vi.mock("bcryptjs", () => ({
   default: {
-    compare: vi.fn(async (password: string, hash: string) => password === "correct_password"),
+    compare: vi.fn(async (password: string, _hash: string) => password === "correct_password"),
+    hash: vi.fn(async () => "runtime_dummy_hash"),
   },
-  compare: vi.fn(async (password: string, hash: string) => password === "correct_password"),
+  compare: vi.fn(async (password: string, _hash: string) => password === "correct_password"),
+  hash: vi.fn(async () => "runtime_dummy_hash"),
 }));
 
 process.env.SUPABASE_URL = "https://mock.supabase.co";
@@ -46,9 +48,39 @@ describe("authOptions.authorize error segregation (F-11)", () => {
     });
 
     expect(res).toBeNull();
-    // Timing equalization: the dummy-hash compare must still run so an early
-    // return cannot reveal that the address is unknown.
-    expect(bcrypt.compare).toHaveBeenCalled();
+    // Timing equalization: the runtime-generated dummy-hash compare must still
+    // run so an early return cannot reveal that the address is unknown.
+    expect(bcrypt.hash).toHaveBeenCalledWith(expect.any(String), 12);
+    expect(bcrypt.compare).toHaveBeenCalledWith("any_password", "runtime_dummy_hash");
+  });
+
+  it("memoizes timing equalizer hash across consecutive unknown-email calls", async () => {
+    vi.resetModules();
+    const freshBcrypt = (await import("bcryptjs")).default;
+    const { authOptions: freshAuthOptions } = await import("./auth-options");
+    const freshProvider = freshAuthOptions.providers.find(
+      (p: any) => p.id === "credentials" || p.name === "credentials"
+    ) as any;
+
+    mockSupabase.from.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: null, error: new Error("Not found") }),
+        }),
+      }),
+    });
+
+    await freshProvider.options.authorize({
+      email: "unknown1@example.com",
+      password: "any_password",
+    });
+    await freshProvider.options.authorize({
+      email: "unknown2@example.com",
+      password: "any_password",
+    });
+
+    expect(freshBcrypt.hash).toHaveBeenCalledTimes(1);
+    expect(freshBcrypt.compare).toHaveBeenCalledTimes(2);
   });
 
   it("returns null for wrong password even if account is banned or unverified", async () => {

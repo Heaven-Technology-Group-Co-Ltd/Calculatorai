@@ -135,7 +135,7 @@ root_block_line = line_of(globals_clean, root_m.start())
 root_close_line = line_of(globals_clean, root_body_end)
 root_body = globals_clean[root_body_start:root_body_end]
 
-DECL_RE = re.compile(r"(--[\w-]+)\s*:\s*([^;{}]+);")
+DECL_RE = re.compile(r"(--[A-Za-z0-9_-]+)[ \t]*:([^;{}]+);")
 tokens = {}
 for m in DECL_RE.finditer(root_body):
     tokens[m.group(1)] = {
@@ -467,7 +467,7 @@ bp_counter = collections.Counter()
 for p in walk({".css"}):
     clean = strip_comments(read(p))
     for m in re.finditer(r"@media([^{]+)\{", clean):
-        for q in re.findall(r"\(\s*(?:min|max)-width\s*:\s*([^)]+)\)", m.group(1)):
+        for q in re.findall(r"\(\s*(?:min|max)-width\s*:([^)]+)\)", m.group(1)):
             bp_counter[q.strip()] += 1
 
 dup_values = collections.defaultdict(list)

@@ -218,6 +218,7 @@ export function StatusClient() {
           <div
             className={styles.tabs}
             role="tablist"
+            tabIndex={0}
             aria-label="Time range"
             onKeyDown={(e) => {
               if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;

@@ -96,7 +96,7 @@ export function verifyHmacSignature(
 
   // 2. Reject stale or future-dated requests (replay / clock-skew prevention)
   const ts = Number(timestamp);
-  if (isNaN(ts) || Math.abs(Date.now() - ts) > MAX_AGE_MS) {
+  if (Number.isNaN(ts) || Math.abs(Date.now() - ts) > MAX_AGE_MS) {
     console.warn("[ADMIN HMAC] Request timestamp is stale, future-dated, or invalid.");
     return false;
   }

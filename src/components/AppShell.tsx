@@ -314,7 +314,7 @@ export function AppShell() {
         onClearAll={openConfirm}
         isMobile={isMobile}
       />
-      <InfoModal show={showModal} onClose={closeModal} lang={lang} />
+      {showModal && <InfoModal show={showModal} onClose={closeModal} lang={lang} />}
       <ConfirmModal show={showConfirm} onClose={closeConfirm} onConfirm={handleClearAll} lang={lang} />
 
       {/* Mobile Bottom Nav */}

@@ -99,6 +99,7 @@ function LanguageDropdownInner({
           ref={menuRef}
           id="lang-menu"
           role="listbox"
+          tabIndex={0}
           aria-label={langInfo[lang].label}
           onKeyDown={handleMenuKeyDown}
           className="lang-dropdown-menu"

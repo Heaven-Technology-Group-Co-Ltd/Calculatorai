@@ -91,7 +91,7 @@ export function LoginClient() {
       await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password: "ResendVerification1!", name: "" }),
+        body: JSON.stringify({ email: email.trim(), password: crypto.randomUUID(), name: "" }),
       });
       setResendSent(true);
     } catch {
