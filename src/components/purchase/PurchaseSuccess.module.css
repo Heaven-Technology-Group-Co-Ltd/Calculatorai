@@ -1,0 +1,151 @@
+/* ── PurchaseSuccessClient styles ── */
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 70vh;
+  justify-content: center;
+}
+
+.stateWrap {
+  text-align: center;
+}
+
+/* ── Icon Box ── */
+.iconBox {
+  width: 96px;
+  height: 96px;
+  border-radius: 28px;
+  background: var(--primary-soft);
+  border: 1px solid var(--border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.iconBoxCircle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.iconBoxSuccess {
+  background: rgba(16, 185, 129, 0.1);
+  border: 2px solid rgba(16, 185, 129, 0.2);
+}
+
+.iconBoxError {
+  background: rgba(239, 68, 68, 0.1);
+  border: 2px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ── Typography ── */
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(--font-title);
+  color: var(--text);
+}
+
+.titleSmall {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--font-title);
+  color: var(--text);
+}
+
+.desc {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+/* ── Payment Card ── */
+.paymentCard {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+}
+
+.paymentLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.paymentAmount {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+
+
+/* ── Buttons ── */
+.btnRow {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.btnPrimary {
+  padding: 14px 32px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--text);
+  border: none;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.15);
+}
+
+.btnPrimary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btnSecondary {
+  padding: 14px 32px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btnSecondary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+
+

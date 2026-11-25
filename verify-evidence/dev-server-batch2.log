@@ -1,0 +1,14 @@
+$ next dev
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.108.65.215:3000
+✓ Ready in 397ms
+
+ GET / 200 in 432ms (next.js: 75ms, proxy.ts: 155ms, application-code: 202ms)
+ GET /api/auth/session 200 in 743ms (next.js: 717ms, proxy.ts: 3ms, application-code: 23ms)
+ GET / 200 in 40ms (next.js: 3ms, proxy.ts: 5ms, application-code: 32ms)
+ GET /api/auth/session 200 in 49ms (next.js: 9ms, proxy.ts: 4ms, application-code: 36ms)
+✓ Compiled in 484ms
+ GET / 200 in 115ms (next.js: 49ms, proxy.ts: 38ms, application-code: 28ms)
+[?25h
+[ELIFECYCLE] Command failed with exit code 1.

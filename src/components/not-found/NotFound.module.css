@@ -1,0 +1,346 @@
+/* ═══════════════════════════════════════════════════════════════
+   NotFound (404) — CSS Module
+   Ursa palette · Calculator-display concept · 4-breakpoint
+   Mobile-first · genuinely designed mobile layout
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ── */
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Decorative math-symbol backdrop ── */
+.shell::before {
+  content: "∅";
+  position: absolute;
+  font-size: 40vw;
+  font-weight: 800;
+  color: rgba(232, 184, 150, 0.025);
+  font-family: var(--font-title);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* ── Card ── */
+.card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* subtle top accent bar */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), rgba(232, 184, 150, 0.15));
+}
+
+/* ── Calculator Display Panel ── */
+.display {
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: right;
+  position: relative;
+}
+
+.displayCalcLine {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  min-height: 1.4em;
+  margin-bottom: 4px;
+  opacity: 0.7;
+}
+
+.displayResult {
+  font-family: var(--font-title);
+  font-size: 4.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  position: relative;
+}
+
+/* subtle glow under the 404 */
+.displayResult::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0.25;
+}
+
+.displayErrTag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--error);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+  opacity: 0.6;
+}
+
+/* ── Body Content ── */
+.body {
+  padding: 32px 32px 36px;
+  text-align: center;
+}
+
+.domainTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--primary);
+  background: rgba(232, 184, 150, 0.08);
+  border: 1px solid rgba(232, 184, 150, 0.12);
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 28px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Button ── */
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--primary);
+  color: var(--bg);
+  cursor: pointer;
+  transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  min-height: 48px;
+  text-decoration: none;
+}
+
+.ctaBtn:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 20px rgba(232, 184, 150, 0.25);
+}
+
+.ctaBtn:active {
+  transform: scale(0.98);
+}
+
+.ctaBtn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE — 4 Breakpoints (genuine mobile design)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Desktop (≥901px) — generous spacing, full display ── */
+@media (min-width: 901px) {
+  .shell {
+    padding: 48px 24px;
+  }
+  .display {
+    padding: 40px 32px;
+  }
+  .displayResult {
+    font-size: 5rem;
+  }
+  .body {
+    padding: 36px 36px 40px;
+  }
+  .description {
+    font-size: 1rem;
+  }
+  .shell::before {
+    font-size: 35vw;
+  }
+}
+
+/* ── Tablet (≤900px) — tighter, still centered ── */
+@media (max-width: 900px) {
+  .shell {
+    padding: 36px 20px;
+    padding-top: 48px;
+  }
+  .card {
+    max-width: 440px;
+  }
+  .display {
+    padding: 28px 20px;
+  }
+  .displayResult {
+    font-size: 4rem;
+  }
+  .body {
+    padding: 28px 28px 32px;
+  }
+  .displayCalcLine {
+    font-size: 0.85rem;
+  }
+}
+
+/* ── Phone (≤640px) — full-width, mobile-first layout ── */
+@media (max-width: 640px) {
+  .shell {
+    padding: 16px 12px;
+    padding-bottom: calc(16px + 80px); /* bottom nav clearance */
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
+  .card {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  .card::before {
+    height: 2px;
+  }
+
+  .display {
+    padding: 24px 16px;
+  }
+
+  .displayCalcLine {
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+  }
+
+  .displayResult {
+    font-size: 3rem;
+    letter-spacing: -0.02em;
+  }
+
+  .displayResult::after {
+    height: 1px;
+    opacity: 0.15;
+  }
+
+  .displayErrTag {
+    font-size: 0.7rem;
+    margin-top: 4px;
+  }
+
+  .body {
+    padding: 24px 20px 28px;
+  }
+
+  .domainTag {
+    font-size: 0.8rem;
+    padding: 5px 14px;
+    margin-bottom: 16px;
+  }
+
+  .description {
+    font-size: 0.88rem;
+    margin-bottom: 24px;
+    max-width: 100%;
+  }
+
+  .ctaBtn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 12px 20px;
+    min-height: 46px;
+  }
+
+  .shell::before {
+    font-size: 50vw;
+  }
+}
+
+/* ── Small Phone (≤400px) — ultra compact, maximized space ── */
+@media (max-width: 400px) {
+  .shell {
+    padding: 12px 8px;
+    padding-bottom: calc(12px + 80px);
+    padding-top: 24px;
+  }
+
+  .card {
+    border-radius: var(--radius-sm);
+  }
+
+  .display {
+    padding: 18px 12px;
+  }
+
+  .displayCalcLine {
+    font-size: 0.72rem;
+  }
+
+  .displayResult {
+    font-size: 2.4rem;
+  }
+
+  .displayErrTag {
+    font-size: 0.65rem;
+  }
+
+  .body {
+    padding: 20px 14px 24px;
+  }
+
+  .domainTag {
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    margin-bottom: 14px;
+  }
+
+  .description {
+    font-size: 0.82rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .ctaBtn {
+    font-size: 0.88rem;
+    padding: 11px 16px;
+    min-height: 44px;
+    gap: 6px;
+  }
+
+  .shell::before {
+    font-size: 60vw;
+  }
+}

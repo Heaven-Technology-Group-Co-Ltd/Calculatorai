@@ -1,0 +1,4205 @@
+{
+  "_meta": {
+    "generatedFrom": "scripts/v3/measure.py",
+    "sourceOfTruth": "src/app/globals.css",
+    "rootBlock": "src/app/globals.css:12-109",
+    "tokenCount": 71,
+    "filesScanned": {
+      "css": 32,
+      "tsxTsNonTest": 213,
+      "tsxTsAll": 200
+    },
+    "note": "All values parsed at runtime; no token literal is hardcoded in this script."
+  },
+  "tokens": [
+    {
+      "name": "--bg",
+      "declared": "#242F35",
+      "resolved": "#242F35",
+      "decl": "src/app/globals.css:14",
+      "usage": 31,
+      "role": "surface",
+      "color": "#242F35"
+    },
+    {
+      "name": "--surface",
+      "declared": "#2F3D44",
+      "resolved": "#2F3D44",
+      "decl": "src/app/globals.css:15",
+      "usage": 35,
+      "role": "surface",
+      "color": "#2F3D44"
+    },
+    {
+      "name": "--surface-card",
+      "declared": "rgba(59, 74, 82, 0.40)",
+      "resolved": "rgba(59, 74, 82, 0.40)",
+      "decl": "src/app/globals.css:16",
+      "usage": 4,
+      "role": "surface",
+      "color": "#3B4A52@0.40"
+    },
+    {
+      "name": "--surface-hover",
+      "declared": "rgba(74, 90, 98, 0.35)",
+      "resolved": "rgba(74, 90, 98, 0.35)",
+      "decl": "src/app/globals.css:17",
+      "usage": 13,
+      "role": "surface",
+      "color": "#4A5A62@0.35"
+    },
+    {
+      "name": "--surface-glass",
+      "declared": "rgba(36, 47, 53, 0.88)",
+      "resolved": "rgba(36, 47, 53, 0.88)",
+      "decl": "src/app/globals.css:18",
+      "usage": 1,
+      "role": "surface",
+      "color": "#242F35@0.88"
+    },
+    {
+      "name": "--sidebar-bg",
+      "declared": "#1B272C",
+      "resolved": "#1B272C",
+      "decl": "src/app/globals.css:19",
+      "usage": 7,
+      "role": "surface",
+      "color": "#1B272C"
+    },
+    {
+      "name": "--card-bg",
+      "declared": "rgba(59, 74, 82, 0.12)",
+      "resolved": "rgba(59, 74, 82, 0.12)",
+      "decl": "src/app/globals.css:20",
+      "usage": 1,
+      "role": "surface",
+      "color": "#3B4A52@0.12"
+    },
+    {
+      "name": "--border",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "decl": "src/app/globals.css:23",
+      "usage": 68,
+      "role": "border",
+      "color": "#E8B896@0.10"
+    },
+    {
+      "name": "--border-hover",
+      "declared": "rgba(232, 184, 150, 0.15)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "decl": "src/app/globals.css:24",
+      "usage": 12,
+      "role": "border",
+      "color": "#E8B896@0.15"
+    },
+    {
+      "name": "--border-gold",
+      "declared": "rgba(232, 184, 150, 0.22)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "decl": "src/app/globals.css:25",
+      "usage": 26,
+      "role": "border",
+      "color": "#E8B896@0.22"
+    },
+    {
+      "name": "--border-gold-hover",
+      "declared": "rgba(232, 184, 150, 0.38)",
+      "resolved": "rgba(232, 184, 150, 0.38)",
+      "decl": "src/app/globals.css:26",
+      "usage": 4,
+      "role": "border",
+      "color": "#E8B896@0.38"
+    },
+    {
+      "name": "--primary",
+      "declared": "#E8B896",
+      "resolved": "#E8B896",
+      "decl": "src/app/globals.css:29",
+      "usage": 132,
+      "role": "accent",
+      "color": "#E8B896"
+    },
+    {
+      "name": "--primary-light",
+      "declared": "#F0CCAE",
+      "resolved": "#F0CCAE",
+      "decl": "src/app/globals.css:30",
+      "usage": 2,
+      "role": "accent",
+      "color": "#F0CCAE"
+    },
+    {
+      "name": "--primary-subtle",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "decl": "src/app/globals.css:31",
+      "usage": 18,
+      "role": "accent",
+      "color": "#E8B896@0.10"
+    },
+    {
+      "name": "--secondary",
+      "declared": "#D9A47E",
+      "resolved": "#D9A47E",
+      "decl": "src/app/globals.css:32",
+      "usage": 5,
+      "role": "accent",
+      "color": "#D9A47E"
+    },
+    {
+      "name": "--accent-teal",
+      "declared": "#4A5A62",
+      "resolved": "#4A5A62",
+      "decl": "src/app/globals.css:33",
+      "usage": 0,
+      "role": "accent",
+      "color": "#4A5A62"
+    },
+    {
+      "name": "--text",
+      "declared": "#F2E6DA",
+      "resolved": "#F2E6DA",
+      "decl": "src/app/globals.css:36",
+      "usage": 119,
+      "role": "text",
+      "color": "#F2E6DA"
+    },
+    {
+      "name": "--text-secondary",
+      "declared": "rgba(242, 230, 218, 0.62)",
+      "resolved": "rgba(242, 230, 218, 0.62)",
+      "decl": "src/app/globals.css:37",
+      "usage": 175,
+      "role": "text",
+      "color": "#F2E6DA@0.62"
+    },
+    {
+      "name": "--radius-sm",
+      "declared": "8px",
+      "resolved": "8px",
+      "decl": "src/app/globals.css:40",
+      "usage": 51,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--radius-md",
+      "declared": "12px",
+      "resolved": "12px",
+      "decl": "src/app/globals.css:41",
+      "usage": 17,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--radius-lg",
+      "declared": "14px",
+      "resolved": "14px",
+      "decl": "src/app/globals.css:42",
+      "usage": 7,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--radius-xl",
+      "declared": "16px",
+      "resolved": "16px",
+      "decl": "src/app/globals.css:43",
+      "usage": 2,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--radius-full",
+      "declared": "100px",
+      "resolved": "100px",
+      "decl": "src/app/globals.css:44",
+      "usage": 17,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--transition-fast",
+      "declared": "0.12s ease",
+      "resolved": "0.12s ease",
+      "decl": "src/app/globals.css:47",
+      "usage": 24,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--transition-base",
+      "declared": "0.2s ease",
+      "resolved": "0.2s ease",
+      "decl": "src/app/globals.css:48",
+      "usage": 11,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--transition-slow",
+      "declared": "0.3s ease",
+      "resolved": "0.3s ease",
+      "decl": "src/app/globals.css:49",
+      "usage": 0,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--success",
+      "declared": "#4ade80",
+      "resolved": "#4ade80",
+      "decl": "src/app/globals.css:54",
+      "usage": 15,
+      "role": "status",
+      "color": "#4ADE80"
+    },
+    {
+      "name": "--error",
+      "declared": "#FF8A8A",
+      "resolved": "#FF8A8A",
+      "decl": "src/app/globals.css:55",
+      "usage": 37,
+      "role": "status",
+      "color": "#FF8A8A"
+    },
+    {
+      "name": "--warning",
+      "declared": "#facc15",
+      "resolved": "#facc15",
+      "decl": "src/app/globals.css:56",
+      "usage": 9,
+      "role": "status",
+      "color": "#FACC15"
+    },
+    {
+      "name": "--info",
+      "declared": "#70b4ff",
+      "resolved": "#70b4ff",
+      "decl": "src/app/globals.css:57",
+      "usage": 2,
+      "role": "status",
+      "color": "#70B4FF"
+    },
+    {
+      "name": "--status-unknown",
+      "declared": "#a8b0bc",
+      "resolved": "#a8b0bc",
+      "decl": "src/app/globals.css:58",
+      "usage": 1,
+      "role": "other",
+      "color": "#A8B0BC"
+    },
+    {
+      "name": "--fs-1",
+      "declared": "12px",
+      "resolved": "12px",
+      "decl": "src/app/globals.css:61",
+      "usage": 0,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--fs-2",
+      "declared": "13px",
+      "resolved": "13px",
+      "decl": "src/app/globals.css:62",
+      "usage": 0,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--fs-3",
+      "declared": "15px",
+      "resolved": "15px",
+      "decl": "src/app/globals.css:63",
+      "usage": 0,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--fs-4",
+      "declared": "17px",
+      "resolved": "17px",
+      "decl": "src/app/globals.css:64",
+      "usage": 1,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--fs-5",
+      "declared": "21px",
+      "resolved": "21px",
+      "decl": "src/app/globals.css:65",
+      "usage": 3,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--fs-6",
+      "declared": "27px",
+      "resolved": "27px",
+      "decl": "src/app/globals.css:66",
+      "usage": 1,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--z-base",
+      "declared": "0",
+      "resolved": "0",
+      "decl": "src/app/globals.css:69",
+      "usage": 0,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--z-sticky",
+      "declared": "10",
+      "resolved": "10",
+      "decl": "src/app/globals.css:70",
+      "usage": 3,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--z-drawer",
+      "declared": "40",
+      "resolved": "40",
+      "decl": "src/app/globals.css:71",
+      "usage": 9,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--z-modal",
+      "declared": "50",
+      "resolved": "50",
+      "decl": "src/app/globals.css:72",
+      "usage": 2,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--z-toast",
+      "declared": "60",
+      "resolved": "60",
+      "decl": "src/app/globals.css:73",
+      "usage": 0,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--dash-bg",
+      "declared": "var(--bg)",
+      "resolved": "#242F35",
+      "decl": "src/app/globals.css:76",
+      "usage": 0,
+      "role": "surface",
+      "color": "#242F35"
+    },
+    {
+      "name": "--dash-surface",
+      "declared": "var(--surface)",
+      "resolved": "#2F3D44",
+      "decl": "src/app/globals.css:77",
+      "usage": 0,
+      "role": "surface",
+      "color": "#2F3D44"
+    },
+    {
+      "name": "--dash-sidebar",
+      "declared": "var(--sidebar-bg)",
+      "resolved": "#1B272C",
+      "decl": "src/app/globals.css:78",
+      "usage": 0,
+      "role": "surface",
+      "color": "#1B272C"
+    },
+    {
+      "name": "--dash-text",
+      "declared": "var(--text)",
+      "resolved": "#F2E6DA",
+      "decl": "src/app/globals.css:79",
+      "usage": 0,
+      "role": "text",
+      "color": "#F2E6DA"
+    },
+    {
+      "name": "--dash-border",
+      "declared": "var(--border)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "decl": "src/app/globals.css:80",
+      "usage": 0,
+      "role": "border",
+      "color": "#E8B896@0.10"
+    },
+    {
+      "name": "--dash-primary",
+      "declared": "var(--primary)",
+      "resolved": "#E8B896",
+      "decl": "src/app/globals.css:81",
+      "usage": 0,
+      "role": "accent",
+      "color": "#E8B896"
+    },
+    {
+      "name": "--level-color",
+      "declared": "#ECCCA8",
+      "resolved": "#ECCCA8",
+      "decl": "src/app/globals.css:82",
+      "usage": 2,
+      "role": "accent",
+      "color": "#ECCCA8"
+    },
+    {
+      "name": "--level-bg",
+      "declared": "rgba(236, 204, 168, 0.06)",
+      "resolved": "rgba(236, 204, 168, 0.06)",
+      "decl": "src/app/globals.css:83",
+      "usage": 2,
+      "role": "surface",
+      "color": "#ECCCA8@0.06"
+    },
+    {
+      "name": "--level-border",
+      "declared": "rgba(236, 204, 168, 0.10)",
+      "resolved": "rgba(236, 204, 168, 0.10)",
+      "decl": "src/app/globals.css:84",
+      "usage": 1,
+      "role": "border",
+      "color": "#ECCCA8@0.10"
+    },
+    {
+      "name": "--level-glow",
+      "declared": "rgba(236, 204, 168, 0.06)",
+      "resolved": "rgba(236, 204, 168, 0.06)",
+      "decl": "src/app/globals.css:85",
+      "usage": 0,
+      "role": "surface",
+      "color": "#ECCCA8@0.06"
+    },
+    {
+      "name": "--font-body",
+      "declared": "var(--font-inter), 'Inter', system-ui, sans-serif",
+      "resolved": "var(--font-inter), 'Inter', system-ui, sans-serif",
+      "decl": "src/app/globals.css:88",
+      "usage": 2,
+      "role": "text",
+      "color": null
+    },
+    {
+      "name": "--font-title",
+      "declared": "var(--font-outfit), 'Outfit', system-ui, sans-serif",
+      "resolved": "var(--font-outfit), 'Outfit', system-ui, sans-serif",
+      "decl": "src/app/globals.css:89",
+      "usage": 24,
+      "role": "text",
+      "color": null
+    },
+    {
+      "name": "--font-mono",
+      "declared": "var(--font-jetbrains-mono), 'JetBrains Mono', monospace",
+      "resolved": "var(--font-jetbrains-mono), 'JetBrains Mono', monospace",
+      "decl": "src/app/globals.css:90",
+      "usage": 11,
+      "role": "text",
+      "color": null
+    },
+    {
+      "name": "--primary-soft",
+      "declared": "var(--primary-subtle)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "decl": "src/app/globals.css:91",
+      "usage": 5,
+      "role": "accent",
+      "color": "#E8B896@0.10"
+    },
+    {
+      "name": "--primary-glow",
+      "declared": "rgba(232, 184, 150, 0.08)",
+      "resolved": "rgba(232, 184, 150, 0.08)",
+      "decl": "src/app/globals.css:92",
+      "usage": 0,
+      "role": "surface",
+      "color": "#E8B896@0.08"
+    },
+    {
+      "name": "--primary-border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "decl": "src/app/globals.css:93",
+      "usage": 4,
+      "role": "border",
+      "color": "#E8B896@0.22"
+    },
+    {
+      "name": "--border-primary",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "decl": "src/app/globals.css:94",
+      "usage": 3,
+      "role": "border",
+      "color": "#E8B896@0.22"
+    },
+    {
+      "name": "--border-strong",
+      "declared": "var(--border-hover)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "decl": "src/app/globals.css:95",
+      "usage": 0,
+      "role": "border",
+      "color": "#E8B896@0.15"
+    },
+    {
+      "name": "--surface-opaque",
+      "declared": "#2F3D44",
+      "resolved": "#2F3D44",
+      "decl": "src/app/globals.css:96",
+      "usage": 0,
+      "role": "surface",
+      "color": "#2F3D44"
+    },
+    {
+      "name": "--space-xs",
+      "declared": "4px",
+      "resolved": "4px",
+      "decl": "src/app/globals.css:97",
+      "usage": 5,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--space-sm",
+      "declared": "8px",
+      "resolved": "8px",
+      "decl": "src/app/globals.css:98",
+      "usage": 27,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--space-md",
+      "declared": "16px",
+      "resolved": "16px",
+      "decl": "src/app/globals.css:99",
+      "usage": 24,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--space-lg",
+      "declared": "24px",
+      "resolved": "24px",
+      "decl": "src/app/globals.css:100",
+      "usage": 15,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--space-xl",
+      "declared": "32px",
+      "resolved": "32px",
+      "decl": "src/app/globals.css:101",
+      "usage": 2,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--space-2xl",
+      "declared": "48px",
+      "resolved": "48px",
+      "decl": "src/app/globals.css:102",
+      "usage": 3,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--space-3xl",
+      "declared": "64px",
+      "resolved": "64px",
+      "decl": "src/app/globals.css:103",
+      "usage": 1,
+      "role": "other",
+      "color": null
+    },
+    {
+      "name": "--shadow-md",
+      "declared": "0 8px 24px rgba(0, 0, 0, 0.3)",
+      "resolved": "0 8px 24px rgba(0, 0, 0, 0.3)",
+      "decl": "src/app/globals.css:106",
+      "usage": 1,
+      "role": "surface",
+      "color": null
+    },
+    {
+      "name": "--shadow-lg",
+      "declared": "0 20px 60px rgba(0, 0, 0, 0.5)",
+      "resolved": "0 20px 60px rgba(0, 0, 0, 0.5)",
+      "decl": "src/app/globals.css:107",
+      "usage": 3,
+      "role": "surface",
+      "color": null
+    },
+    {
+      "name": "--shadow-glow",
+      "declared": "0 0 24px rgba(232, 184, 150, 0.22)",
+      "resolved": "0 0 24px rgba(232, 184, 150, 0.22)",
+      "decl": "src/app/globals.css:108",
+      "usage": 2,
+      "role": "surface",
+      "color": null
+    }
+  ],
+  "contrast": [
+    {
+      "token": "--border",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#42494C",
+      "ratio": 1.22,
+      "pass45": false,
+      "pass30": false,
+      "usage": 68,
+      "decl": "src/app/globals.css:23"
+    },
+    {
+      "token": "--border",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#424B4E",
+      "ratio": 1.22,
+      "pass45": false,
+      "pass30": false,
+      "usage": 68,
+      "decl": "src/app/globals.css:23"
+    },
+    {
+      "token": "--primary-subtle",
+      "role": "accent",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#42494C",
+      "ratio": 1.22,
+      "pass45": false,
+      "pass30": false,
+      "usage": 18,
+      "decl": "src/app/globals.css:31"
+    },
+    {
+      "token": "--primary-subtle",
+      "role": "accent",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#424B4E",
+      "ratio": 1.22,
+      "pass45": false,
+      "pass30": false,
+      "usage": 18,
+      "decl": "src/app/globals.css:31"
+    },
+    {
+      "token": "--dash-border",
+      "role": "border",
+      "declared": "var(--border)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#42494C",
+      "ratio": 1.22,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:80"
+    },
+    {
+      "token": "--dash-border",
+      "role": "border",
+      "declared": "var(--border)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#424B4E",
+      "ratio": 1.22,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:80"
+    },
+    {
+      "token": "--primary-soft",
+      "role": "accent",
+      "declared": "var(--primary-subtle)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#42494C",
+      "ratio": 1.22,
+      "pass45": false,
+      "pass30": false,
+      "usage": 5,
+      "decl": "src/app/globals.css:91"
+    },
+    {
+      "token": "--primary-soft",
+      "role": "accent",
+      "declared": "var(--primary-subtle)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#424B4E",
+      "ratio": 1.22,
+      "pass45": false,
+      "pass30": false,
+      "usage": 5,
+      "decl": "src/app/globals.css:91"
+    },
+    {
+      "token": "--border",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#383D3F",
+      "ratio": 1.24,
+      "pass45": false,
+      "pass30": false,
+      "usage": 68,
+      "decl": "src/app/globals.css:23"
+    },
+    {
+      "token": "--border",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#303637",
+      "ratio": 1.24,
+      "pass45": false,
+      "pass30": false,
+      "usage": 68,
+      "decl": "src/app/globals.css:23"
+    },
+    {
+      "token": "--primary-subtle",
+      "role": "accent",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#383D3F",
+      "ratio": 1.24,
+      "pass45": false,
+      "pass30": false,
+      "usage": 18,
+      "decl": "src/app/globals.css:31"
+    },
+    {
+      "token": "--primary-subtle",
+      "role": "accent",
+      "declared": "rgba(232, 184, 150, 0.10)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#303637",
+      "ratio": 1.24,
+      "pass45": false,
+      "pass30": false,
+      "usage": 18,
+      "decl": "src/app/globals.css:31"
+    },
+    {
+      "token": "--dash-border",
+      "role": "border",
+      "declared": "var(--border)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#383D3F",
+      "ratio": 1.24,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:80"
+    },
+    {
+      "token": "--dash-border",
+      "role": "border",
+      "declared": "var(--border)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#303637",
+      "ratio": 1.24,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:80"
+    },
+    {
+      "token": "--primary-soft",
+      "role": "accent",
+      "declared": "var(--primary-subtle)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#383D3F",
+      "ratio": 1.24,
+      "pass45": false,
+      "pass30": false,
+      "usage": 5,
+      "decl": "src/app/globals.css:91"
+    },
+    {
+      "token": "--primary-soft",
+      "role": "accent",
+      "declared": "var(--primary-subtle)",
+      "resolved": "rgba(232, 184, 150, 0.10)",
+      "alpha": 0.1,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#303637",
+      "ratio": 1.24,
+      "pass45": false,
+      "pass30": false,
+      "usage": 5,
+      "decl": "src/app/globals.css:91"
+    },
+    {
+      "token": "--level-border",
+      "role": "border",
+      "declared": "rgba(236, 204, 168, 0.10)",
+      "resolved": "rgba(236, 204, 168, 0.10)",
+      "alpha": 0.1,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#424B4E",
+      "ratio": 1.25,
+      "pass45": false,
+      "pass30": false,
+      "usage": 1,
+      "decl": "src/app/globals.css:84"
+    },
+    {
+      "token": "--level-border",
+      "role": "border",
+      "declared": "rgba(236, 204, 168, 0.10)",
+      "resolved": "rgba(236, 204, 168, 0.10)",
+      "alpha": 0.1,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#434D50",
+      "ratio": 1.26,
+      "pass45": false,
+      "pass30": false,
+      "usage": 1,
+      "decl": "src/app/globals.css:84"
+    },
+    {
+      "token": "--level-border",
+      "role": "border",
+      "declared": "rgba(236, 204, 168, 0.10)",
+      "resolved": "rgba(236, 204, 168, 0.10)",
+      "alpha": 0.1,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#383F40",
+      "ratio": 1.27,
+      "pass45": false,
+      "pass30": false,
+      "usage": 1,
+      "decl": "src/app/globals.css:84"
+    },
+    {
+      "token": "--level-border",
+      "role": "border",
+      "declared": "rgba(236, 204, 168, 0.10)",
+      "resolved": "rgba(236, 204, 168, 0.10)",
+      "alpha": 0.1,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#303838",
+      "ratio": 1.27,
+      "pass45": false,
+      "pass30": false,
+      "usage": 1,
+      "decl": "src/app/globals.css:84"
+    },
+    {
+      "token": "--border-hover",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.15)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "alpha": 0.15,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#4B4F50",
+      "ratio": 1.35,
+      "pass45": false,
+      "pass30": false,
+      "usage": 12,
+      "decl": "src/app/globals.css:24"
+    },
+    {
+      "token": "--border-hover",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.15)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "alpha": 0.15,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#4C5152",
+      "ratio": 1.35,
+      "pass45": false,
+      "pass30": false,
+      "usage": 12,
+      "decl": "src/app/globals.css:24"
+    },
+    {
+      "token": "--border-strong",
+      "role": "border",
+      "declared": "var(--border-hover)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "alpha": 0.15,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#4B4F50",
+      "ratio": 1.35,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:95"
+    },
+    {
+      "token": "--border-strong",
+      "role": "border",
+      "declared": "var(--border-hover)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "alpha": 0.15,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#4C5152",
+      "ratio": 1.35,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:95"
+    },
+    {
+      "token": "--border-hover",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.15)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "alpha": 0.15,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#414444",
+      "ratio": 1.39,
+      "pass45": false,
+      "pass30": false,
+      "usage": 12,
+      "decl": "src/app/globals.css:24"
+    },
+    {
+      "token": "--border-hover",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.15)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "alpha": 0.15,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#3A3D3C",
+      "ratio": 1.39,
+      "pass45": false,
+      "pass30": false,
+      "usage": 12,
+      "decl": "src/app/globals.css:24"
+    },
+    {
+      "token": "--border-strong",
+      "role": "border",
+      "declared": "var(--border-hover)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "alpha": 0.15,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#414444",
+      "ratio": 1.39,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:95"
+    },
+    {
+      "token": "--border-strong",
+      "role": "border",
+      "declared": "var(--border-hover)",
+      "resolved": "rgba(232, 184, 150, 0.15)",
+      "alpha": 0.15,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#3A3D3C",
+      "ratio": 1.39,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:95"
+    },
+    {
+      "token": "--accent-teal",
+      "role": "accent",
+      "declared": "#4A5A62",
+      "resolved": "#4A5A62",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#4A5A62",
+      "ratio": 1.52,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:33"
+    },
+    {
+      "token": "--border-gold",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.22)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#585856",
+      "ratio": 1.57,
+      "pass45": false,
+      "pass30": false,
+      "usage": 26,
+      "decl": "src/app/globals.css:25"
+    },
+    {
+      "token": "--border-gold",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.22)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#585A58",
+      "ratio": 1.57,
+      "pass45": false,
+      "pass30": false,
+      "usage": 26,
+      "decl": "src/app/globals.css:25"
+    },
+    {
+      "token": "--accent-teal",
+      "role": "accent",
+      "declared": "#4A5A62",
+      "resolved": "#4A5A62",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#4A5A62",
+      "ratio": 1.57,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:33"
+    },
+    {
+      "token": "--primary-border",
+      "role": "border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#585856",
+      "ratio": 1.57,
+      "pass45": false,
+      "pass30": false,
+      "usage": 4,
+      "decl": "src/app/globals.css:93"
+    },
+    {
+      "token": "--primary-border",
+      "role": "border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#585A58",
+      "ratio": 1.57,
+      "pass45": false,
+      "pass30": false,
+      "usage": 4,
+      "decl": "src/app/globals.css:93"
+    },
+    {
+      "token": "--border-primary",
+      "role": "border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#585856",
+      "ratio": 1.57,
+      "pass45": false,
+      "pass30": false,
+      "usage": 3,
+      "decl": "src/app/globals.css:94"
+    },
+    {
+      "token": "--border-primary",
+      "role": "border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#585A58",
+      "ratio": 1.57,
+      "pass45": false,
+      "pass30": false,
+      "usage": 3,
+      "decl": "src/app/globals.css:94"
+    },
+    {
+      "token": "--border-gold",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.22)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#4F4D4A",
+      "ratio": 1.63,
+      "pass45": false,
+      "pass30": false,
+      "usage": 26,
+      "decl": "src/app/globals.css:25"
+    },
+    {
+      "token": "--primary-border",
+      "role": "border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#4F4D4A",
+      "ratio": 1.63,
+      "pass45": false,
+      "pass30": false,
+      "usage": 4,
+      "decl": "src/app/globals.css:93"
+    },
+    {
+      "token": "--border-primary",
+      "role": "border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#4F4D4A",
+      "ratio": 1.63,
+      "pass45": false,
+      "pass30": false,
+      "usage": 3,
+      "decl": "src/app/globals.css:94"
+    },
+    {
+      "token": "--border-gold",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.22)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#484743",
+      "ratio": 1.64,
+      "pass45": false,
+      "pass30": false,
+      "usage": 26,
+      "decl": "src/app/globals.css:25"
+    },
+    {
+      "token": "--primary-border",
+      "role": "border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#484743",
+      "ratio": 1.64,
+      "pass45": false,
+      "pass30": false,
+      "usage": 4,
+      "decl": "src/app/globals.css:93"
+    },
+    {
+      "token": "--border-primary",
+      "role": "border",
+      "declared": "var(--border-gold)",
+      "resolved": "rgba(232, 184, 150, 0.22)",
+      "alpha": 0.22,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#484743",
+      "ratio": 1.64,
+      "pass45": false,
+      "pass30": false,
+      "usage": 3,
+      "decl": "src/app/globals.css:94"
+    },
+    {
+      "token": "--accent-teal",
+      "role": "accent",
+      "declared": "#4A5A62",
+      "resolved": "#4A5A62",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#4A5A62",
+      "ratio": 1.91,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:33"
+    },
+    {
+      "token": "--accent-teal",
+      "role": "accent",
+      "declared": "#4A5A62",
+      "resolved": "#4A5A62",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#4A5A62",
+      "ratio": 2.13,
+      "pass45": false,
+      "pass30": false,
+      "usage": 0,
+      "decl": "src/app/globals.css:33"
+    },
+    {
+      "token": "--border-gold-hover",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.38)",
+      "resolved": "rgba(232, 184, 150, 0.38)",
+      "alpha": 0.38,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#766D64",
+      "ratio": 2.15,
+      "pass45": false,
+      "pass30": false,
+      "usage": 4,
+      "decl": "src/app/globals.css:26"
+    },
+    {
+      "token": "--border-gold-hover",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.38)",
+      "resolved": "rgba(232, 184, 150, 0.38)",
+      "alpha": 0.38,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#756C63",
+      "ratio": 2.18,
+      "pass45": false,
+      "pass30": false,
+      "usage": 4,
+      "decl": "src/app/globals.css:26"
+    },
+    {
+      "token": "--border-gold-hover",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.38)",
+      "resolved": "rgba(232, 184, 150, 0.38)",
+      "alpha": 0.38,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#6E635A",
+      "ratio": 2.35,
+      "pass45": false,
+      "pass30": false,
+      "usage": 4,
+      "decl": "src/app/globals.css:26"
+    },
+    {
+      "token": "--border-gold-hover",
+      "role": "border",
+      "declared": "rgba(232, 184, 150, 0.38)",
+      "resolved": "rgba(232, 184, 150, 0.38)",
+      "alpha": 0.38,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#695E54",
+      "ratio": 2.42,
+      "pass45": false,
+      "pass30": false,
+      "usage": 4,
+      "decl": "src/app/globals.css:26"
+    },
+    {
+      "token": "--text-secondary",
+      "role": "text",
+      "declared": "rgba(242, 230, 218, 0.62)",
+      "resolved": "rgba(242, 230, 218, 0.62)",
+      "alpha": 0.62,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#A8A7A2",
+      "ratio": 4.53,
+      "pass45": true,
+      "pass30": true,
+      "usage": 175,
+      "decl": "src/app/globals.css:37"
+    },
+    {
+      "token": "--text-secondary",
+      "role": "text",
+      "declared": "rgba(242, 230, 218, 0.62)",
+      "resolved": "rgba(242, 230, 218, 0.62)",
+      "alpha": 0.62,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#A8A6A1",
+      "ratio": 4.61,
+      "pass45": true,
+      "pass30": true,
+      "usage": 175,
+      "decl": "src/app/globals.css:37"
+    },
+    {
+      "token": "--error",
+      "role": "status",
+      "declared": "#FF8A8A",
+      "resolved": "#FF8A8A",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#FF8A8A",
+      "ratio": 4.81,
+      "pass45": true,
+      "pass30": true,
+      "usage": 37,
+      "decl": "src/app/globals.css:55"
+    },
+    {
+      "token": "--error",
+      "role": "status",
+      "declared": "#FF8A8A",
+      "resolved": "#FF8A8A",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#FF8A8A",
+      "ratio": 4.94,
+      "pass45": true,
+      "pass30": true,
+      "usage": 37,
+      "decl": "src/app/globals.css:55"
+    },
+    {
+      "token": "--secondary",
+      "role": "accent",
+      "declared": "#D9A47E",
+      "resolved": "#D9A47E",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#D9A47E",
+      "ratio": 4.97,
+      "pass45": true,
+      "pass30": true,
+      "usage": 5,
+      "decl": "src/app/globals.css:32"
+    },
+    {
+      "token": "--status-unknown",
+      "role": "other",
+      "declared": "#a8b0bc",
+      "resolved": "#a8b0bc",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#A8B0BC",
+      "ratio": 4.99,
+      "pass45": true,
+      "pass30": true,
+      "usage": 1,
+      "decl": "src/app/globals.css:58"
+    },
+    {
+      "token": "--info",
+      "role": "status",
+      "declared": "#70b4ff",
+      "resolved": "#70b4ff",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#70B4FF",
+      "ratio": 5.02,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:57"
+    },
+    {
+      "token": "--secondary",
+      "role": "accent",
+      "declared": "#D9A47E",
+      "resolved": "#D9A47E",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#D9A47E",
+      "ratio": 5.11,
+      "pass45": true,
+      "pass30": true,
+      "usage": 5,
+      "decl": "src/app/globals.css:32"
+    },
+    {
+      "token": "--status-unknown",
+      "role": "other",
+      "declared": "#a8b0bc",
+      "resolved": "#a8b0bc",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#A8B0BC",
+      "ratio": 5.13,
+      "pass45": true,
+      "pass30": true,
+      "usage": 1,
+      "decl": "src/app/globals.css:58"
+    },
+    {
+      "token": "--info",
+      "role": "status",
+      "declared": "#70b4ff",
+      "resolved": "#70b4ff",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#70B4FF",
+      "ratio": 5.16,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:57"
+    },
+    {
+      "token": "--text-secondary",
+      "role": "text",
+      "declared": "rgba(242, 230, 218, 0.62)",
+      "resolved": "rgba(242, 230, 218, 0.62)",
+      "alpha": 0.62,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#A4A09B",
+      "ratio": 5.27,
+      "pass45": true,
+      "pass30": true,
+      "usage": 175,
+      "decl": "src/app/globals.css:37"
+    },
+    {
+      "token": "--text-secondary",
+      "role": "text",
+      "declared": "rgba(242, 230, 218, 0.62)",
+      "resolved": "rgba(242, 230, 218, 0.62)",
+      "alpha": 0.62,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#A09D98",
+      "ratio": 5.66,
+      "pass45": true,
+      "pass30": true,
+      "usage": 175,
+      "decl": "src/app/globals.css:37"
+    },
+    {
+      "token": "--error",
+      "role": "status",
+      "declared": "#FF8A8A",
+      "resolved": "#FF8A8A",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#FF8A8A",
+      "ratio": 6.04,
+      "pass45": true,
+      "pass30": true,
+      "usage": 37,
+      "decl": "src/app/globals.css:55"
+    },
+    {
+      "token": "--primary",
+      "role": "accent",
+      "declared": "#E8B896",
+      "resolved": "#E8B896",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#E8B896",
+      "ratio": 6.09,
+      "pass45": true,
+      "pass30": true,
+      "usage": 132,
+      "decl": "src/app/globals.css:29"
+    },
+    {
+      "token": "--dash-primary",
+      "role": "accent",
+      "declared": "var(--primary)",
+      "resolved": "#E8B896",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#E8B896",
+      "ratio": 6.09,
+      "pass45": true,
+      "pass30": true,
+      "usage": 0,
+      "decl": "src/app/globals.css:81"
+    },
+    {
+      "token": "--secondary",
+      "role": "accent",
+      "declared": "#D9A47E",
+      "resolved": "#D9A47E",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#D9A47E",
+      "ratio": 6.24,
+      "pass45": true,
+      "pass30": true,
+      "usage": 5,
+      "decl": "src/app/globals.css:32"
+    },
+    {
+      "token": "--success",
+      "role": "status",
+      "declared": "#4ade80",
+      "resolved": "#4ade80",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#4ADE80",
+      "ratio": 6.26,
+      "pass45": true,
+      "pass30": true,
+      "usage": 15,
+      "decl": "src/app/globals.css:54"
+    },
+    {
+      "token": "--status-unknown",
+      "role": "other",
+      "declared": "#a8b0bc",
+      "resolved": "#a8b0bc",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#A8B0BC",
+      "ratio": 6.26,
+      "pass45": true,
+      "pass30": true,
+      "usage": 1,
+      "decl": "src/app/globals.css:58"
+    },
+    {
+      "token": "--primary",
+      "role": "accent",
+      "declared": "#E8B896",
+      "resolved": "#E8B896",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#E8B896",
+      "ratio": 6.27,
+      "pass45": true,
+      "pass30": true,
+      "usage": 132,
+      "decl": "src/app/globals.css:29"
+    },
+    {
+      "token": "--dash-primary",
+      "role": "accent",
+      "declared": "var(--primary)",
+      "resolved": "#E8B896",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#E8B896",
+      "ratio": 6.27,
+      "pass45": true,
+      "pass30": true,
+      "usage": 0,
+      "decl": "src/app/globals.css:81"
+    },
+    {
+      "token": "--info",
+      "role": "status",
+      "declared": "#70b4ff",
+      "resolved": "#70b4ff",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#70B4FF",
+      "ratio": 6.3,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:57"
+    },
+    {
+      "token": "--success",
+      "role": "status",
+      "declared": "#4ade80",
+      "resolved": "#4ade80",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#4ADE80",
+      "ratio": 6.44,
+      "pass45": true,
+      "pass30": true,
+      "usage": 15,
+      "decl": "src/app/globals.css:54"
+    },
+    {
+      "token": "--error",
+      "role": "status",
+      "declared": "#FF8A8A",
+      "resolved": "#FF8A8A",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#FF8A8A",
+      "ratio": 6.74,
+      "pass45": true,
+      "pass30": true,
+      "usage": 37,
+      "decl": "src/app/globals.css:55"
+    },
+    {
+      "token": "--secondary",
+      "role": "accent",
+      "declared": "#D9A47E",
+      "resolved": "#D9A47E",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#D9A47E",
+      "ratio": 6.96,
+      "pass45": true,
+      "pass30": true,
+      "usage": 5,
+      "decl": "src/app/globals.css:32"
+    },
+    {
+      "token": "--status-unknown",
+      "role": "other",
+      "declared": "#a8b0bc",
+      "resolved": "#a8b0bc",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#A8B0BC",
+      "ratio": 6.99,
+      "pass45": true,
+      "pass30": true,
+      "usage": 1,
+      "decl": "src/app/globals.css:58"
+    },
+    {
+      "token": "--info",
+      "role": "status",
+      "declared": "#70b4ff",
+      "resolved": "#70b4ff",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#70B4FF",
+      "ratio": 7.04,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:57"
+    },
+    {
+      "token": "--warning",
+      "role": "status",
+      "declared": "#facc15",
+      "resolved": "#facc15",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#FACC15",
+      "ratio": 7.12,
+      "pass45": true,
+      "pass30": true,
+      "usage": 9,
+      "decl": "src/app/globals.css:56"
+    },
+    {
+      "token": "--level-color",
+      "role": "accent",
+      "declared": "#ECCCA8",
+      "resolved": "#ECCCA8",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#ECCCA8",
+      "ratio": 7.15,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:82"
+    },
+    {
+      "token": "--primary-light",
+      "role": "accent",
+      "declared": "#F0CCAE",
+      "resolved": "#F0CCAE",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#F0CCAE",
+      "ratio": 7.25,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:30"
+    },
+    {
+      "token": "--warning",
+      "role": "status",
+      "declared": "#facc15",
+      "resolved": "#facc15",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#FACC15",
+      "ratio": 7.33,
+      "pass45": true,
+      "pass30": true,
+      "usage": 9,
+      "decl": "src/app/globals.css:56"
+    },
+    {
+      "token": "--level-color",
+      "role": "accent",
+      "declared": "#ECCCA8",
+      "resolved": "#ECCCA8",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#ECCCA8",
+      "ratio": 7.36,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:82"
+    },
+    {
+      "token": "--primary-light",
+      "role": "accent",
+      "declared": "#F0CCAE",
+      "resolved": "#F0CCAE",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#F0CCAE",
+      "ratio": 7.45,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:30"
+    },
+    {
+      "token": "--primary",
+      "role": "accent",
+      "declared": "#E8B896",
+      "resolved": "#E8B896",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#E8B896",
+      "ratio": 7.65,
+      "pass45": true,
+      "pass30": true,
+      "usage": 132,
+      "decl": "src/app/globals.css:29"
+    },
+    {
+      "token": "--dash-primary",
+      "role": "accent",
+      "declared": "var(--primary)",
+      "resolved": "#E8B896",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#E8B896",
+      "ratio": 7.65,
+      "pass45": true,
+      "pass30": true,
+      "usage": 0,
+      "decl": "src/app/globals.css:81"
+    },
+    {
+      "token": "--success",
+      "role": "status",
+      "declared": "#4ade80",
+      "resolved": "#4ade80",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#4ADE80",
+      "ratio": 7.86,
+      "pass45": true,
+      "pass30": true,
+      "usage": 15,
+      "decl": "src/app/globals.css:54"
+    },
+    {
+      "token": "--primary",
+      "role": "accent",
+      "declared": "#E8B896",
+      "resolved": "#E8B896",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#E8B896",
+      "ratio": 8.54,
+      "pass45": true,
+      "pass30": true,
+      "usage": 132,
+      "decl": "src/app/globals.css:29"
+    },
+    {
+      "token": "--dash-primary",
+      "role": "accent",
+      "declared": "var(--primary)",
+      "resolved": "#E8B896",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#E8B896",
+      "ratio": 8.54,
+      "pass45": true,
+      "pass30": true,
+      "usage": 0,
+      "decl": "src/app/globals.css:81"
+    },
+    {
+      "token": "--success",
+      "role": "status",
+      "declared": "#4ade80",
+      "resolved": "#4ade80",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#4ADE80",
+      "ratio": 8.78,
+      "pass45": true,
+      "pass30": true,
+      "usage": 15,
+      "decl": "src/app/globals.css:54"
+    },
+    {
+      "token": "--text",
+      "role": "text",
+      "declared": "#F2E6DA",
+      "resolved": "#F2E6DA",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#F2E6DA",
+      "ratio": 8.89,
+      "pass45": true,
+      "pass30": true,
+      "usage": 119,
+      "decl": "src/app/globals.css:36"
+    },
+    {
+      "token": "--dash-text",
+      "role": "text",
+      "declared": "var(--text)",
+      "resolved": "#F2E6DA",
+      "alpha": 1.0,
+      "background": "--card-bg",
+      "backgroundHex": "#303F46",
+      "compositeHex": "#F2E6DA",
+      "ratio": 8.89,
+      "pass45": true,
+      "pass30": true,
+      "usage": 0,
+      "decl": "src/app/globals.css:79"
+    },
+    {
+      "token": "--warning",
+      "role": "status",
+      "declared": "#facc15",
+      "resolved": "#facc15",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#FACC15",
+      "ratio": 8.94,
+      "pass45": true,
+      "pass30": true,
+      "usage": 9,
+      "decl": "src/app/globals.css:56"
+    },
+    {
+      "token": "--level-color",
+      "role": "accent",
+      "declared": "#ECCCA8",
+      "resolved": "#ECCCA8",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#ECCCA8",
+      "ratio": 8.98,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:82"
+    },
+    {
+      "token": "--primary-light",
+      "role": "accent",
+      "declared": "#F0CCAE",
+      "resolved": "#F0CCAE",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#F0CCAE",
+      "ratio": 9.1,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:30"
+    },
+    {
+      "token": "--text",
+      "role": "text",
+      "declared": "#F2E6DA",
+      "resolved": "#F2E6DA",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#F2E6DA",
+      "ratio": 9.14,
+      "pass45": true,
+      "pass30": true,
+      "usage": 119,
+      "decl": "src/app/globals.css:36"
+    },
+    {
+      "token": "--dash-text",
+      "role": "text",
+      "declared": "var(--text)",
+      "resolved": "#F2E6DA",
+      "alpha": 1.0,
+      "background": "--surface",
+      "backgroundHex": "#2F3D44",
+      "compositeHex": "#F2E6DA",
+      "ratio": 9.14,
+      "pass45": true,
+      "pass30": true,
+      "usage": 0,
+      "decl": "src/app/globals.css:79"
+    },
+    {
+      "token": "--warning",
+      "role": "status",
+      "declared": "#facc15",
+      "resolved": "#facc15",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#FACC15",
+      "ratio": 9.99,
+      "pass45": true,
+      "pass30": true,
+      "usage": 9,
+      "decl": "src/app/globals.css:56"
+    },
+    {
+      "token": "--level-color",
+      "role": "accent",
+      "declared": "#ECCCA8",
+      "resolved": "#ECCCA8",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#ECCCA8",
+      "ratio": 10.03,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:82"
+    },
+    {
+      "token": "--primary-light",
+      "role": "accent",
+      "declared": "#F0CCAE",
+      "resolved": "#F0CCAE",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#F0CCAE",
+      "ratio": 10.16,
+      "pass45": true,
+      "pass30": true,
+      "usage": 2,
+      "decl": "src/app/globals.css:30"
+    },
+    {
+      "token": "--text",
+      "role": "text",
+      "declared": "#F2E6DA",
+      "resolved": "#F2E6DA",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#F2E6DA",
+      "ratio": 11.16,
+      "pass45": true,
+      "pass30": true,
+      "usage": 119,
+      "decl": "src/app/globals.css:36"
+    },
+    {
+      "token": "--dash-text",
+      "role": "text",
+      "declared": "var(--text)",
+      "resolved": "#F2E6DA",
+      "alpha": 1.0,
+      "background": "--bg",
+      "backgroundHex": "#242F35",
+      "compositeHex": "#F2E6DA",
+      "ratio": 11.16,
+      "pass45": true,
+      "pass30": true,
+      "usage": 0,
+      "decl": "src/app/globals.css:79"
+    },
+    {
+      "token": "--text",
+      "role": "text",
+      "declared": "#F2E6DA",
+      "resolved": "#F2E6DA",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#F2E6DA",
+      "ratio": 12.46,
+      "pass45": true,
+      "pass30": true,
+      "usage": 119,
+      "decl": "src/app/globals.css:36"
+    },
+    {
+      "token": "--dash-text",
+      "role": "text",
+      "declared": "var(--text)",
+      "resolved": "#F2E6DA",
+      "alpha": 1.0,
+      "background": "--sidebar-bg",
+      "backgroundHex": "#1B272C",
+      "compositeHex": "#F2E6DA",
+      "ratio": 12.46,
+      "pass45": true,
+      "pass30": true,
+      "usage": 0,
+      "decl": "src/app/globals.css:79"
+    }
+  ],
+  "fontSizes": {
+    "literalCounts": {
+      "0.85rem": 41,
+      "0.8rem": 33,
+      "14px": 27,
+      "13px": 24,
+      "0.75rem": 23,
+      "0.9rem": 18,
+      "12px": 15,
+      "0.95rem": 13,
+      "0.78rem": 11,
+      "0.7rem": 11,
+      "11px": 11,
+      "1rem": 10,
+      "10px": 7,
+      "0.65rem": 6,
+      "0.68rem": 5,
+      "0.72rem": 5,
+      "15px": 5,
+      "16px": 5,
+      "20px": 5,
+      "0.82rem": 4,
+      "0.88rem": 4,
+      "1.15rem": 4,
+      "1.5rem": 4,
+      "1.8rem": 4,
+      "1.1rem": 3,
+      "1.3rem": 3,
+      "1.4rem": 3,
+      "1.6rem": 3,
+      "0.6rem": 2,
+      "1.2rem": 2,
+      "1.55rem": 2,
+      "16px !important": 2,
+      "17px": 2,
+      "22px": 2,
+      "28px": 2,
+      "0.62rem": 1,
+      "0.76rem": 1,
+      "1.05rem": 1,
+      "1.25rem": 1,
+      "1.35rem": 1,
+      "1.45rem": 1,
+      "18px": 1,
+      "2.4rem": 1,
+      "24px": 1,
+      "2rem": 1,
+      "35vw": 1,
+      "3rem": 1,
+      "4.5rem": 1,
+      "40vw": 1,
+      "4rem": 1,
+      "50vw": 1,
+      "5rem": 1,
+      "60vw": 1,
+      "clamp(2.4rem, 9vw, 3.5rem)": 1,
+      "clamp(4rem, 12vw, 7rem)": 1
+    },
+    "literalTotal": 341,
+    "distinctLiterals": 55,
+    "literalSites": [
+      {
+        "value": "1rem",
+        "site": "src/app/globals.css:186"
+      },
+      {
+        "value": "0.65rem",
+        "site": "src/app/globals.css:194"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:209"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/globals.css:244"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/globals.css:276"
+      },
+      {
+        "value": "14px",
+        "site": "src/app/globals.css:339"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:343"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/app/globals.css:344"
+      },
+      {
+        "value": "1rem",
+        "site": "src/app/globals.css:347"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/globals.css:352"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:374"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:391"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/app/globals.css:414"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/app/globals.css:421"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/globals.css:449"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/app/globals.css:461"
+      },
+      {
+        "value": "0.65rem",
+        "site": "src/app/globals.css:469"
+      },
+      {
+        "value": "1rem",
+        "site": "src/app/globals.css:518"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/app/globals.css:519"
+      },
+      {
+        "value": "1.1rem",
+        "site": "src/app/globals.css:538"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:542"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:551"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/app/globals.css:596"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:600"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/app/globals.css:601"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/app/globals.css:604"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:613"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/globals.css:631"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/app/globals.css:632"
+      },
+      {
+        "value": "0.65rem",
+        "site": "src/app/globals.css:633"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/app/globals.css:647"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/app/globals.css:657"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/globals.css:689"
+      },
+      {
+        "value": "28px",
+        "site": "src/app/globals.css:734"
+      },
+      {
+        "value": "14px",
+        "site": "src/app/globals.css:740"
+      },
+      {
+        "value": "12px",
+        "site": "src/app/globals.css:750"
+      },
+      {
+        "value": "14px",
+        "site": "src/app/globals.css:778"
+      },
+      {
+        "value": "10px",
+        "site": "src/app/globals.css:784"
+      },
+      {
+        "value": "22px",
+        "site": "src/app/globals.css:806"
+      },
+      {
+        "value": "13px",
+        "site": "src/app/globals.css:807"
+      },
+      {
+        "value": "11px",
+        "site": "src/app/globals.css:809"
+      },
+      {
+        "value": "16px !important",
+        "site": "src/app/globals.css:811"
+      },
+      {
+        "value": "16px !important",
+        "site": "src/app/globals.css:812"
+      },
+      {
+        "value": "20px",
+        "site": "src/app/globals.css:815"
+      },
+      {
+        "value": "1rem",
+        "site": "src/app/globals.css:853"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/globals.css:859"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/app/globals.css:878"
+      },
+      {
+        "value": "0.68rem",
+        "site": "src/app/globals.css:922"
+      },
+      {
+        "value": "0.6rem",
+        "site": "src/app/globals.css:950"
+      },
+      {
+        "value": "1.8rem",
+        "site": "src/app/status/StatusClient.module.css:84"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/status/StatusClient.module.css:90"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/app/status/StatusClient.module.css:108"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/app/status/StatusClient.module.css:133"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/status/StatusClient.module.css:157"
+      },
+      {
+        "value": "1.45rem",
+        "site": "src/app/status/StatusClient.module.css:186"
+      },
+      {
+        "value": "0.82rem",
+        "site": "src/app/status/StatusClient.module.css:193"
+      },
+      {
+        "value": "2rem",
+        "site": "src/app/status/StatusClient.module.css:204"
+      },
+      {
+        "value": "0.68rem",
+        "site": "src/app/status/StatusClient.module.css:210"
+      },
+      {
+        "value": "0.68rem",
+        "site": "src/app/status/StatusClient.module.css:225"
+      },
+      {
+        "value": "1.5rem",
+        "site": "src/app/status/StatusClient.module.css:233"
+      },
+      {
+        "value": "0.88rem",
+        "site": "src/app/status/StatusClient.module.css:266"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/app/status/StatusClient.module.css:271"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/app/status/StatusClient.module.css:284"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/app/status/StatusClient.module.css:306"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/app/status/StatusClient.module.css:310"
+      },
+      {
+        "value": "1rem",
+        "site": "src/app/status/StatusClient.module.css:318"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/app/status/StatusClient.module.css:330"
+      },
+      {
+        "value": "0.72rem",
+        "site": "src/app/status/StatusClient.module.css:336"
+      },
+      {
+        "value": "0.82rem",
+        "site": "src/app/status/StatusClient.module.css:348"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/app/status/StatusClient.module.css:354"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/status/StatusClient.module.css:392"
+      },
+      {
+        "value": "0.65rem",
+        "site": "src/app/status/StatusClient.module.css:396"
+      },
+      {
+        "value": "0.62rem",
+        "site": "src/app/status/StatusClient.module.css:403"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/app/status/StatusClient.module.css:411"
+      },
+      {
+        "value": "0.68rem",
+        "site": "src/app/status/StatusClient.module.css:416"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/status/StatusClient.module.css:430"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/app/status/StatusClient.module.css:439"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/app/status/StatusClient.module.css:473"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/app/status/StatusClient.module.css:486"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:16"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:17"
+      },
+      {
+        "value": "28px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:22"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:23"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:43"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:47"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:48"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:51"
+      },
+      {
+        "value": "15px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:65"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:66"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:102"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:111"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:140"
+      },
+      {
+        "value": "15px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:200"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:222"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:266"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:271"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:275"
+      },
+      {
+        "value": "20px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:298"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:303"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:312"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:329"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:349"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:356"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:365"
+      },
+      {
+        "value": "16px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:370"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:371"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:372"
+      },
+      {
+        "value": "10px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:373"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:377"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-blocks.module.css:393"
+      },
+      {
+        "value": "16px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:43"
+      },
+      {
+        "value": "20px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:52"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:80"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:85"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:100"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:123"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:148"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:165"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:185"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:201"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:214"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-modals.module.css:222"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-settings.module.css:22"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-settings.module.css:48"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-settings.module.css:60"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-settings.module.css:77"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-settings.module.css:92"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-settings.module.css:107"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-settings.module.css:108"
+      },
+      {
+        "value": "16px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:48"
+      },
+      {
+        "value": "15px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:53"
+      },
+      {
+        "value": "10px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:59"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:71"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:117"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:122"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:123"
+      },
+      {
+        "value": "17px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:164"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:204"
+      },
+      {
+        "value": "10px",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:250"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:22"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:35"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:54"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:61"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:90"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:106"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:130"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:146"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:153"
+      },
+      {
+        "value": "12px",
+        "site": "src/components/dashboard/styles/dashboard-tables.module.css:154"
+      },
+      {
+        "value": "16px",
+        "site": "src/components/features/history/HistorySidebar.module.css:44"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/features/history/HistorySidebar.module.css:76"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/features/history/HistorySidebar.module.css:115"
+      },
+      {
+        "value": "15px",
+        "site": "src/components/features/history/HistorySidebar.module.css:125"
+      },
+      {
+        "value": "11px",
+        "site": "src/components/features/history/HistorySidebar.module.css:133"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/features/history/HistorySidebar.module.css:164"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/features/history/HistorySidebar.module.css:218"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/features/info/InfoModal.module.css:35"
+      },
+      {
+        "value": "0.68rem",
+        "site": "src/components/features/info/InfoModal.module.css:67"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/components/features/info/InfoModal.module.css:96"
+      },
+      {
+        "value": "0.88rem",
+        "site": "src/components/features/info/InfoModal.module.css:117"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/features/info/InfoModal.module.css:130"
+      },
+      {
+        "value": "16px",
+        "site": "src/components/features/language/LanguageDropdown.module.css:4"
+      },
+      {
+        "value": "clamp(2.4rem, 9vw, 3.5rem)",
+        "site": "src/components/features/loading/LoadingScreen.module.css:54"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/features/loading/LoadingScreen.module.css:69"
+      },
+      {
+        "value": "clamp(4rem, 12vw, 7rem)",
+        "site": "src/components/features/loading/LoadingScreen.module.css:88"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/features/loading/LoadingScreen.module.css:98"
+      },
+      {
+        "value": "0.72rem",
+        "site": "src/components/features/loading/LoadingScreen.module.css:129"
+      },
+      {
+        "value": "0.82rem",
+        "site": "src/components/features/loading/LoadingScreen.module.css:147"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/formulas/FormulaCard.module.css:86"
+      },
+      {
+        "value": "0.76rem",
+        "site": "src/components/formulas/FormulaCard.module.css:94"
+      },
+      {
+        "value": "10px",
+        "site": "src/components/formulas/FormulaCard.module.css:117"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/components/formulas/FormulaCard.module.css:146"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/formulas/FormulaCard.module.css:178"
+      },
+      {
+        "value": "0.72rem",
+        "site": "src/components/formulas/FormulaCard.module.css:231"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/formulas/FormulaCard.module.css:248"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/LevelFilter.module.css:27"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/components/LevelTabs.module.css:35"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/login/Login.module.css:37"
+      },
+      {
+        "value": "1.6rem",
+        "site": "src/components/login/Login.module.css:45"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/login/Login.module.css:79"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/login/Login.module.css:94"
+      },
+      {
+        "value": "1rem",
+        "site": "src/components/login/Login.module.css:133"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/login/Login.module.css:168"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/login/Login.module.css:188"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/login/Login.module.css:209"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/login/Login.module.css:244"
+      },
+      {
+        "value": "1.35rem",
+        "site": "src/components/login/Login.module.css:297"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/login/Login.module.css:306"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/login/Login.module.css:311"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/login/Login.module.css:317"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/login/Login.module.css:321"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/login/Login.module.css:331"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/login/Login.module.css:343"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/login/Login.module.css:362"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/login/Login.module.css:377"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/login/Login.module.css:400"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/login/Login.module.css:404"
+      },
+      {
+        "value": "1.15rem",
+        "site": "src/components/login/Login.module.css:427"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/login/Login.module.css:431"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/login/Login.module.css:439"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/login/Login.module.css:444"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/login/Login.module.css:450"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/login/Login.module.css:457"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/components/login/Login.module.css:462"
+      },
+      {
+        "value": "40vw",
+        "site": "src/components/not-found/NotFound.module.css:23"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/not-found/NotFound.module.css:69"
+      },
+      {
+        "value": "4.5rem",
+        "site": "src/components/not-found/NotFound.module.css:79"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/not-found/NotFound.module.css:101"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/not-found/NotFound.module.css:119"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/not-found/NotFound.module.css:130"
+      },
+      {
+        "value": "1rem",
+        "site": "src/components/not-found/NotFound.module.css:149"
+      },
+      {
+        "value": "5rem",
+        "site": "src/components/not-found/NotFound.module.css:186"
+      },
+      {
+        "value": "1rem",
+        "site": "src/components/not-found/NotFound.module.css:192"
+      },
+      {
+        "value": "35vw",
+        "site": "src/components/not-found/NotFound.module.css:195"
+      },
+      {
+        "value": "4rem",
+        "site": "src/components/not-found/NotFound.module.css:212"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/not-found/NotFound.module.css:218"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/not-found/NotFound.module.css:245"
+      },
+      {
+        "value": "3rem",
+        "site": "src/components/not-found/NotFound.module.css:250"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/components/not-found/NotFound.module.css:260"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/not-found/NotFound.module.css:269"
+      },
+      {
+        "value": "0.88rem",
+        "site": "src/components/not-found/NotFound.module.css:275"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/not-found/NotFound.module.css:282"
+      },
+      {
+        "value": "50vw",
+        "site": "src/components/not-found/NotFound.module.css:288"
+      },
+      {
+        "value": "0.72rem",
+        "site": "src/components/not-found/NotFound.module.css:309"
+      },
+      {
+        "value": "2.4rem",
+        "site": "src/components/not-found/NotFound.module.css:313"
+      },
+      {
+        "value": "0.65rem",
+        "site": "src/components/not-found/NotFound.module.css:317"
+      },
+      {
+        "value": "0.72rem",
+        "site": "src/components/not-found/NotFound.module.css:325"
+      },
+      {
+        "value": "0.82rem",
+        "site": "src/components/not-found/NotFound.module.css:331"
+      },
+      {
+        "value": "0.88rem",
+        "site": "src/components/not-found/NotFound.module.css:337"
+      },
+      {
+        "value": "60vw",
+        "site": "src/components/not-found/NotFound.module.css:344"
+      },
+      {
+        "value": "1.8rem",
+        "site": "src/components/purchase/Purchase.module.css:39"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/purchase/Purchase.module.css:48"
+      },
+      {
+        "value": "0.65rem",
+        "site": "src/components/purchase/Purchase.module.css:108"
+      },
+      {
+        "value": "1.1rem",
+        "site": "src/components/purchase/Purchase.module.css:149"
+      },
+      {
+        "value": "1.8rem",
+        "site": "src/components/purchase/Purchase.module.css:156"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/purchase/Purchase.module.css:164"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/purchase/Purchase.module.css:172"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/purchase/Purchase.module.css:196"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/purchase/Purchase.module.css:298"
+      },
+      {
+        "value": "1.2rem",
+        "site": "src/components/purchase/Purchase.module.css:331"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/purchase/Purchase.module.css:340"
+      },
+      {
+        "value": "1.8rem",
+        "site": "src/components/purchase/Purchase.module.css:357"
+      },
+      {
+        "value": "1.6rem",
+        "site": "src/components/purchase/Purchase.module.css:377"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/purchase/Purchase.module.css:381"
+      },
+      {
+        "value": "20px",
+        "site": "src/components/purchase/Purchase.module.css:405"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/purchase/Purchase.module.css:409"
+      },
+      {
+        "value": "1.6rem",
+        "site": "src/components/purchase/Purchase.module.css:413"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/purchase/Purchase.module.css:417"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/purchase/Purchase.module.css:426"
+      },
+      {
+        "value": "1rem",
+        "site": "src/components/purchase/Purchase.module.css:443"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/purchase/Purchase.module.css:447"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/purchase/Purchase.module.css:451"
+      },
+      {
+        "value": "17px",
+        "site": "src/components/purchase/Purchase.module.css:472"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/purchase/Purchase.module.css:476"
+      },
+      {
+        "value": "1.4rem",
+        "site": "src/components/purchase/Purchase.module.css:481"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/purchase/Purchase.module.css:485"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/purchase/Purchase.module.css:495"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/purchase/Purchase.module.css:499"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/components/purchase/Purchase.module.css:505"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/purchase/Purchase.module.css:522"
+      },
+      {
+        "value": "24px",
+        "site": "src/components/purchase/PurchaseSuccess.module.css:53"
+      },
+      {
+        "value": "22px",
+        "site": "src/components/purchase/PurchaseSuccess.module.css:60"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/purchase/PurchaseSuccess.module.css:68"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/purchase/PurchaseSuccess.module.css:83"
+      },
+      {
+        "value": "20px",
+        "site": "src/components/purchase/PurchaseSuccess.module.css:89"
+      },
+      {
+        "value": "15px",
+        "site": "src/components/purchase/PurchaseSuccess.module.css:111"
+      },
+      {
+        "value": "14px",
+        "site": "src/components/purchase/PurchaseSuccess.module.css:134"
+      },
+      {
+        "value": "1.3rem",
+        "site": "src/components/ResetPassword.module.css:10"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/ResetPassword.module.css:11"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/ResetPassword.module.css:14"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/ResetPassword.module.css:19"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/ResetPassword.module.css:31"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/ResetPassword.module.css:38"
+      },
+      {
+        "value": "1.15rem",
+        "site": "src/components/ResetPassword.module.css:41"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/ResetPassword.module.css:42"
+      },
+      {
+        "value": "1.5rem",
+        "site": "src/components/ResetPassword.module.css:46"
+      },
+      {
+        "value": "1.1rem",
+        "site": "src/components/ResetPassword.module.css:48"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/ResetPassword.module.css:51"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/components/sidebar/SidebarSection.module.css:15"
+      },
+      {
+        "value": "0.6rem",
+        "site": "src/components/sidebar/SidebarSection.module.css:87"
+      },
+      {
+        "value": "10px",
+        "site": "src/components/Sidebar.module.css:83"
+      },
+      {
+        "value": "10px",
+        "site": "src/components/Sidebar.module.css:91"
+      },
+      {
+        "value": "18px",
+        "site": "src/components/Sidebar.module.css:178"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/Sidebar.module.css:185"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/Sidebar.module.css:202"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/Sidebar.module.css:219"
+      },
+      {
+        "value": "13px",
+        "site": "src/components/Sidebar.module.css:264"
+      },
+      {
+        "value": "1.5rem",
+        "site": "src/components/signup/SignUp.module.css:59"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/signup/SignUp.module.css:67"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/signup/SignUp.module.css:88"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/signup/SignUp.module.css:103"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/signup/SignUp.module.css:123"
+      },
+      {
+        "value": "1rem",
+        "site": "src/components/signup/SignUp.module.css:146"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/signup/SignUp.module.css:190"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/signup/SignUp.module.css:205"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/signup/SignUp.module.css:236"
+      },
+      {
+        "value": "1.3rem",
+        "site": "src/components/signup/SignUp.module.css:287"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/signup/SignUp.module.css:294"
+      },
+      {
+        "value": "1.55rem",
+        "site": "src/components/signup/SignUp.module.css:313"
+      },
+      {
+        "value": "1.4rem",
+        "site": "src/components/signup/SignUp.module.css:329"
+      },
+      {
+        "value": "1.3rem",
+        "site": "src/components/signup/SignUp.module.css:358"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/signup/SignUp.module.css:362"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/signup/SignUp.module.css:374"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/signup/SignUp.module.css:379"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/signup/SignUp.module.css:384"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/signup/SignUp.module.css:390"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/components/signup/SignUp.module.css:407"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/signup/SignUp.module.css:412"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/signup/SignUp.module.css:416"
+      },
+      {
+        "value": "1.15rem",
+        "site": "src/components/signup/SignUp.module.css:426"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/signup/SignUp.module.css:430"
+      },
+      {
+        "value": "1.2rem",
+        "site": "src/components/signup/SignUp.module.css:462"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/signup/SignUp.module.css:466"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/components/signup/SignUp.module.css:474"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/signup/SignUp.module.css:480"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/signup/SignUp.module.css:486"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/signup/SignUp.module.css:492"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/components/signup/SignUp.module.css:504"
+      },
+      {
+        "value": "0.78rem",
+        "site": "src/components/signup/SignUp.module.css:508"
+      },
+      {
+        "value": "1.05rem",
+        "site": "src/components/signup/SignUp.module.css:519"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/signup/SignUp.module.css:523"
+      },
+      {
+        "value": "1.5rem",
+        "site": "src/components/verify/Verify.module.css:70"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/verify/Verify.module.css:90"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/verify/Verify.module.css:105"
+      },
+      {
+        "value": "0.95rem",
+        "site": "src/components/verify/Verify.module.css:124"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/verify/Verify.module.css:152"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/verify/Verify.module.css:177"
+      },
+      {
+        "value": "1.55rem",
+        "site": "src/components/verify/Verify.module.css:207"
+      },
+      {
+        "value": "1.4rem",
+        "site": "src/components/verify/Verify.module.css:227"
+      },
+      {
+        "value": "1.25rem",
+        "site": "src/components/verify/Verify.module.css:261"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/verify/Verify.module.css:265"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/verify/Verify.module.css:270"
+      },
+      {
+        "value": "0.9rem",
+        "site": "src/components/verify/Verify.module.css:277"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/verify/Verify.module.css:284"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/verify/Verify.module.css:301"
+      },
+      {
+        "value": "1.15rem",
+        "site": "src/components/verify/Verify.module.css:330"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/verify/Verify.module.css:334"
+      },
+      {
+        "value": "0.75rem",
+        "site": "src/components/verify/Verify.module.css:339"
+      },
+      {
+        "value": "0.85rem",
+        "site": "src/components/verify/Verify.module.css:346"
+      },
+      {
+        "value": "0.8rem",
+        "site": "src/components/verify/Verify.module.css:352"
+      },
+      {
+        "value": "0.7rem",
+        "site": "src/components/verify/Verify.module.css:357"
+      }
+    ],
+    "varFsUsages": 5,
+    "varFsSites": [
+      {
+        "value": "var(--fs-5)",
+        "site": "src/components/purchase/Purchase.module.css:14"
+      },
+      {
+        "value": "var(--fs-5)",
+        "site": "src/components/purchase/Purchase.module.css:215"
+      },
+      {
+        "value": "var(--fs-4)",
+        "site": "src/components/purchase/Purchase.module.css:257"
+      },
+      {
+        "value": "var(--fs-6)",
+        "site": "src/components/purchase/Purchase.module.css:280"
+      },
+      {
+        "value": "var(--fs-5)",
+        "site": "src/components/purchase/Purchase.module.css:421"
+      }
+    ],
+    "fsTokens": [
+      {
+        "name": "--fs-1",
+        "value": "12px",
+        "usage": 0,
+        "decl": "src/app/globals.css:61"
+      },
+      {
+        "name": "--fs-2",
+        "value": "13px",
+        "usage": 0,
+        "decl": "src/app/globals.css:62"
+      },
+      {
+        "name": "--fs-3",
+        "value": "15px",
+        "usage": 0,
+        "decl": "src/app/globals.css:63"
+      },
+      {
+        "name": "--fs-4",
+        "value": "17px",
+        "usage": 1,
+        "decl": "src/app/globals.css:64"
+      },
+      {
+        "name": "--fs-5",
+        "value": "21px",
+        "usage": 3,
+        "decl": "src/app/globals.css:65"
+      },
+      {
+        "name": "--fs-6",
+        "value": "27px",
+        "usage": 1,
+        "decl": "src/app/globals.css:66"
+      }
+    ],
+    "fsTokenUsageTotal": 5
+  },
+  "zIndex": {
+    "raw": [
+      {
+        "value": 0,
+        "site": "src/components/not-found/NotFound.module.css:32"
+      },
+      {
+        "value": 0,
+        "site": "src/components/purchase/Purchase.module.css:100"
+      },
+      {
+        "value": 1,
+        "site": "src/components/not-found/NotFound.module.css:44"
+      },
+      {
+        "value": 1,
+        "site": "src/components/purchase/Purchase.module.css:117"
+      },
+      {
+        "value": 1,
+        "site": "src/components/purchase/Purchase.module.css:134"
+      },
+      {
+        "value": 1,
+        "site": "src/components/purchase/Purchase.module.css:160"
+      },
+      {
+        "value": 1,
+        "site": "src/components/purchase/Purchase.module.css:176"
+      },
+      {
+        "value": 1,
+        "site": "src/components/purchase/Purchase.module.css:188"
+      },
+      {
+        "value": 1,
+        "site": "src/components/purchase/Purchase.module.css:221"
+      },
+      {
+        "value": 1,
+        "site": "src/components/purchase/Purchase.module.css:299"
+      },
+      {
+        "value": 1,
+        "site": "src/components/sidebar/SidebarNavItem.module.css:34"
+      },
+      {
+        "value": 2,
+        "site": "src/components/purchase/Purchase.module.css:125"
+      },
+      {
+        "value": 50,
+        "site": "src/app/globals.css:682"
+      }
+    ],
+    "rawCount": 13,
+    "distinctRaw": [
+      0,
+      1,
+      2,
+      50
+    ],
+    "varZUsages": 14,
+    "zVarDeclarations": [
+      {
+        "value": "var(--z-drawer)",
+        "site": "src/app/globals.css:158"
+      },
+      {
+        "value": "var(--z-drawer)",
+        "site": "src/app/globals.css:174"
+      },
+      {
+        "value": "var(--z-drawer)",
+        "site": "src/app/globals.css:712"
+      },
+      {
+        "value": "var(--z-drawer)",
+        "site": "src/app/globals.css:844"
+      },
+      {
+        "value": "var(--z-sticky)",
+        "site": "src/app/globals.css:896"
+      },
+      {
+        "value": "var(--z-drawer)",
+        "site": "src/app/globals.css:961"
+      },
+      {
+        "value": "var(--z-sticky, 10)",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:145"
+      },
+      {
+        "value": "var(--z-sticky, 10)",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:237"
+      },
+      {
+        "value": "var(--z-drawer, 40)",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:266"
+      },
+      {
+        "value": "var(--z-drawer, 40)",
+        "site": "src/components/dashboard/styles/dashboard-shell.module.css:285"
+      },
+      {
+        "value": "var(--z-drawer, 40)",
+        "site": "src/components/features/history/HistorySidebar.module.css:20"
+      },
+      {
+        "value": "var(--z-drawer, 40)",
+        "site": "src/components/features/history/HistorySidebar.module.css:196"
+      },
+      {
+        "value": "var(--z-modal, 50)",
+        "site": "src/components/features/loading/LoadingScreen.module.css:16"
+      },
+      {
+        "value": "var(--z-modal, 50)",
+        "site": "src/components/purchase/Purchase.module.css:307"
+      }
+    ],
+    "zTokens": [
+      {
+        "name": "--z-base",
+        "value": "0",
+        "usage": 0,
+        "decl": "src/app/globals.css:69"
+      },
+      {
+        "name": "--z-sticky",
+        "value": "10",
+        "usage": 3,
+        "decl": "src/app/globals.css:70"
+      },
+      {
+        "name": "--z-drawer",
+        "value": "40",
+        "usage": 9,
+        "decl": "src/app/globals.css:71"
+      },
+      {
+        "name": "--z-modal",
+        "value": "50",
+        "usage": 2,
+        "decl": "src/app/globals.css:72"
+      },
+      {
+        "name": "--z-toast",
+        "value": "60",
+        "usage": 0,
+        "decl": "src/app/globals.css:73"
+      }
+    ]
+  },
+  "rawHex": {
+    "nonGlobalsCss": [],
+    "nonGlobalsCssCount": 0,
+    "jsTs": [
+      {
+        "hex": "#1B272C",
+        "site": "src/app/api/auth/forgot-password/route.ts:103"
+      },
+      {
+        "hex": "#E8B896",
+        "site": "src/app/api/auth/forgot-password/route.ts:104"
+      },
+      {
+        "hex": "#242F35",
+        "site": "src/app/api/auth/forgot-password/route.ts:106"
+      },
+      {
+        "hex": "#F2E6DA",
+        "site": "src/app/api/auth/forgot-password/route.ts:107"
+      },
+      {
+        "hex": "#E8B896",
+        "site": "src/app/api/auth/forgot-password/route.ts:111"
+      },
+      {
+        "hex": "#1B272C",
+        "site": "src/app/api/auth/forgot-password/route.ts:111"
+      },
+      {
+        "hex": "#8A9FA8",
+        "site": "src/app/api/auth/forgot-password/route.ts:114"
+      },
+      {
+        "hex": "#1B272C",
+        "site": "src/app/api/auth/register/route.ts:116"
+      },
+      {
+        "hex": "#E8B896",
+        "site": "src/app/api/auth/register/route.ts:117"
+      },
+      {
+        "hex": "#242F35",
+        "site": "src/app/api/auth/register/route.ts:119"
+      },
+      {
+        "hex": "#F2E6DA",
+        "site": "src/app/api/auth/register/route.ts:120"
+      },
+      {
+        "hex": "#E8B896",
+        "site": "src/app/api/auth/register/route.ts:124"
+      },
+      {
+        "hex": "#1B272C",
+        "site": "src/app/api/auth/register/route.ts:124"
+      },
+      {
+        "hex": "#8A9FA8",
+        "site": "src/app/api/auth/register/route.ts:127"
+      },
+      {
+        "hex": "#60a5fa",
+        "site": "src/app/api/stats/route.ts:166"
+      },
+      {
+        "hex": "#ef4444",
+        "site": "src/app/formulas-demo/FormulasDemoClient.tsx:167"
+      },
+      {
+        "hex": "#4ade80",
+        "site": "src/app/formulas-demo/FormulasDemoClient.tsx:196"
+      },
+      {
+        "hex": "#242F35",
+        "site": "src/app/status/components/Charts.tsx:22"
+      },
+      {
+        "hex": "#E8B896",
+        "site": "src/app/status/components/Charts.tsx:69"
+      },
+      {
+        "hex": "#E8B896",
+        "site": "src/app/status/components/Charts.tsx:70"
+      },
+      {
+        "hex": "#E8B896",
+        "site": "src/app/status/components/Charts.tsx:99"
+      },
+      {
+        "hex": "#7DD3FC",
+        "site": "src/app/status/components/KPIBar.tsx:20"
+      },
+      {
+        "hex": "#E8B896",
+        "site": "src/app/status/constants.ts:21"
+      },
+      {
+        "hex": "#D4A045",
+        "site": "src/app/status/constants.ts:22"
+      },
+      {
+        "hex": "#7DD3FC",
+        "site": "src/app/status/constants.ts:23"
+      },
+      {
+        "hex": "#A78BFA",
+        "site": "src/app/status/constants.ts:24"
+      },
+      {
+        "hex": "#86EFAC",
+        "site": "src/app/status/constants.ts:25"
+      },
+      {
+        "hex": "#ef4444",
+        "site": "src/app/status/StatusClient.tsx:179"
+      },
+      {
+        "hex": "#eab308",
+        "site": "src/app/status/StatusClient.tsx:194"
+      },
+      {
+        "hex": "#22c55e",
+        "site": "src/app/status/StatusClient.tsx:196"
+      }
+    ],
+    "jsTsCount": 89,
+    "jsTsDistinctSites": 80
+  },
+  "deadClasses": {
+    "method": "audit_ui.py style: global class = className literal token; module class = styles.X / styles['X']; G11 style: bare-word regex over tsx/ts corpus, module css only, collapsed/active/open exempt",
+    "globalDeclared": 84,
+    "moduleDeclared": 410,
+    "auditStyle": {
+      "deadGlobal": [
+        {
+          "class": "active",
+          "decl": "src/app/globals.css:221"
+        },
+        {
+          "class": "closed",
+          "decl": "src/app/globals.css:161"
+        },
+        {
+          "class": "dept-nav-item",
+          "decl": "src/app/globals.css:237"
+        },
+        {
+          "class": "lang-dropdown-item",
+          "decl": "src/app/globals.css:686"
+        },
+        {
+          "class": "mb-item",
+          "decl": "src/app/globals.css:913"
+        },
+        {
+          "class": "mb-item-active",
+          "decl": "src/app/globals.css:930"
+        },
+        {
+          "class": "modal-header-text",
+          "decl": "src/app/globals.css:517"
+        },
+        {
+          "class": "p-result",
+          "decl": "src/app/globals.css:407"
+        },
+        {
+          "class": "sidebar-nav-item",
+          "decl": "src/app/globals.css:202"
+        },
+        {
+          "class": "sidebar-premium",
+          "decl": "src/app/globals.css:145"
+        },
+        {
+          "class": "sidebar-section-title",
+          "decl": "src/app/globals.css:193"
+        },
+        {
+          "class": "single-col",
+          "decl": "src/app/globals.css:366"
+        },
+        {
+          "class": "three-col",
+          "decl": "src/app/globals.css:367"
+        },
+        {
+          "class": "tile-input-row",
+          "decl": "src/app/globals.css:360"
+        }
+      ],
+      "deadGlobalCount": 14,
+      "deadModule": [],
+      "deadModuleCount": 0,
+      "note": "raw scripts/audit_ui.py regex; misses className={`template ${\\x} literal`} tokens"
+    },
+    "robust": {
+      "deadGlobal": [
+        {
+          "class": "active",
+          "decl": "src/app/globals.css:221"
+        },
+        {
+          "class": "closed",
+          "decl": "src/app/globals.css:161"
+        },
+        {
+          "class": "mb-item-active",
+          "decl": "src/app/globals.css:930"
+        },
+        {
+          "class": "single-col",
+          "decl": "src/app/globals.css:366"
+        },
+        {
+          "class": "three-col",
+          "decl": "src/app/globals.css:367"
+        }
+      ],
+      "deadGlobalCount": 5,
+      "deadModule": [],
+      "deadModuleCount": 0,
+      "note": "same method, className {...} parsed with balanced braces and ${...} stripped"
+    },
+    "falsePositivesOfAuditRegex": [],
+    "falsePositiveCount": 0,
+    "g11": {
+      "count": 0,
+      "ratchet": 2,
+      "pass": true,
+      "list": [],
+      "exempt": [
+        "active",
+        "collapsed",
+        "open"
+      ],
+      "exemptSource": "src/lib/quality-gates.test.ts:132",
+      "source": "src/lib/quality-gates.test.ts:115-146"
+    },
+    "caveats": [
+      "auditStyle false positives: className expression template literals are mis-split by scripts/audit_ui.py:29, e.g. .sidebar-premium (used at src/components/Sidebar.tsx:91), .mb-item and .tile-input-row.",
+      "robust false positives: class names passed as quoted strings inside JS expressions are invisible to className parsing, e.g. .mb-item-active (src/components/AppShell.tsx:323), .single-col/.three-col (src/components/formulas/FormulaCard.tsx:231-234), .active/.closed dynamic state.",
+      "G11 false negatives: bare-word matching also fires on same-named global classes and ordinary identifiers, e.g. module .sidebar-header vs global .sidebar-header (src/app/globals.css:180), .warning, .toggle, .overlay, .webhookUrl."
+    ],
+    "mismatch": {
+      "auditStyleVsG11": {
+        "auditDeadG11Alive": [],
+        "g11DeadAuditAlive": []
+      },
+      "robustVsG11": {
+        "robustDeadG11Alive": [],
+        "g11DeadRobustAlive": []
+      }
+    }
+  },
+  "misc": {
+    "importantCount": 15,
+    "important": [
+      "src/app/globals.css:811",
+      "src/app/globals.css:812",
+      "src/app/globals.css:1000",
+      "src/app/globals.css:1001",
+      "src/app/globals.css:1002",
+      "src/app/globals.css:1003",
+      "src/components/formulas/FormulaCard.module.css:167",
+      "src/components/LevelTabs.module.css:51",
+      "src/components/LevelTabs.module.css:53",
+      "src/components/login/Login.module.css:105",
+      "src/components/login/Login.module.css:106",
+      "src/components/purchase/Purchase.module.css:76",
+      "src/components/purchase/Purchase.module.css:77",
+      "src/components/Sidebar.module.css:5",
+      "src/components/Sidebar.module.css:6"
+    ],
+    "breakpoints": {
+      "640px": 14,
+      "900px": 11,
+      "768px": 5,
+      "400px": 5,
+      "901px": 4,
+      "1024px": 3,
+      "480px": 3,
+      "1600px": 2,
+      "600px": 2,
+      "1200px": 1,
+      "1025px": 1,
+      "767px": 1,
+      "380px": 1,
+      "769px": 1
+    },
+    "breakpointCount": 14,
+    "duplicateTokenValues": {
+      "#242F35": [
+        "--bg",
+        "--dash-bg"
+      ],
+      "#2F3D44": [
+        "--surface",
+        "--dash-surface",
+        "--surface-opaque"
+      ],
+      "#1B272C": [
+        "--sidebar-bg",
+        "--dash-sidebar"
+      ],
+      "rgba(232, 184, 150, 0.10)": [
+        "--border",
+        "--primary-subtle",
+        "--dash-border",
+        "--primary-soft"
+      ],
+      "rgba(232, 184, 150, 0.15)": [
+        "--border-hover",
+        "--border-strong"
+      ],
+      "rgba(232, 184, 150, 0.22)": [
+        "--border-gold",
+        "--primary-border",
+        "--border-primary"
+      ],
+      "#E8B896": [
+        "--primary",
+        "--dash-primary"
+      ],
+      "#F2E6DA": [
+        "--text",
+        "--dash-text"
+      ],
+      "8px": [
+        "--radius-sm",
+        "--space-sm"
+      ],
+      "12px": [
+        "--radius-md",
+        "--fs-1"
+      ],
+      "16px": [
+        "--radius-xl",
+        "--space-md"
+      ],
+      "rgba(236, 204, 168, 0.06)": [
+        "--level-bg",
+        "--level-glow"
+      ]
+    },
+    "declaredUnusedTokens": [
+      "--accent-teal",
+      "--transition-slow",
+      "--fs-1",
+      "--fs-2",
+      "--fs-3",
+      "--z-base",
+      "--z-toast",
+      "--dash-bg",
+      "--dash-surface",
+      "--dash-sidebar",
+      "--dash-text",
+      "--dash-border",
+      "--dash-primary",
+      "--level-glow",
+      "--primary-glow",
+      "--border-strong",
+      "--surface-opaque"
+    ],
+    "declaredUnusedCount": 17,
+    "textRoleFailures45": [],
+    "textRoleFailureCount": 0,
+    "contrastScope": "foreground candidates only (role text/border/accent/status); surface tokens are the backgrounds being compared against",
+    "sanity": {
+      "claim": "--text-secondary (lowest-contrast text token) resolves to alpha 0.62 and passes 4.5:1; scripts/contrast.py:24 still asserts 0.18 and reports 1.67",
+      "textDim": {
+        "declared": "rgba(242, 230, 218, 0.62)",
+        "decl": "src/app/globals.css:37",
+        "alpha": 0.62,
+        "ratioOnBg": 5.27,
+        "pass45": true,
+        "compositeHex": "#A4A09B"
+      },
+      "legacyContrastPy": {
+        "hardcodedAlpha": 0.18,
+        "source": "scripts/contrast.py:24",
+        "ratioOnBg": 1.67,
+        "compositeHex": "#495053"
+      },
+      "delta": 3.6
+    }
+  },
+  "sanity": {
+    "claim": "--text-secondary (lowest-contrast text token) resolves to alpha 0.62 and passes 4.5:1; scripts/contrast.py:24 still asserts 0.18 and reports 1.67",
+    "textDim": {
+      "declared": "rgba(242, 230, 218, 0.62)",
+      "decl": "src/app/globals.css:37",
+      "alpha": 0.62,
+      "ratioOnBg": 5.27,
+      "pass45": true,
+      "compositeHex": "#A4A09B"
+    },
+    "legacyContrastPy": {
+      "hardcodedAlpha": 0.18,
+      "source": "scripts/contrast.py:24",
+      "ratioOnBg": 1.67,
+      "compositeHex": "#495053"
+    },
+    "delta": 3.6
+  }
+}

@@ -1,0 +1,156 @@
+/* src/components/dashboard/styles/dashboard-tables.module.css */
+/* Task 9 — user tables, search, filters, pagination */
+
+/* ── Search / Filter bar ── */
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(36, 47, 53, 0.8);
+  border: 1px solid rgba(232, 184, 150, 0.12);
+  border-radius: 10px;
+  padding: 8px 14px;
+  flex: 1;
+  max-width: 340px;
+  color: var(--text-secondary);
+}
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 14px;
+  width: 100%;
+  font-family: inherit;
+}
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+.filterSelect {
+  background: rgba(36, 47, 53, 0.8);
+  border: 1px solid rgba(232, 184, 150, 0.12);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  min-width: 130px;
+}
+.filterSelect option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── Table ── */
+.tableWrap {
+  overflow-x: auto;
+  width: 100%;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.table th {
+  text-align: left;
+  padding: 10px 14px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid rgba(232, 184, 150, 0.08);
+}
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(232, 184, 150, 0.05);
+  color: var(--text);
+  vertical-align: middle;
+}
+.table tr:hover td {
+  background: rgba(232, 184, 150, 0.03);
+}
+
+/* Cell variants */
+.cellName {
+  font-weight: 600;
+  color: var(--text);
+}
+.cellDim {
+  color: var(--text-secondary);
+}
+.planBadge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(232, 184, 150, 0.1);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Action buttons */
+.actionBtns {
+  display: flex;
+  gap: 6px;
+}
+.actionBtn {
+  background: rgba(232, 184, 150, 0.06);
+  border: 1px solid rgba(232, 184, 150, 0.08);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 150ms ease;
+  line-height: 1;
+}
+.actionBtn:hover {
+  background: rgba(232, 184, 150, 0.15);
+  color: var(--primary);
+}
+
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+.pageBtn {
+  background: rgba(36, 47, 53, 0.6);
+  border: 1px solid rgba(232, 184, 150, 0.08);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: all 150ms ease;
+}
+.pageBtn:hover:not(:disabled) {
+  background: rgba(232, 184, 150, 0.1);
+  color: var(--primary);
+}
+.pageBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pageInfo {
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 0 8px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .searchWrap { max-width: 100%; }
+  .searchInput { font-size: 13px; }
+  .table { font-size: 12px; }
+  .table th, .table td { padding: 8px 10px; }
+}

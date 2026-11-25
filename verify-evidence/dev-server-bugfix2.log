@@ -1,0 +1,51 @@
+$ next dev
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.108.65.215:3000
+✓ Ready in 397ms
+
+ GET /api/health 200 in 210ms (next.js: 51ms, proxy.ts: 137ms, application-code: 23ms)
+⨯ Error: Neither apiKey nor config.authenticator provided
+    at module evaluation (src\lib\stripe.ts:23:3)
+    at module evaluation (src\app\api\payments\create-checkout-session\route.ts:17:1)
+    at Object.<anonymous> (E:\testtt\Web_project\projectreal\webcalculater\.next\dev\server\app\api\payments\create-checkout-session\route.js:14:3)
+  21 | export const stripe: Stripe =
+  22 |   globalThis.__stripe__ ??
+> 23 |   new Stripe(process.env.STRIPE_SECRET_KEY!, {
+     |   ^
+  24 |     typescript: true,
+  25 |     maxNetworkRetries: 2,
+  26 |     timeout: 10_000, {
+  page: '/api/payments/create-checkout-session'
+}
+ POST /api/payments/create-checkout-session 500 in 384ms (next.js: 265ms, proxy.ts: 5ms, application-code: 115ms)
+⨯ Error: Neither apiKey nor config.authenticator provided
+    at module evaluation (src\lib\stripe.ts:23:3)
+    at module evaluation (src\app\api\payments\create-checkout-session\route.ts:17:1)
+    at Object.<anonymous> (E:\testtt\Web_project\projectreal\webcalculater\.next\dev\server\app\api\payments\create-checkout-session\route.js:14:3)
+  21 | export const stripe: Stripe =
+  22 |   globalThis.__stripe__ ??
+> 23 |   new Stripe(process.env.STRIPE_SECRET_KEY!, {
+     |   ^
+  24 |     typescript: true,
+  25 |     maxNetworkRetries: 2,
+  26 |     timeout: 10_000, {
+  page: '/api/payments/create-checkout-session'
+}
+ POST /api/payments/create-checkout-session 500 in 46ms (next.js: 36ms, proxy.ts: 3ms, application-code: 7ms)
+⨯ Error: Neither apiKey nor config.authenticator provided
+    at module evaluation (src\lib\stripe.ts:23:3)
+    at module evaluation (src\app\api\payments\create-checkout-session\route.ts:17:1)
+    at Object.<anonymous> (E:\testtt\Web_project\projectreal\webcalculater\.next\dev\server\app\api\payments\create-checkout-session\route.js:14:3)
+  21 | export const stripe: Stripe =
+  22 |   globalThis.__stripe__ ??
+> 23 |   new Stripe(process.env.STRIPE_SECRET_KEY!, {
+     |   ^
+  24 |     typescript: true,
+  25 |     maxNetworkRetries: 2,
+  26 |     timeout: 10_000, {
+  page: '/api/payments/create-checkout-session'
+}
+ POST /api/payments/create-checkout-session 500 in 32ms (next.js: 23ms, proxy.ts: 3ms, application-code: 6ms)
+[?25h
+[ELIFECYCLE] Command failed with exit code 1.

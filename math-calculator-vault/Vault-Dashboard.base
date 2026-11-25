@@ -1,0 +1,199 @@
+---
+description: "All-in-One Second Brain Dashboard — ภาพรวม vault, Decisions, Architecture, Sessions, Templates"
+filters: {}
+formulas:
+  # Emoji ตามประเภทโฟลเดอร์
+  folder_icon: >
+    if(file.folder == "01-Decisions", "💡",
+    if(file.folder == "02-Architecture", "🏗️",
+    if(file.folder == "03-Sessions", "📝",
+    if(file.folder == "04-Templates", "📋",
+    if(file.folder == "05-Bridges", "🌉",
+    if(file.folder == "00-Inbox", "📥",
+    "📄"))))))
+
+  # ชื่อประเภทที่อ่านง่าย
+  note_type: >
+    if(file.folder == "01-Decisions", "Decision",
+    if(file.folder == "02-Architecture", "Architecture",
+    if(file.folder == "03-Sessions", "Session",
+    if(file.folder == "04-Templates", "Template",
+    if(file.folder == "05-Bridges", "Bridge",
+    if(file.folder == "00-Inbox", "Inbox",
+    "Other"))))))
+
+  # จำนวนวันตั้งแต่แก้ไขล่าสุด
+  days_since_update: '(today() - file.mtime).days'
+
+  # อายุโน้ต (นับจากวันที่สร้างใน frontmatter ถ้ามี)
+  age_days: 'if(date, (today() - date(date)).days, "")'
+
+  # สถานะความสดของโน้ต
+  recency: >
+    if((today() - file.mtime).days <= 1, "🔥 Today",
+    if((today() - file.mtime).days <= 7, "✨ This Week",
+    if((today() - file.mtime).days <= 30, "📌 This Month",
+    "💤 Older")))
+
+  # สถานะโน้ตแบบ visual
+  status_icon: >
+    if(status == "active", "🟢 Active",
+    if(status == "superseded", "🔄 Superseded",
+    if(status == "archived", "⬜ Archived",
+    if(status == "draft", "✏️ Draft",
+    "—"))))
+
+  # จำนวน internal links ในโน้ต
+  link_count: file.links.length
+
+properties:
+  formula.folder_icon:
+    displayName: ""
+  formula.note_type:
+    displayName: "Type"
+  formula.days_since_update:
+    displayName: "Days Ago"
+  formula.age_days:
+    displayName: "Age (d)"
+  formula.recency:
+    displayName: "Recency"
+  formula.status_icon:
+    displayName: "Status"
+  formula.link_count:
+    displayName: "🔗"
+  file.folder:
+    displayName: "Folder"
+
+views:
+  # ─── VIEW 1: VAULT DASHBOARD ───────────────────────────────
+  # ภาพรวมทุกโน้ตใน vault แบ่งตามโฟลเดอร์
+  - type: table
+    name: "📊 Vault Dashboard"
+    groupBy:
+      property: file.folder
+      direction: ASC
+    order:
+      - formula.folder_icon
+      - file.name
+      - formula.note_type
+      - formula.status_icon
+      - formula.recency
+      - formula.link_count
+      - file.mtime
+      - file.tags
+    summaries:
+      formula.link_count: Sum
+      file.mtime: Latest
+
+  # ─── VIEW 2: DECISIONS LOG ──────────────────────────────────
+  # แสดงเฉพาะ Decision notes เรียงตามวันที่
+  - type: table
+    name: "💡 Decisions"
+    filters:
+      and:
+        - file.inFolder("01-Decisions")
+    order:
+      - date
+      - file.name
+      - formula.status_icon
+      - formula.recency
+      - file.tags
+      - formula.link_count
+    groupBy:
+      property: status
+      direction: ASC
+
+  # ─── VIEW 3: ARCHITECTURE ───────────────────────────────────
+  # แสดง Architecture docs เป็น Cards view
+  - type: cards
+    name: "🏗️ Architecture"
+    filters:
+      and:
+        - file.inFolder("02-Architecture")
+    order:
+      - file.name
+      - formula.status_icon
+      - formula.recency
+      - formula.link_count
+      - file.tags
+
+  # ─── VIEW 4: SESSIONS TIMELINE ──────────────────────────────
+  # เรียง Session notes ตามวันที่ล่าสุดขึ้นก่อน
+  - type: table
+    name: "📝 Sessions"
+    filters:
+      and:
+        - file.inFolder("03-Sessions")
+    order:
+      - date
+      - file.name
+      - file.tags
+      - formula.link_count
+      - formula.recency
+
+  # ─── VIEW 5: TEMPLATES ──────────────────────────────────────
+  # รายการ templates ทั้งหมด
+  - type: table
+    name: "📋 Templates"
+    filters:
+      and:
+        - file.inFolder("04-Templates")
+    order:
+      - file.name
+      - file.ext
+      - file.mtime
+
+  # ─── VIEW 6: BRIDGES ────────────────────────────────────────
+  # External system reference notes
+  - type: table
+    name: "🌉 Bridges"
+    filters:
+      and:
+        - file.inFolder("05-Bridges")
+    order:
+      - file.name
+      - formula.link_count
+      - file.mtime
+      - file.tags
+
+  # ─── VIEW 7: INBOX (รอจัดระเบียบ) ──────────────────────────
+  # โน้ตที่ยังไม่ถูกจัดหมวดหมู่
+  - type: list
+    name: "📥 Inbox (Uncategorized)"
+    filters:
+      and:
+        - file.inFolder("00-Inbox")
+    order:
+      - file.mtime
+      - file.name
+
+  # ─── VIEW 7: BRAIN MAP (MOC notes) ────────────────────────
+  # Notes ที่ทำหน้าที่เป็น Maps of Content
+  - type: table
+    name: "🧠 Brain Map (MOCs)"
+    filters:
+      or:
+        - 'file.hasTag("map-of-content")'
+        - 'file.hasTag("brain")'
+        - 'file.hasTag("meta")'
+    order:
+      - file.name
+      - formula.note_type
+      - formula.link_count
+      - formula.recency
+      - file.tags
+
+  # ─── VIEW 8: ORPHANS (โน้ตไร้ connection) ──────────────────
+  # โน้ตที่ไม่มี backlinks — ควรเชื่อมโยงกับโน้ตอื่น
+  - type: table
+    name: "🕸️ Orphans (No Backlinks)"
+    filters:
+      and:
+        - not:
+            - file.inFolder("04-Templates")
+        - 'file.backlinks.length == 0'
+    order:
+      - file.folder
+      - file.name
+      - formula.recency
+      - formula.link_count

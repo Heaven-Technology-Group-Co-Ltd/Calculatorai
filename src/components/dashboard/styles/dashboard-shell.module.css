@@ -1,0 +1,333 @@
+/* src/components/dashboard/styles/dashboard-shell.module.css */
+/* Task 4: DashboardShell layout — sidebar + topbar + bottom nav + content */
+
+/* ── Layout ── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--sidebar-bg);
+  color: var(--text);
+}
+
+/* ── Sidebar (desktop) ── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--bg);
+  border-right: 1px solid rgba(232, 184, 150, 0.12);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Sidebar brand / logo area */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px 20px;
+  border-bottom: 1px solid rgba(232, 184, 150, 0.08);
+  margin-bottom: 8px;
+}
+
+.brandIcon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sidebar-bg);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.brandText {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.brandSub {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Navigation items */
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 150ms;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.navItem:hover {
+  background: rgba(232, 184, 150, 0.06);
+  color: var(--text);
+}
+
+.navItemActive {
+  background: rgba(232, 184, 150, 0.12);
+  color: var(--primary);
+}
+
+.navIcon { width: 18px; height: 18px; }
+
+/* Sidebar footer (user section) */
+.sidebarFooter {
+  margin-top: auto;
+  padding: 12px 10px 0;
+  border-top: 1px solid rgba(232, 184, 150, 0.08);
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(232, 184, 150, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.userName { font-size: 13px; font-weight: 600; color: var(--text); }
+.userRole { font-size: 11px; color: var(--text-secondary); }
+
+/* ── Main area (topbar + content, right of sidebar) ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── Topbar ── */
+.topbar {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(27, 39, 44, 0.8);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(232, 184, 150, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky, 10);
+}
+
+/* Hamburger (mobile sidebar toggle, hidden on desktop) */
+.hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* Page title area */
+.pageTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Topbar right actions */
+.topbarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.iconBtn:hover { background: rgba(232, 184, 150, 0.08); color: var(--text); }
+
+/* Date range pill group */
+.datePills {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.datePill {
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.datePill:hover { color: var(--text); }
+
+.datePillActive {
+  background: rgba(232, 184, 150, 0.15);
+  color: var(--primary);
+}
+
+/* ── Content ── */
+.content {
+  padding: 24px;
+  flex: 1;
+}
+
+/* ── Bottom nav (mobile) ── */
+.bottomNav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border-top: 1px solid rgba(232, 184, 150, 0.12);
+  padding: 6px 12px max(6px, env(safe-area-inset-bottom));
+  z-index: var(--z-sticky, 10);
+}
+
+.bottomNavItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 0;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 150ms;
+}
+
+.bottomNavItem:hover { color: var(--text); }
+
+.bottomNavItemActive { color: var(--primary); }
+
+/* ── Drawer (mobile sidebar overlay) ── */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-drawer, 40);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms;
+}
+
+.drawerOverlayOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  background: var(--bg);
+  border-right: 1px solid rgba(232, 184, 150, 0.12);
+  z-index: var(--z-drawer, 40);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 14px;
+  transform: translateX(-100%);
+  transition: transform 250ms;
+}
+
+.drawerOpen { transform: translateX(0); }
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 16px;
+  border-bottom: 1px solid rgba(232, 184, 150, 0.08);
+  margin-bottom: 8px;
+}
+
+.drawerClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.drawerClose:hover { background: rgba(232, 184, 150, 0.08); color: var(--text); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .bottomNav { display: flex; }
+  .content { padding: 16px; padding-bottom: 80px; }
+  .topbar { padding: 0 16px; }
+  .hamburger { display: flex; }
+}
+
+@media (max-width: 640px) {
+  .content { padding: 12px; padding-bottom: 76px; }
+  .topbar { height: 52px; }
+  .datePills { display: none; }
+}

@@ -1,0 +1,47 @@
+$ next dev
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.108.65.215:3000
+✓ Ready in 394ms
+
+ GET /api/health 200 in 209ms (next.js: 48ms, proxy.ts: 138ms, application-code: 23ms)
+Rate limiter DB error (fail-open): {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: connect ECONNREFUSED 127.0.0.1:54321 (ECONNREFUSED)\n' +
+    'Error: connect ECONNREFUSED 127.0.0.1:54321\n' +
+    '    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2021:16)\n' +
+    '    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:131:17)',
+  hint: '',
+  code: ''
+}
+ POST /api/payments/create-checkout-session 400 in 7.2s (next.js: 135ms, proxy.ts: 5ms, application-code: 7.0s)
+Rate limiter DB error (fail-open): {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: connect ECONNREFUSED 127.0.0.1:54321 (ECONNREFUSED)\n' +
+    'Error: connect ECONNREFUSED 127.0.0.1:54321\n' +
+    '    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2021:16)\n' +
+    '    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:131:17)',
+  hint: '',
+  code: ''
+}
+ POST /api/payments/create-checkout-session 400 in 7.0s (next.js: 2ms, proxy.ts: 4ms, application-code: 7.0s)
+Rate limiter DB error (fail-open): {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: connect ECONNREFUSED 127.0.0.1:54321 (ECONNREFUSED)\n' +
+    'Error: connect ECONNREFUSED 127.0.0.1:54321\n' +
+    '    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2021:16)\n' +
+    '    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:131:17)',
+  hint: '',
+  code: ''
+}
+[Payments] Unexpected error: Invalid API Key provided: sk_test_**************lder
+ POST /api/payments/create-checkout-session 500 in 7.2s (next.js: 2ms, proxy.ts: 5ms, application-code: 7.2s)
+ GET /api/auth/admin-check 503 in 7.1s (next.js: 48ms, proxy.ts: 4ms, application-code: 7.0s)
+[?25h
+[ELIFECYCLE] Command failed with exit code 1.

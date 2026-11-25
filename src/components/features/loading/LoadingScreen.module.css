@@ -1,0 +1,191 @@
+/* ═══════════════════════════════════════════════════════════════
+   LoadingScreen — Minimal Precision
+   Typography-forward, no rings/particles, purposeful animation
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Keyframes ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Container ── */
+.container {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  overflow: hidden;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.container.exiting {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* ── Center Stack ── */
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+  padding: 0 24px;
+}
+
+/* ── Brand Block — fades up first ── */
+.brandWrap {
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.brand {
+  font-family: var(--font-title);
+  font-size: clamp(2.4rem, 9vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.1;
+  user-select: none;
+}
+
+.brandDot {
+  color: var(--primary);
+}
+
+.brandSub {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.38em;
+  color: var(--text-secondary);
+  margin: 0;
+  user-select: none;
+}
+
+/* ── Percentage Counter ── */
+.counterWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  justify-content: center;
+  margin: 4px 0;
+}
+
+.counter {
+  font-family: var(--font-title);
+  font-size: clamp(4rem, 12vw, 7rem);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+.counterPct {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+}
+
+/* ── Progress Segments ── */
+.progressRow {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+
+.segment {
+  width: clamp(12px, 3vw, 18px);
+  height: 3px;
+  border-radius: 2px;
+  transition: background 200ms ease;
+}
+
+.segmentFilled {
+  background: var(--primary);
+}
+
+.segmentEmpty {
+  background: rgba(242, 230, 218, 0.07);
+}
+
+/* ── Phase Status Text ── */
+.statusText {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  transition: opacity 300ms ease;
+  min-height: 1.3em;
+  user-select: none;
+}
+
+/* ── Explore Button ── */
+.exploreBtn {
+  margin-top: 6px;
+  padding: 11px 42px;
+  border: 1px solid var(--primary);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-title);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 350ms ease,
+              transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              background 220ms ease,
+              color 220ms ease;
+  user-select: none;
+}
+
+.exploreBtn:hover {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+.exploreBtn:active {
+  transform: scale(0.97);
+}
+
+.exploreBtnHidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+.exploreBtnVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .brandWrap {
+    animation: none;
+  }
+  .segment {
+    transition: none;
+  }
+  .exploreBtn {
+    transition: opacity 150ms ease;
+  }
+}

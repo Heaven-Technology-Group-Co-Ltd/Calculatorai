@@ -1,0 +1,64 @@
+/* ── LevelTabs styles ── */
+
+/* Horizontal chip scroll (mobile) */
+.tabsRow {
+  display: flex;
+  gap: 6px;
+  padding: 0 24px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tabsRow::-webkit-scrollbar { display: none; }
+.tabsRow > * { flex-shrink: 0; }
+
+/* Keep desktop wrap behavior */
+@media (min-width: 769px) {
+  .tabsRow {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    padding: 0;
+    margin-bottom: 24px;
+    gap: 8px;
+  }
+}
+
+/* Chip button */
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-base);
+}
+
+.chip:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.chipActive {
+  background: var(--primary) !important;
+  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.3);
+  color: var(--bg) !important;
+}
+
+.chipIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.icon {
+  color: var(--level-color);
+}

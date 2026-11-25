@@ -1,0 +1,14 @@
+/* ── ConfirmModal styles ── */
+
+.container {
+  max-width: 400px;
+}
+
+.headerNoBorder {
+  border: none;
+  padding-bottom: 0;
+}
+
+.bodyCentered {
+  text-align: center;
+}

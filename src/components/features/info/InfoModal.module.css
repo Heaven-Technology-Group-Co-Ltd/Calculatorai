@@ -1,0 +1,133 @@
+/* ── InfoModal module styles ── */
+
+.headerText {
+  margin-left: 12px;
+}
+
+.tipLabel {
+  margin-left: 6px;
+}
+
+/* Device Segmented Control */
+.deviceTabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-lg);
+}
+
+.deviceTab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.deviceTab:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.deviceTabActive {
+  background: var(--surface-card);
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-gold);
+}
+
+/* Device Badges */
+.badgeRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  line-height: 1.3;
+}
+
+.badgeAll {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.badgePC {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--info);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.badgeMobile {
+  background: rgba(236, 72, 153, 0.12);
+  color: var(--secondary);
+  border: 1px solid rgba(236, 72, 153, 0.25);
+}
+
+/* Kbd Shortcut Badge */
+.kbdBadge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--primary);
+  border: 1px solid var(--border-gold);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: 6px;
+}
+
+/* Step Header & Title */
+.stepTitleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.stepTitleText {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .deviceTabs {
+    flex-direction: row;
+    gap: 4px;
+  }
+
+  .deviceTab {
+    font-size: 0.75rem;
+    padding: 7px 8px;
+  }
+}

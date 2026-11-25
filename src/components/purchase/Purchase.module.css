@@ -1,0 +1,528 @@
+/* ── Purchase Page CSS Module ── */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  width: 100%;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-5);
+  color: var(--text-secondary);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-bottom: var(--space-lg);
+  min-height: 38px;
+}
+
+.backBtn:hover {
+  color: var(--text);
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.header h1 {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-sm);
+  color: var(--text);
+}
+
+.header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ── Plan Grid ── */
+.planGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* ── Plan Card ── */
+.planCard {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.planCardActive {
+  transform: scale(0.97);
+  border-color: var(--border-gold) !important;
+  background: rgba(22, 8, 22, 0.6) !important;
+}
+
+.planCard:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.planCard.active {
+  border-color: var(--border-gold);
+  background: rgba(22, 8, 22, 0.6);
+}
+
+.planCardDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ── Highlight Background ── */
+.highlightBg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Best Value Badge ── */
+.bestValueBadge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--border-gold);
+  color: var(--bg);
+  margin-bottom: var(--space-md);
+  z-index: 1;
+}
+
+/* ── Loading Indicator ── */
+.planLoadingIndicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+}
+
+/* ── Plan Header ── */
+.planHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  z-index: 1;
+}
+
+.planIconBox {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: rgba(232, 184, 150, 0.1);
+}
+
+.planNameText {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+/* ── Price ── */
+.planPrice {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+  color: var(--text);
+  z-index: 1;
+}
+
+.planPrice small {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-left: 2px;
+}
+
+/* ── Description ── */
+.planDesc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+  line-height: 1.5;
+  z-index: 1;
+  flex-grow: 0;
+}
+
+/* ── Features ── */
+.planFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-lg) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  z-index: 1;
+  flex-grow: 1;
+}
+
+.planFeatures li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.85rem;
+  color: var(--text);
+  padding: 2px 0;
+}
+
+.planFeatures li svg {
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+/* ── Card Select Button ── */
+.selectCardBtn {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--fs-5);
+  background: var(--surface);
+  color: var(--text);
+  transition: all var(--transition-fast);
+  min-height: 44px;
+  cursor: pointer;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.selectCardBtn:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.selectedCardBtn {
+  border-color: var(--border-gold);
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ── Checkout Action Section ── */
+.checkoutActionWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  gap: 12px;
+  width: 100%;
+}
+
+.checkoutSubmitBtn {
+  max-width: 440px;
+  width: 100%;
+  padding: 16px 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--fs-4);
+  background: var(--primary);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.checkoutSubmitBtn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 10px 36px var(--border-gold-hover);
+}
+
+.checkoutSubmitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.checkoutNote {
+  font-size: var(--fs-6);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+/* ── Error ── */
+.error {
+  text-align: center;
+  max-width: 500px;
+  margin: var(--space-md) auto 0;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--error);
+  font-size: 0.9rem;
+  z-index: 1;
+  transition: all 0.2s ease;
+}
+
+/* ── Loading Overlay ── */
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 50);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.loadingIconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: rgba(232, 184, 150, 0.1);
+  border: 1px solid rgba(232, 184, 150, 0.2);
+  margin-bottom: 8px;
+}
+
+.loadingTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: var(--font-title);
+  color: var(--text);
+  text-align: center;
+}
+
+.loadingSub {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN (Based on User Requirements)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Desktop Default (≥901px) ── */
+@media (min-width: 901px) {
+  .planGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .planCard {
+    padding: 28px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/* ── Tablet (≤900px) ── */
+@media (max-width: 900px) {
+  .container {
+    padding: 40px 20px;
+  }
+
+  .planGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .planCard {
+    padding: 24px 20px;
+  }
+
+  .header h1 {
+    font-size: 1.6rem;
+  }
+
+  .backBtn {
+    font-size: 0.8rem;
+    padding: 7px 12px;
+    min-height: 36px;
+    margin-bottom: var(--space-md);
+  }
+}
+
+/* ── Phone (≤640px) ── */
+@media (max-width: 640px) {
+  .container {
+    padding: 24px 14px;
+    padding-bottom: calc(24px + 80px); /* Bottom nav clearance to prevent overlapping */
+  }
+
+  .planGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .planCard {
+    padding: 20px 14px;
+  }
+
+  .header h1 {
+    font-size: 20px;
+  }
+
+  .header p {
+    font-size: 0.85rem;
+  }
+
+  .planPrice {
+    font-size: 1.6rem;
+  }
+
+  .planFeatures li {
+    font-size: 0.8rem;
+  }
+
+  .selectCardBtn {
+    font-size: var(--fs-5);
+    padding: 10px;
+  }
+
+  .backBtn {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    min-height: 34px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .loadingOverlay {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .loadingIconBox {
+    width: 48px;
+    height: 48px;
+  }
+
+  .loadingTitle {
+    font-size: 1rem;
+  }
+
+  .loadingSub {
+    font-size: 0.8rem;
+  }
+
+  .error {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+  }
+}
+
+/* ── Small Phone (≤400px) ── */
+@media (max-width: 400px) {
+  .container {
+    padding: 16px 10px;
+    padding-bottom: calc(16px + 80px);
+  }
+
+  .planGrid {
+    gap: 12px;
+  }
+
+  .planCard {
+    padding: 16px 10px;
+  }
+
+  .header h1 {
+    font-size: 17px;
+  }
+
+  .header p {
+    font-size: 0.75rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .planPrice {
+    font-size: 1.4rem;
+  }
+
+  .planDesc {
+    font-size: 0.75rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .planFeatures {
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+  }
+
+  .planFeatures li {
+    font-size: 0.75rem;
+  }
+
+  .selectCardBtn {
+    font-size: 0.85rem;
+    padding: 8px;
+    min-height: 44px;
+  }
+
+  .backBtn {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    min-height: 32px;
+  }
+}
+
+.canceledBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 680px;
+  margin: 0 auto var(--space-lg);
+  padding: 12px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.canceledIcon {
+  color: var(--primary);
+  flex-shrink: 0;
+}

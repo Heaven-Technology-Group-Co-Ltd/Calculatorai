@@ -1,0 +1,275 @@
+/* ── Sidebar.module.css — Premium Sidebar Styles ── */
+
+/* Collapsed state: 56px icon-only panel */
+.collapsed {
+  width: 56px !important;
+  padding: 16px 8px !important;
+  min-width: 56px;
+}
+
+.collapsed :global(.navLabel) {
+  display: none;
+}
+
+.collapsed :global(.sidebar-logo-text) {
+  display: none;
+}
+
+.collapsed :global(.sidebar-section-title) {
+  display: none;
+}
+
+.collapsed :global(.sidebar-header) {
+  justify-content: center;
+  padding: 12px 8px;
+}
+
+.collapsed .closeBtn {
+  display: none;
+}
+
+.collapsed :global(.sidebar-logo) {
+  justify-content: center;
+  padding: 0;
+}
+
+.collapsed :global(.sidebar-nav-item) {
+  justify-content: center;
+  padding: 10px;
+  gap: 0;
+}
+
+.collapsed :global(.dept-nav-item) {
+  justify-content: center;
+  padding: 10px;
+  gap: 0;
+}
+
+.collapsed .subjectCount {
+  display: none;
+}
+
+.collapsed :global(.sidebar-footer-item) {
+  justify-content: center;
+  padding: 10px;
+  gap: 0;
+}
+
+.collapsed .historyBadge {
+  display: none;
+}
+
+.collapsed :global(.sidebar-bottom-profile) {
+  justify-content: center;
+  padding: 10px 8px;
+}
+
+.collapsed :global(.profile-info) {
+  display: none;
+}
+
+/* Close button square */
+.closeBtn {
+  width: 28px;
+  height: 28px;
+}
+
+/* Subject count badge */
+.subjectCount {
+  margin-left: auto;
+  flex-shrink: 0;
+  min-width: 12px;
+  text-align: right;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+/* History count badge */
+.historyBadge {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 10px;
+  padding: 1px 7px;
+  background: var(--primary);
+  color: var(--text);
+  border-radius: var(--radius-sm, 8px);
+}
+
+/* ── Scrollable nav wrapper ── */
+.scrollNav {
+  flex: 1 1 0%;                 /* constrain height to remaining space */
+  overflow-y: auto;           /* auto — scrollbar only when content overflows */
+  overflow-x: hidden;
+  min-height: 0;                 /* override flex min-height:auto */
+  overscroll-behavior: contain;  /* block scroll chaining to body */
+  touch-action: pan-y;           /* mobile: vertical pan only */
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 184, 150, 0.20) transparent;
+  padding: 2px 0 var(--space-lg) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Custom Webkit scrollbar for scrollNav */
+.scrollNav::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollNav::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 4px;
+}
+.scrollNav::-webkit-scrollbar-thumb {
+  background: rgba(232, 184, 150, 0.12);
+  border-radius: 999px;
+  transition: background 0.25s ease;
+}
+.scrollNav::-webkit-scrollbar-thumb:hover {
+  background: rgba(232, 184, 150, 0.30);
+}
+.scrollNav::-webkit-scrollbar-thumb:active {
+  background: rgba(232, 184, 150, 0.40);
+}
+
+/* Logout icon & button */
+
+.logoutBtn {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: var(--error);
+}
+
+
+
+.modalCard::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+}
+
+.modalIconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.modalText {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.modalBtnRow {
+  display: flex;
+  gap: 10px;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--bg, var(--bg));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancelBtn:hover {
+  background: var(--surface);
+}
+
+.signOutConfirmBtn {
+  flex: 1;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--error), var(--error));
+  border: none;
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.signOutConfirmBtn:hover {
+  opacity: 0.9;
+}
+
+/* ── Profile Detail List ── */
+.profileModalHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.largeAvatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary-subtle, rgba(255, 255, 255, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary, var(--primary));
+  margin-bottom: 12px;
+  border: 2px solid var(--border);
+}
+
+.profileDetailList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: left;
+}
+
+.profileDetailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.detailLabel {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.detailValue {
+  color: var(--text);
+  font-weight: 600;
+}

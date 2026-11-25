@@ -1,0 +1,144 @@
+/**
+ * History API — Premium Math Calculator
+ *
+ * GET    /api/history          — List history for authenticated user
+ * POST   /api/history          — Create history entry
+ * DELETE /api/history          — Clear all history for user
+ *
+ * All endpoints require authentication.
+ */
+
+import { NextRequest } from "next/server";
+import { z } from "zod";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { getSupabaseAdmin } from "@/lib/supabase-client";
+import {
+  successResponse,
+  createdResponse,
+  unauthorizedResponse,
+  badRequestResponse,
+  serverErrorResponse,
+} from "@/lib/api-response";
+import { encodeHistoryPayload } from "@/lib/history-payload";
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+/** Extract user id from session */
+function getUserId(session: unknown): string | null {
+  const s = session as { user?: { id?: string } } | null;
+  return s?.user?.id ?? null;
+}
+
+// ── Zod schemas ──────────────────────────────────────────────────────────────
+
+const CreateHistorySchema = z.object({
+  calcId: z.string().min(1, "Calculation id is required"),
+  calcTitle: z.string().min(1, "Calculation title is required"),
+  inputs: z.record(z.string(), z.string()),
+  result: z.string(),
+  unit: z.string(),
+});
+
+// ── GET ─────────────────────────────────────────────────────────────────────
+// Returns history for the authenticated user, newest first, max 100.
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = getUserId(session);
+    if (!userId) {
+      return unauthorizedResponse();
+    }
+
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("calculation_history")
+      .select("*")
+      .eq("user_id", userId)
+      .order("timestamp", { ascending: false })
+      .limit(100);
+
+    if (error) {
+      console.error("[History] GET error:", error.message);
+      return serverErrorResponse("Failed to fetch history");
+    }
+
+    return successResponse(data ?? []);
+  } catch (err) {
+    console.error("[History] GET unexpected error:", err);
+    return serverErrorResponse("Internal server error");
+  }
+}
+
+// ── POST ─────────────────────────────────────────────────────────────────────
+// Creates a history entry for the authenticated user.
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = getUserId(session);
+    if (!userId) {
+      return unauthorizedResponse();
+    }
+
+    const body = await request.json();
+    const parsed = CreateHistorySchema.safeParse(body);
+    if (!parsed.success) {
+      const issues = parsed.error.issues.map((i) => i.message).join("; ");
+      return badRequestResponse(`Validation failed: ${issues}`);
+    }
+
+    const supabase = getSupabaseAdmin();
+
+    const { data, error } = await supabase
+      .from("calculation_history")
+      .insert({
+        user_id: userId,
+        expression: encodeHistoryPayload(parsed.data),
+        result: parsed.data.result,
+        timestamp: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[History] POST error:", error.message);
+      return serverErrorResponse("Failed to create history entry");
+    }
+
+    return createdResponse(data);
+  } catch (err) {
+    console.error("[History] POST unexpected error:", err);
+    return serverErrorResponse("Internal server error");
+  }
+}
+
+// ── DELETE ───────────────────────────────────────────────────────────────────
+// Clears ALL history for the authenticated user.
+
+export async function DELETE() {
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = getUserId(session);
+    if (!userId) {
+      return unauthorizedResponse();
+    }
+
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase
+      .from("calculation_history")
+      .delete()
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("[History] DELETE error:", error.message);
+      return serverErrorResponse("Failed to clear history");
+    }
+
+    return successResponse({ cleared: true });
+  } catch (err) {
+    console.error("[History] DELETE unexpected error:", err);
+    return serverErrorResponse("Internal server error");
+  }
+}

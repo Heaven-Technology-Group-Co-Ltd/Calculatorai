@@ -1,0 +1,360 @@
+/* ═══════════════════════════════════════════════════════════════
+   Verify Page — CSS Module
+   Ursa palette · 4-breakpoint responsive · Mobile-first
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Shell ── */
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* ── Card ── */
+.card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle top accent bar */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), rgba(232, 184, 150, 0.3));
+}
+
+/* ── Icon Box ── */
+.iconBox {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.iconLoading {
+  background: rgba(232, 184, 150, 0.1);
+  border: 2px solid rgba(232, 184, 150, 0.25);
+}
+
+.iconSuccess {
+  background: rgba(34, 197, 94, 0.1);
+  border: 2px solid rgba(34, 197, 94, 0.3);
+}
+
+.iconError {
+  background: rgba(239, 68, 68, 0.1);
+  border: 2px solid rgba(239, 68, 68, 0.25);
+}
+
+/* ── Title ── */
+.title {
+  font-family: var(--font-title);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.titleSuccess {
+  color: var(--success);
+}
+
+.titleError {
+  color: var(--error);
+}
+
+.titleLoading {
+  color: var(--text);
+}
+
+/* ── Description ── */
+.desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+
+/* ── Email chip ── */
+.emailChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: rgba(232, 184, 150, 0.08);
+  border: 1px solid rgba(232, 184, 150, 0.2);
+  font-size: 0.85rem;
+  color: var(--primary);
+  margin-bottom: 24px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Primary Button ── */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--primary);
+  color: var(--bg);
+  transition: filter 0.2s, box-shadow 0.2s, transform 0.15s;
+  min-height: 46px;
+  cursor: pointer;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 20px rgba(232, 184, 150, 0.25);
+}
+
+.btnPrimary:active {
+  transform: scale(0.98);
+}
+
+/* ── Secondary Button ── */
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 24px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: transparent;
+  color: var(--text);
+  min-height: 44px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btnSecondary:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+
+.btnSecondary:active {
+  transform: scale(0.98);
+}
+
+/* ── Countdown ring ── */
+.countdownRing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.countdownRing svg {
+  flex-shrink: 0;
+}
+
+/* ── Error actions ── */
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE — 4 Breakpoints (genuine mobile, not shrunk desktop)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Desktop (≥901px) ── */
+@media (min-width: 901px) {
+  .shell {
+    padding: 48px 24px;
+  }
+  .card {
+    padding: 44px 36px;
+  }
+  .title {
+    font-size: 1.55rem;
+  }
+  .iconBox {
+    width: 76px;
+    height: 76px;
+  }
+}
+
+/* ── Tablet (≤900px) ── */
+@media (max-width: 900px) {
+  .shell {
+    padding: 36px 20px;
+    justify-content: flex-start;
+    padding-top: 48px;
+  }
+  .card {
+    max-width: 420px;
+    padding: 36px 28px;
+  }
+  .title {
+    font-size: 1.4rem;
+  }
+  .iconBox {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* ── Phone (≤640px) ── */
+@media (max-width: 640px) {
+  .shell {
+    padding: 20px 12px;
+    padding-bottom: calc(20px + 80px); /* bottom nav clearance */
+    justify-content: flex-start;
+    padding-top: 28px;
+  }
+
+  .card {
+    max-width: 100%;
+    padding: 30px 18px;
+    border-radius: var(--radius-md);
+  }
+
+  .card::before {
+    height: 2px;
+  }
+
+  .iconBox {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .desc {
+    font-size: 0.85rem;
+    margin-bottom: 22px;
+  }
+
+  .emailChip {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    margin-bottom: 18px;
+  }
+
+  .btnPrimary {
+    padding: 11px 24px;
+    font-size: 0.9rem;
+    min-height: 44px;
+    width: 100%;
+  }
+
+  .btnSecondary {
+    padding: 9px 16px;
+    font-size: 0.85rem;
+    min-height: 42px;
+  }
+
+  .errorActions {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .errorActions .btnPrimary,
+  .errorActions .btnSecondary {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .countdownRing {
+    font-size: 0.75rem;
+    margin-top: 16px;
+  }
+}
+
+/* ── Small Phone (≤400px) ── */
+@media (max-width: 400px) {
+  .shell {
+    padding: 14px 8px;
+    padding-bottom: calc(14px + 80px);
+    padding-top: 18px;
+  }
+
+  .card {
+    padding: 24px 14px;
+    border-radius: var(--radius-sm);
+  }
+
+  .card::before {
+    height: 2px;
+  }
+
+  .iconBox {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 14px;
+  }
+
+  .title {
+    font-size: 1.15rem;
+  }
+
+  .desc {
+    font-size: 0.8rem;
+    margin-bottom: 18px;
+  }
+
+  .emailChip {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    margin-bottom: 14px;
+  }
+
+  .btnPrimary {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    min-height: 42px;
+  }
+
+  .btnSecondary {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    min-height: 40px;
+  }
+
+  .countdownRing {
+    font-size: 0.7rem;
+    margin-top: 12px;
+  }
+}

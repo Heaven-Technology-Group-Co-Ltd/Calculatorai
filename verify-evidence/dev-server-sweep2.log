@@ -1,0 +1,10 @@
+$ next dev
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.108.65.215:3000
+✓ Ready in 374ms
+
+ GET /api/health 200 in 194ms (next.js: 47ms, proxy.ts: 131ms, application-code: 17ms)
+ GET /api/users 503 in 7.3s (next.js: 257ms, proxy.ts: 3ms, application-code: 7.1s)
+[?25h
+[ELIFECYCLE] Command failed with exit code 1.

@@ -1,0 +1,43 @@
+$ next dev
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.108.65.215:3000
+✓ Ready in 554ms
+
+ GET /api/health 200 in 231ms (next.js: 57ms, proxy.ts: 147ms, application-code: 27ms)
+ POST /api/history 401 in 696ms (next.js: 664ms, proxy.ts: 7ms, application-code: 25ms)
+ GET /api/admin/check 404 in 227ms (next.js: 72ms, proxy.ts: 4ms, application-code: 150ms)
+ GET /api/auth/admin-check 503 in 7.2s (next.js: 124ms, proxy.ts: 3ms, application-code: 7.0s)
+✓ Compiled in 18ms
+✓ Compiled in 11ms
+ POST /api/history 401 in 121ms (next.js: 65ms, proxy.ts: 32ms, application-code: 24ms)
+⨯ Error: Neither apiKey nor config.authenticator provided
+    at module evaluation (src\lib\stripe.ts:23:3)
+    at module evaluation (src\app\api\payments\create-checkout-session\route.ts:17:1)
+    at Object.<anonymous> (E:\testtt\Web_project\projectreal\webcalculater\.next\dev\server\app\api\payments\create-checkout-session\route.js:14:3)
+  21 | export const stripe: Stripe =
+  22 |   globalThis.__stripe__ ??
+> 23 |   new Stripe(process.env.STRIPE_SECRET_KEY!, {
+     |   ^
+  24 |     typescript: true,
+  25 |     maxNetworkRetries: 2,
+  26 |     timeout: 10_000, {
+  page: '/api/payments/create-checkout-session'
+}
+ POST /api/payments/create-checkout-session 500 in 654ms (next.js: 549ms, proxy.ts: 3ms, application-code: 102ms)
+⨯ Error: Neither apiKey nor config.authenticator provided
+    at module evaluation (src\lib\stripe.ts:23:3)
+    at module evaluation (src\app\api\payments\create-checkout-session\route.ts:17:1)
+    at Object.<anonymous> (E:\testtt\Web_project\projectreal\webcalculater\.next\dev\server\app\api\payments\create-checkout-session\route.js:14:3)
+  21 | export const stripe: Stripe =
+  22 |   globalThis.__stripe__ ??
+> 23 |   new Stripe(process.env.STRIPE_SECRET_KEY!, {
+     |   ^
+  24 |     typescript: true,
+  25 |     maxNetworkRetries: 2,
+  26 |     timeout: 10_000, {
+  page: '/api/payments/create-checkout-session'
+}
+ POST /api/payments/create-checkout-session 500 in 38ms (next.js: 27ms, proxy.ts: 4ms, application-code: 6ms)
+[?25h
+[ELIFECYCLE] Command failed with exit code 1.

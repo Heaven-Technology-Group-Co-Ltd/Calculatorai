@@ -1,0 +1,407 @@
+/* src/components/dashboard/styles/dashboard-blocks.module.css */
+/* Task 2 primitives + block-level styles */
+
+/* ── Panel ── */
+.panel {
+  background: rgba(36, 47, 53, 0.8);
+  border: 1px solid rgba(232, 184, 150, 0.08);
+  border-radius: 14px;
+  backdrop-filter: blur(4px);
+}
+.panel_hover { cursor: pointer; transition: border-color 200ms; }
+.panel_hover:hover { border-color: rgba(232, 184, 150, 0.25); }
+
+/* ── KPI Card ── */
+.kpiHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.kpiLabel { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+.kpiIconWrap { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.kpiIconGreen { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+.kpiIconBlue { background: rgba(96, 165, 250, 0.15); color: var(--info); }
+.kpiIconGold { background: rgba(212, 160, 69, 0.15); color: var(--secondary); }
+.kpiIconPink { background: var(--primary-subtle); color: var(--primary); }
+.kpiValue { font-size: 28px; font-weight: 700; line-height: 1.1; transition: color 300ms; }
+.kpiTrend { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+.kpiTrendLabel { color: var(--text-secondary); font-weight: 400; }
+
+/* ── Skeleton ── */
+.skeletonShimmer {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--bg) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeletonBlock { border-radius: 6px; }
+.skeletonKpi { padding: 12px; background: rgba(36, 47, 53, 0.8); border-radius: 14px; }
+.skeletonPanel { padding: 20px; background: rgba(36, 47, 53, 0.8); border-radius: 14px; }
+
+/* ── Empty / Error states ── */
+.emptyWrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 32px 0; text-align: center; }
+.emptyIcon { color: var(--text-secondary); }
+.emptyText { color: var(--text-secondary); font-size: 14px; }
+.emptyAction { margin-top: 4px; }
+.errorWrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 0; text-align: center; }
+.errorIcon { color: var(--error); }
+.errorText { color: var(--text-secondary); font-size: 14px; }
+.retryBtn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(232, 184, 150, 0.2); background: var(--surface); color: var(--primary); font-size: 13px; cursor: pointer; }
+
+/* ── Badge ── */
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.badgeDot { width: 6px; height: 6px; border-radius: 50%; }
+.badgeActive { background: rgba(74, 222, 128, 0.12); color: var(--success); }
+.badgeActive .badgeDot { background: var(--success); }
+.badgeSuspended { background: rgba(251, 191, 36, 0.12); color: var(--warning); }
+.badgeSuspended .badgeDot { background: var(--warning); }
+.badgeBanned { background: rgba(251, 113, 133, 0.12); color: var(--error); }
+.badgeBanned .badgeDot { background: var(--error); }
+
+/* ── Section layout ── */
+.kpiRow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid2col { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.grid3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.panelHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.panelTitle { font-size: 15px; font-weight: 600; }
+.panelAction { font-size: 12px; color: var(--primary); cursor: pointer; font-weight: 500; }
+
+/* ── Funnel bars ── */
+.funnelBarFill { height: 100%; border-radius: 3px; }
+
+/* ── Activity feed ── */
+.activityItem { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(232, 184, 150, 0.06); }
+.activityItem:last-child { border-bottom: none; }
+
+/* ── Mobile KPI scroll ── */
+
+/* ── Responsive overrides ── */
+@media (max-width: 900px) {
+  .kpiRow { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .kpiRow { grid-template-columns: 1fr 1fr; }
+  .grid2col { grid-template-columns: 1fr; }
+  .grid3col { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Task 5 additions: Tables, Settings, Heatmap
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Data Table ── */
+.tableWrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid rgba(232, 184, 150, 0.08);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead { background: rgba(36, 47, 53, 0.6); }
+
+.table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(232, 184, 150, 0.08);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 10px 14px;
+  color: var(--text);
+  border-bottom: 1px solid rgba(232, 184, 150, 0.04);
+  white-space: nowrap;
+}
+
+.tableRow { transition: background 120ms; }
+
+.tableRow:hover { background: rgba(232, 184, 150, 0.04); }
+
+.tableRow:last-child td { border-bottom: none; }
+
+
+
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+
+
+
+
+
+/* ── Settings ── */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ── Webhook card (settings) ── */
+
+
+
+
+
+
+
+
+
+
+/* ── Heatmap ── */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ── KPI Row ── */
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* ── Section title ── */
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+/* ── Chart ── */
+.chartPanel { min-height: 240px; }
+.chartWrap { width: 100%; }
+
+/* ── Pie chart legend ── */
+.legendList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+  justify-content: center;
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legendLabel { color: var(--text); }
+.legendValue { color: var(--text-secondary); }
+
+/* ── Activity feed ── */
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px;
+  border-radius: 8px;
+}
+.activityItem:hover { background: rgba(232, 184, 150, 0.04); }
+.activityItemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 184, 150, 0.08);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.activityItemContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.activityItemUser {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+}
+.activityItemAction {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.activityItemTime {
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* ── System health ── */
+.healthGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.healthItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border-radius: 12px;
+  background: rgba(232, 184, 150, 0.04);
+  text-align: center;
+}
+.healthIcon { color: var(--primary); }
+.healthItemValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+.healthItemLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Page link ── */
+.pageLink {
+  color: var(--primary);
+  font-size: 13px;
+  word-break: break-all;
+}
+
+/* ── Conversion funnel ── */
+.funnelStages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.funnelStageRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.funnelStageLabel {
+  width: 80px;
+  font-size: 12px;
+  color: var(--text);
+  flex-shrink: 0;
+  text-align: right;
+}
+.funnelBarTrack {
+  flex: 1;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(232, 184, 150, 0.06);
+  overflow: hidden;
+}
+.funnelBarFill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  transition: width 0.5s ease;
+}
+.funnelStageCount {
+  width: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  flex-shrink: 0;
+}
+.funnelStagePct {
+  width: 40px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* ── Responsive: Table overflow on mobile ── */
+@media (max-width: 640px) {
+  .tableWrap { border-radius: 8px; }
+  .table th,
+  .table td { padding: 8px 10px; font-size: 12px; }
+  .pagination { flex-direction: column; gap: 8px; }
+
+  .kpiRow { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .healthGrid { grid-template-columns: repeat(2, 1fr); }
+  .healthItemValue { font-size: 16px; }
+  .funnelStageLabel { width: 60px; font-size: 11px; }
+  .funnelStageCount { width: 36px; font-size: 11px; }
+  .funnelStagePct { width: 32px; font-size: 10px; }
+  .activityItem { padding: 6px 4px; }
+  .activityItemTime { display: none; }
+  .legendList { gap: 6px; }
+  .sectionTitle { font-size: 14px; }
+}
+
+/* ── Filter chips ── */
+.chipRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(232, 184, 150, 0.12);
+  background: rgba(36, 47, 53, 0.6);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.chip:hover {
+  background: rgba(232, 184, 150, 0.08);
+  color: var(--text);
+  border-color: rgba(232, 184, 150, 0.2);
+}
+.chipActive {
+  background: rgba(232, 184, 150, 0.15);
+  color: var(--primary);
+  border-color: rgba(232, 184, 150, 0.3);
+}

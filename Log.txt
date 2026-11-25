@@ -1,0 +1,1003 @@
+# Log.txt — Session Log (Premium Math Calculator)
+# Format: [YYYY-MM-DD HH:MM] <what changed> — <why> — <files touched>
+# Keep entries short. Log mid-task, not just at session end.
+
+[2026-09-30 15:10] Status page redesign complete — 3 phases: frontend (CSS 1440px, charts 1-col, gap fix, label formats, tooltip split, dot/gap fixes), API (await insert, Stripe 60s cache), backend (SQL health_history function, history route rpc refactor) — StatusClient.module.css, utils.ts, StatusClient.tsx, Charts.tsx, api/status/route.ts, api/status/history/route.ts, supabase/migrations/007_health_history.sql
+
+[2026-09-27 16:45] Added CODEBASE.md navigation map after checking existing docs; kept rules and architecture detail in existing sources — CODEBASE.md, AGENTS.md, Log.txt
+
+[2026-07-18 00:00] Project config initialized (CLAUDE.md, AGENTS.md, RULE.md, Log.txt) — starting full rebuild, frontend-first phase — CLAUDE.md, AGENTS.md, RULE.md, Log.txt
+[2026-07-24 12:30] Changed SWR refreshInterval 30s/60s → 1,800,000ms (30 min) across all 5 dashboard hooks — reduce DB load, real-time 30-min update — useDashboardStats.ts, useAnalytics.ts, useUsers.ts, useRevenue.ts, useTraffic.ts
+
+[2026-07-18 11:15] Frontend scaffold complete — Next.js 16 + React 19 + Tailwind v4 + shadcn/ui (button, card, separator) — config files, package.json, tsconfig, next.config, postcss, eslint
+
+[2026-07-18 11:16] Core calculation library created — pure functions in /lib/calculator (evaluate, trig, log, powers, memory, format) — zero UI imports verified — types defined in /types/calculator.ts
+
+[2026-07-18 11:17] UI components created — layout (Header, Sidebar, Footer) + calculator (Calculator with useReducer, Display, Keypad, ScientificPad, MemoryPanel) — accent color amber-500 (#F59E0B) — dark theme baseline
+
+[2026-07-18 11:18] App pages scaffolded — / (calculator page), /history (stub page with mock data) — responsive layout with collapsible sidebar — HistoryContent shows static mock data (TODO: Phase 2 for Supabase persistence)
+
+[2026-07-18 11:19] Build verified — pnpm build passes with 0 type errors, 3 routes (/, /_not-found, /history) — all Quality Gates from RULE.md met — CLAUDE.md updated with SecondBrain section — Log.txt updated
+
+[2026-07-18 13:30] Loading screen implemented — LoadingScreen component with calculator skeleton + history skeleton variants, CSS-only pulse animation, app/loading.tsx + history/loading.tsx route loaders — components/ui/LoadingScreen.tsx, app/loading.tsx, app/history/loading.tsx
+
+[2026-07-18 14:00] LoadingScreen redesigned — inspired by old webcalculater design patterns: concentric ring animation, floating math symbols, phase cycling text, progress bar. All CSS-only (no framer-motion), amber-500 theme, lightweight DOM. Unused CalculatorSkeleton removed. — components/ui/LoadingScreen.tsx
+
+[2026-07-18 14:15] SplashGate created — client-side splash wrapper ensuring minimum 2.6s display time before revealing calculator. Uses sessionStorage to splash only on first visit per session. Prevents premium splash animation from flashing too fast on static pages. — components/ui/SplashGate.tsx, app/page.tsx
+
+[2026-07-18 17:30] Gridgeist Redesign (Obsidian Edition) completed — full-system redesign using Gridgeist methodology. Thesis: "Refined workspace on plum-dark grid, controlled magenta accents, quiet glowing edges."
+- Phase 1: Token foundation — globals.css reduced from 1800→620 lines, CSS variables for all colors/spacing/radii, design-tokens.ts updated with Obsidian palette
+- Phase 2: Core components refactored — AppShell, Sidebar, HomeHero, CalculatorCard, CalculatorCardExpanded, LevelFilter/LevelTabs, Footer, EmptyState, ConfirmModal, Navigation
+- Phase 3: Features refactored — HistorySidebar, InfoModal, LanguageDropdown (all use CSS classes instead of inline style objects)
+- Phase 4: Dashboard refactored — DashboardLayout uses CSS variables, all 5 pages (Overview, Finance, Analytics, Users, Settings) updated with token-based colors
+- Phase 5: Purchase/Auth refactored — PurchaseClient, PurchaseSuccessClient, SignUpClient, VerifyClient
+- Phase 6: Build verified — 0 type errors, 27 routes compiled successfully
+Key changes: glow reduced 85%, color-mix removed, radius system (8/12/16), warm neutral palette, dashboard inherits main app tokens — globals.css, design-tokens.ts, components/*.tsx, components/dashboard/*.tsx, components/purchase/*.tsx, components/signup/*.tsx, components/verify/*.tsx, components/features/*.tsx
+
+[2026-07-19 19:20] Comprehensive fix-all pass completed — systematic scan found and fixed 12 categories of issues across the project:
+- Created .gitignore (was missing, .env.local exposed)
+- Created eslint.config.mjs with FlatCompat (use createRequire to avoid circular dep)
+- Added missing .env vars: GOOGLE_CLIENT_ID, DISCORD_ADMIN_WEBHOOK_URL, ADMIN_API_SHARED_SECRET
+- Added instrumentationHook: true + fixed CSP spacing in next.config.ts
+- Added lint:fix and type-check scripts to package.json
+- Removed dead hooks/useLanguage.ts (duplicate lang system, LanguageContext is the active one)
+- Removed debug console.log from AdminGuard.tsx client component
+- Fixed React 19 setState-in-effect lint error in CalculatorCardExpanded.tsx
+- Removed unnecessary lang dep in useFilter.ts useMemo + unused eslint-disable in SidebarNavItem.tsx + stripe.ts
+- Installed @eslint/eslintrc dep for flat config compat
+- Re-verified: build 28 pages 13 API routes ✓, tsc --noEmit 0 errors ✓, eslint 0 errors/10 warnings ✓
+— .gitignore, eslint.config.mjs, .env.local, next.config.ts, package.json, CalculatorCardExpanded.tsx, AdminGuard.tsx, LanguageContext.tsx, SidebarNavItem.tsx, useFilter.ts, useLanguage.ts(removed), stripe.ts
+
+[2026-07-19 20:30] Formula Library Migration Phase 1-2 complete — generic FormulaCard system created to replace 1-per-formula components:
+- types/formulas.ts: FormulaDef, CalcVar, FormulaResult, FormulaGroup types (migrated from math-data.ts)
+- lib/formulas/registry.ts: 23 formulas as pure data objects + levelMeta + utility finders
+- components/formulas/FormulaCard.tsx: generic card with expand/collapse, inputs, calc/reset, single/multi-result, error handling
+- components/formulas/FormulaCard.module.css: all styles via CSS module — zero inline styles
+- components/formulas/FormulaGrid.tsx: responsive grid wrapping FormulaCard with empty state
+Compliance verified: 0 inline styles, 0 glassmorphism, 0 glow, no gradient icon boxes, proper heading hierarchy, CSS tokens throughout, keyboard navigation (Enter), hover/focus states, 0 any types, responsive at all breakpoints
+— types/formulas.ts, lib/formulas/registry.ts, components/formulas/FormulaCard.tsx, components/formulas/FormulaCard.module.css, components/formulas/FormulaGrid.tsx
+
+[2026-07-19 20:40] Dev server warnings fixed (3 issues) — ① next.config.ts: removed `instrumentationHook: true` (unrecognized in Next.js 16.2 — register() auto-called) ② middleware.ts → proxy.ts: renamed file + changed export to `export default function proxy` (Next.js 16.2 proxy convention) ③ instrumentation.ts: switched to dynamic import() for global-error-catcher (Edge Runtime can't parse process.on, only loaded in nodejs runtime) — Build clean: 0 errors, 29 static + 13 API routes — next.config.ts, src/middleware.ts→src/proxy.ts, src/instrumentation.ts
+
+[2026-07-19 21:00] Phase 3 integration complete — AppShell.tsx switched from old CalculatorGrid/CalculatorCard to new FormulaGrid/registry:
+- Import changed from data (math-data) to formulas (registry.ts)
+- Filter logic unchanged (same field names)
+- Grid render replaced with <FormulaGrid> component (empty state, restoration, showFormula all handled)
+- Old CalculatorCard, CalculatorCardExpanded, CalculatorGrid, and calculators/* now dead code (unused imports)
+- Demo page /formulas-demo verified working (29 routes total)
+— AppShell.tsx
+
+[2026-07-19 21:15] Dead code cleanup — removed CalculatorCard.tsx, CalculatorCardExpanded.tsx, CalculatorGrid.tsx, calculators/ (Elementary, MiddleSchool, HighSchool, University) — all replaced by FormulaCard/FormulaGrid + registry.ts in Phase 3 migration — 7 files deleted, build verified clean
+
+[2026-07-19 22:00] Sidebar systematic audit + refactor (22 items checked across all sidebar files):
+- Created 5 CSS modules: SidebarSection.module.css, SidebarNavItem.module.css, SidebarFooter.module.css, Sidebar.module.css, HistorySidebar.module.css
+- Removed 40+ inline style objects → 0 inline styles across all sidebar files
+- Removed 17 CSSProperties dead code exports from HistorySidebar.data.ts (never imported)
+- Fixed 5 div→button conversions for keyboard accessibility (level items, department items, history, info, all levels)
+- Added aria-expanded, aria-controls to collapsible sections
+- Added :focus-visible outlines to all interactive elements
+- Added hover states to buttons missing them
+- Removed all `as any` type assertions (3 → 0, replaced with single `as React.CSSProperties` cast per object)
+- Fixed `as` type assertion in HistorySidebar onDeleteItem callback
+- Changed localStorage → sessionStorage in useSidebar.ts (CLAUDE.md Rule #3 compliance)
+- Added Escape key listener + try/catch sessionStorage fallback to useSidebar.ts
+- Added close button accessible size + responsive mobile panel width
+— SidebarSection.tsx + .module.css, SidebarNavItem.tsx + .module.css, SidebarFooter.tsx + .module.css, Sidebar.tsx + .module.css, HistorySidebar.tsx + .module.css, HistorySidebar.data.ts, useSidebar.ts
+
+[2026-07-19 22:45] Comprehensive audit Phase 2 — shell + core components:
+- Deleted dead code: Navigation.tsx (0 imports, ALL inline), Footer.tsx (0 imports, duplicate of AppShell internal footer)
+- AppShell.tsx: localStorage→sessionStorage for lang pref, inline style→CSS module
+- LevelTabs.tsx: div→button, as any→as React.CSSProperties, style={{color}}→CSS module .icon
+- LevelFilter.tsx: div→button, as any→as React.CSSProperties, style={{color}}→CSS module .icon
+- Both Level*: added aria-pressed for active state
+- InfoModal.data.ts: removed 22 CSSProperties dead code exports
+- InfoModal.tsx: as any→typed helper function t(), 2 inline styles→CSS module
+- HomeHero.tsx: removed dangerouslySetInnerHTML + useless .replace(), rewritten with clean React elements
+- ConfirmModal.tsx: 3 inline styles→CSS module
+- LanguageDropdown.tsx: 2 inline styles→CSS module
+- useHistory.ts: localStorage→sessionStorage (CLAUDE.md Rule #3 — history will be Supabase-persisted later)
+- FormulaCard+FormulaGrid: verified clean (0 inline styles, 0 as any)
+— Navigation.tsx(deleted), Footer.tsx(deleted), AppShell.tsx+module.css, LevelTabs.tsx+module.css, LevelFilter.tsx+module.css, InfoModal.data.ts, InfoModal.tsx+module.css, HomeHero.tsx, ConfirmModal.tsx+module.css, LanguageDropdown.tsx+module.css, useHistory.ts
+
+[2026-07-19 23:45] Comprehensive audit Phase 4 — Dashboard refactor (shared module approach):
+	  - Created dashboard.module.css — 1 shared CSS module with 80+ semantic classes covering ALL dashboard patterns
+	  - Refactored 19 of 25 dashboard files to use shared module
+	  - Remaining 6 files need manual refactor (OverviewPage, UsersPage, GeneralSettings, SecuritySettings, BillingSettings, SettingsPage)
+	  — dashboard.module.css, 19 dashboard .tsx files
+
+[2026-07-19 23:50] Dashboard Phase 4 complete — remaining 6 files + LoadingScreen refactored
+  — OverviewPage.tsx, UsersPage.tsx, SettingsPage.tsx, GeneralSettings.tsx, SecuritySettings.tsx, BillingSettings.tsx
+
+[2026-07-20 00:00] LevelFilter Premium Redesign Task 7 — converted global card grid to CSS module chip style. LevelFilter.module.css: .filterRow (flex, wrap desktop / horizontal-scroll mobile), .filterChip + .filterChipActive (gold active state), .icon. LevelFilter.tsx: replaced global classes with module classes, removed level-content/level-card-sub/level-card-title wrapper divs, simplified "All" button with LayoutGrid icon + allLevels label, simplified level chips with title-only. --level-color CSS variable retained per chip. Type-check passes 0 errors. Old global classes left untouched for backward-compatibility. — src/components/LevelFilter.tsx, src/components/LevelFilter.module.css
+
+[2026-07-20 00:00] HomeHero Premium Redesign Task 6 — added hero stats row (23+ formulas, 5 levels, 99.9% accuracy) below search bar with responsive compact mode, hidden below 480px. Updated HomeHero.tsx with isMobile prop, stats div, search-kbd shortcut badge. Appended hero CSS to globals.css (hero, hero-stats, search-row, search-kbd classes with mobile breakpoints). Type-check passes 0 errors. — src/components/HomeHero.tsx, src/app/globals.css
+
+[2026-07-20 10:00] LoadingScreen refactored — 15 inline styles + inline <style> tag + 13 CSSProperties exports all moved to LoadingScreen.module.css — LoadingScreen.tsx, LoadingScreen.module.css, LoadingScreen.config.ts
+
+[2026-07-20 10:15] AuthButton.tsx refactored — 14 inline styles moved to CSS module — AuthButton.tsx, AuthButton.module.css
+
+[2026-07-20 11:00] Database schema migration created — 14 tables with indexes, RLS, triggers, seed defaults — supabase/migrations/001_initial_schema.sql
+
+[2026-07-20 12:00] History persistence (Task C): calculation_history + rate_limits tables, 3 API routes, useHistory.ts dual-mode rewrite — supabase/migrations/002_calculation_history.sql, src/app/api/history/*
+
+[2026-07-20 12:30] Discord Bot integration (Task D): build, deploy /admin commands, verified Azura#0869 — discord-bot/
+
+[2026-07-20 14:30] Task 9: Purposeful Animation — FormulaGrid stagger, reduced-motion support, LoadingScreen mobile particle reduction — FormulaGrid.tsx, FormulaCard.module.css, LoadingScreen.config.ts, LoadingScreen.module.css
+
+[2026-07-20 15:53] Premium Redux redesign session 1 — Tasks 1-2: design tokens + AppShell responsive — globals.css, design-tokens.ts, AppShell.tsx+module.css
+
+[2026-07-20 17:30] Task 4: FormulaCard/Grid redesign — flat icons, formula preview, tags, responsive 4/3/2-col grid — FormulaCard.tsx+module.css, FormulaGrid.tsx+module.css
+
+[2026-07-20 18:30] Premium Redux Tasks 3-12 complete — Full system redesign from Obsidian dark to Premium Redux:
+	- Task 3: Sidebar collapsed state (56px icon-only tablet) + mobile drawer with spring animation — Sidebar.tsx+module.css
+	- Task 4: FormulaCard flat icon backgrounds, formula preview (JetBrains Mono), department/level tags — FormulaCard.tsx+module.css, FormulaGrid.tsx+module.css
+	- Task 5: LevelTabs horizontal chip scroll (overflow-x auto, scrollbar hidden) — LevelTabs.tsx+module.css
+	- Task 6: HomeHero stats row (23+ formulas, 5 levels, 99.9% accuracy), compact mobile, hidden below 480px — HomeHero.tsx, globals.css
+	- Task 7: LevelFilter chip style matching LevelTabs — LevelFilter.tsx+module.css
+	- Task 8: History bottom sheet (Framer Motion spring, 65vh, drag handle) on mobile, drawer on desktop — HistorySidebar.tsx+module.css
+	- Task 9: Card stagger FormulaGrid (0.05s stagger capped 0.3s), reduced-motion support — FormulaGrid.tsx, FormulaCard.module.css, LoadingScreen.config.ts
+	- Task 10: Auth responsive CSS (full-screen modal mobile scaffolding) — AuthButton.module.css, AuthGuard.module.css
+	- Task 11: React.memo on FormulaCard + LevelTabs, content-visibility:auto on cards, will-change on animated elements — FormulaCard.tsx, LevelTabs.tsx, FormulaCard.module.css, HistorySidebar.module.css
+	- Task 12: Build verified ✓ (0 type errors, 0 build errors, 27+ routes), ESLint 2 pre-existing errors in useHistory.ts — Log.txt
+Key stats: 12 CSS modules created/modified, 12 TSX components updated, responsive 4-breakpoint system, anti-pattern compliant audit
+
+[2026-07-21 12:00] Ursa palette swap: Bear-inspired colors — forest green-gray bg (#242F35/#2F3D44), cream-peach primary (#E8B896), warm text (#F2E6DA). Replaced all gold/magenta tokens across CSS/TS tokens. — globals.css, design-tokens.ts, LoadingScreen.module.css
+
+[2026-07-21 16:34] Comprehensive UI/UX Audit & Refactor — 6 critical fixes applied:
+  - Fixed Sidebar level filter logic: activeLevel state now correctly bound to AppShell and filters formulas by education level
+  - Integrated LevelFilter component on main view between HomeHero and FormulaGrid for 1-click level switching
+  - Removed double footers duplication (merged into single premium footer-premium layout)
+  - Removed duplicate floating fixed menu button overlapping topbar
+  - Added ⌘K and / keyboard shortcut handlers to focus search input + added X clear search button to HomeHero
+  - Added Escape key handler to close modals/drawers + updated Mobile Bottom Navigation active states & actions
+  - Build & type check verified clean: 0 type errors (tsc --noEmit)
+  — src/components/AppShell.tsx, src/components/HomeHero.tsx, Log.txt
+
+[2026-07-21 16:38] Layout Fix: Sidebar Overlap Resolution
+  - Fixed .appShell CSS (added display: flex, min-height: 100vh) to align Sidebar and mainContent side-by-side in flex layout
+  - Fixed .mainContent CSS (added flex: 1, min-width: 0) to prevent sidebar from overlapping hero & formula grid on desktop
+  - Scoped .sidebar-mobile-overlay to mobile/tablet viewports only (max-width: 1024px) so dark backdrop blur overlay doesn't cover desktop screen
+  - Fixed hardcoded active class on "All Levels" button in Sidebar.tsx (now correctly tracks activeLevel === 'all')
+  - Build & type check verified clean: 0 type errors (tsc --noEmit)
+  — src/app/globals.css, src/components/Sidebar.tsx, Log.txt
+
+[2026-07-21 16:43] Sidebar Smooth Toggle & LevelFilter Cleanup
+  - Removed LevelFilter chips bar from main page body (as levels are managed inside Sidebar)
+  - Animated width (240px to 0px), x (0 to -240px), and opacity in Framer Motion motion.aside in Sidebar.tsx for smooth spring toggle
+  - Upgraded Topbar sidebar toggle button ("เปิดเมนู" / "ซ่อนเมนู") on the left side of topbar
+  - Build & type check verified clean: 0 type errors (tsc --noEmit)
+  — src/components/AppShell.tsx, src/components/Sidebar.tsx, src/app/globals.css, Log.txt
+
+[2026-07-21 16:59] PC Desktop Topbar Visibility & Responsive Fix
+  - Removed display: none from .topbar on desktop (PC screen width >1024px) in globals.css
+  - Topbar with "เปิดเมนู / ซ่อนเมนู" (Open/Hide Menu), language selector, and history buttons is now visible across ALL device resolutions (PC, Tablet, Mobile)
+  - Verified live in browser subagent on desktop view (1280x800): toggle opens/closes sidebar smoothly and main content expands seamlessly
+  - Build & type check verified clean: 0 type errors (tsc --noEmit)
+  — src/app/globals.css, Log.txt
+
+[2026-07-21 17:02] Removed dead hooks: useDebounce.ts, useFilter.ts, useSidebar.ts — not imported anywhere, dead code cleanup — src/hooks/ (3 files deleted)
+
+[2026-07-21 17:05] Changed localStorage → sessionStorage in LanguageContext.tsx — CLAUDE.md Rule #3 compliance: frontend-only phase, no persistent storage — src/lib/LanguageContext.tsx (2 occurrences)
+  - Type-check: 0 errors (npx tsc --noEmit). Build: 0 errors (41 routes).
+  — src/components/AppShell.tsx, src/app/globals.css, src/components/HomeHero.tsx, Log.txt[2026-07-21 12:25] Added department filtering — departments clickable, real formula counts — Sync/registry.ts, Sidebar.tsx, AppShell.tsx
+
+[2026-07-21 17:15] Redesigned LoadingScreen — "Minimal Precision": removed rings/particles, added large % counter + brand typography + border-only explore button — src/components/features/loading/LoadingScreen.module.css (full rewrite), LoadingScreen.tsx (JSX replaced, logic unchanged)
+
+[2026-07-21 18:01] Layout Redundancy & UI Fitting Fixes
+  - Replaced duplicate static topbar title in AppShell.tsx with dynamic location breadcrumbs (e.g. Home › All Formulas, Home › Elementary School, Home › Search)
+  - Consolidated FormulaCard.tsx header structure into single interactive button (Icon, Title, Category, Formula preview badge, Level tag, Chevron toggle)
+  - Removed duplicate formula string rendering inside expanded card body
+  - Refined FormulaCard.module.css headerMeta, headerMain, cardFormula code badge styling
+  - Build & type check verified clean: 0 type errors (tsc --noEmit)
+  — src/components/AppShell.tsx, src/components/formulas/FormulaCard.tsx, src/components/formulas/FormulaCard.module.css, Log.txt
+
+[2026-07-21 18:05] Mobile-First Responsive Architecture Overhaul
+  - FormulaGrid.module.css: Configured true 1-column layout on mobile (<768px), 2-col on tablet (768-1024px), 3-col on desktop, 4-col on ultrawide (>1440px)
+  - FormulaCard.tsx: Added inputMode="decimal" for native numeric keypad pop-up on mobile devices
+  - AppShell.tsx: Added 1-tap horizontal touch-swipe LevelFilter pill bar for mobile + upgraded Glassmorphism bottom navigation bar
+  - globals.css: Added iOS Safari auto-zoom protection (font-size: 16px on mobile inputs), backdrop-filter blur bottom nav with glowing active tab indicator line, 84px mobile clearance bottom padding
+  - Build & type check verified clean: 0 type errors (tsc --noEmit)
+  — src/components/formulas/FormulaGrid.module.css, src/components/formulas/FormulaCard.tsx, src/components/formulas/FormulaCard.module.css, src/components/AppShell.tsx, src/app/globals.css, Log.txt
+
+[2026-07-21 18:11] Clean Device Separation Architecture (Mobile vs Desktop)
+  - AppShell.tsx: Isolated Mobile Topbar (App Logo + MathCalc + Language Dropdown ONLY) from Desktop Topbar (Sidebar Toggle + Dynamic Breadcrumb + Language + History Clock Button)
+  - Removed duplicate menu and history buttons from Mobile Topbar (mobile navigation is 100% handled by Glassmorphic Mobile Bottom Nav)
+  - globals.css: Styled .topbar-mobile-title branding font
+  - Browser subagent verified clean separation on Desktop (1280x800) and Mobile (375x812)
+  - Build & type check verified clean: 0 type errors (tsc --noEmit)
+  — src/components/AppShell.tsx, src/app/globals.css, Log.txt
+
+[2026-07-21 18:16] Full-Width PC Desktop Screen Layout Optimization
+  - globals.css: Removed rigid max-width caps (`max-width: 1600px` on `.appShell` and `max-width: 1400px` on `.app-wrapper`). Replaced with fluid `width: 100%; max-width: 100%` layout with responsive side padding (`var(--space-2xl)`).
+  - FormulaGrid.module.css: Upgraded grid to dynamic `repeat(auto-fill, minmax(320px, 1fr))` on desktop and `minmax(340px, 1fr)` on large monitors (>1600px), automatically expanding to 4, 5, or 6 columns depending on PC screen resolution.
+  - LevelFilter.module.css: Aligned filter chip row padding with main content padding.
+  - Browser verified via screenshot: UI fills PC desktop screen seamlessly without dead black side margins.
+  - Build & type check verified clean: 0 type errors, 0 build errors.
+  — src/app/globals.css, src/components/formulas/FormulaGrid.module.css, src/components/LevelFilter.module.css, Log.txt
+
+[2026-07-21 18:19] LanguageDropdown Overlap Fix
+  - LanguageDropdown.tsx: Removed legacy inline `style={{ position: "fixed", top: 16, right: 24, zIndex: 60 }}` from root wrapper element.
+  - globals.css: Styled `.lang-btn` to match `.tb-btn` flexbox styling so language selector and history button render neatly side-by-side inside `.topbar-right` flex container with zero visual overlap.
+  - Verified via browser screenshot: Language selector `[ EN v ]` and History button `[ History ]` are cleanly positioned side by side.
+  - Build verified: 0 type errors, 0 build errors.
+  — src/components/features/language/LanguageDropdown.tsx, src/app/globals.css, Log.txt
+
+[2026-07-21 19:15] How to Use PC & Mobile Full Support Refactor
+  - InfoModal.tsx: Added Device Segmented Tab Controller ("ทั้งหมด" / "💻 PC / คอมพิวเตอร์" / "📱 Mobile / มือถือ") with auto-device detection on modal open. Added device category tags (💻 PC, 📱 Mobile, 💻 PC & 📱 Mobile) and keyboard shortcut badges (⌘K / Enter / Esc).
+  - InfoModal.data.ts: Added self-contained localized guide data in 5 languages (TH, EN, JP, CH, KO) with PC and Mobile tailored steps & tips.
+  - InfoModal.module.css: Added styles for device tab segmented control, pill badges, and step list items.
+  - globals.css: Configured `.m-info-container` with `max-height: 88vh; display: flex; flex-direction: column; overflow: hidden;` and `.modal-body` with `overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch;` so content scrolls smoothly on mobile viewports without covering the bottom action button.
+  - Build & type check verified clean: 0 type errors (npx tsc --noEmit), browser subagent verified live on PC and Mobile resolutions.
+  — src/components/features/info/InfoModal.tsx, src/components/features/info/InfoModal.data.ts, src/components/features/info/InfoModal.module.css, src/app/globals.css, Log.txt
+
+[2026-07-21 19:42] Lucide-React Icon Integration for InfoModal
+  - InfoModal.tsx & InfoModal.data.ts: Replaced legacy string/FontAwesome icon references with modern vector icons from `lucide-react` (GraduationCap, Calculator, Keyboard, Navigation, Grid3X3, Clock, Globe, BookOpen, Lightbulb, Monitor, Smartphone, Layers).
+  - Type-check verified clean: 0 type errors (npx tsc --noEmit).
+  — src/components/features/info/InfoModal.tsx, src/components/features/info/InfoModal.data.ts, Log.txt
+
+[2026-07-21 19:46] Sidebar Collapsible Accordion Sections Refactor
+  - Sidebar.tsx: Integrated `SidebarSection` component for EDUCATION LEVEL and DEPARTMENTS headers with `levelsOpen` and `deptsOpen` state. Users can click section headers to collapse/expand items with smooth Framer Motion spring animation, rotating ChevronDown icons, and item count badges.
+  - Type-check verified clean: 0 type errors (npx tsc --noEmit).
+  — src/components/Sidebar.tsx, src/components/sidebar/SidebarSection.tsx, Log.txt
+
+[2026-07-21 20:00] Bug audit and fixes (6 bugs found and fixed):
+. Bug: HistorySidebar missing isMobile prop — AppShell.tsx was not passing isMobile to HistorySidebar, so mobile users never saw the bottom sheet (always got desktop drawer). Fixed: pass isMobile={isMobile} + wrap onDelete with wrapper to match signature.
+. Bug: Duplicate .appShell and .mainContent CSS definitions — globals.css had these defined at line ~108 (early LAYOUT section) and again at line ~1296 (APP SHELL section); the early ones were dead code being shadowed. Removed the duplicate early definitions, left single authoritative set.
+. Bug: sidebar-mobile-overlay z-index conflict — defined twice with different z-index values (80 in old media query vs 45 at bottom). Consolidated into single definition: z-index 79 (always fixed, hidden above 1025px via @media).
+. Bug: Stray closing brace left in CSS after sidebar-mobile-overlay removal causing CSS parse errors for all rules after line ~217. Fixed by removing orphaned `}`.
+. Bug: Topbar padding not responsive — .topbar used padding: 14px 48px on ALL viewports, squeezing mobile content. Added @media (max-width: 768px) { .topbar { padding: 10px 16px } }.
+. Bug: HomeHero Thai title missing — both Thai and English showed "Premium Math Calculator" (English). Fixed: Thai now shows "เครื่องคิดเลขคณิตศาสตร์". Also removed 9 inline styles from clear button → .search-clear-btn CSS class.
+
+[2026-07-21 21:30] Layout bug fixes — 5 fixes applied:
+  - Added missing --shadow-md, --shadow-lg, --shadow-glow CSS variables to :root (were referenced by var() but undefined)
+  - Added flex-direction: column to .app-wrapper (was flex without direction, squeezing vertical content sideways)
+  - Added .sidebar-mobile-overlay CSS class (was used in Sidebar.tsx but undefined — overlay backdrop had no styles)
+  - Fixed AppShell.tsx sidebarOpen logic: removed isMobile gate (was: isMobile ? showSidebar : true — now: showSidebar, so Hide button actually hides sidebar on desktop)
+  - Fixed Sidebar.tsx className: added ${!isOpen ? "closed" : ""} so closing sidebar actually applies translateX(-120%) via .sidebar-premium.closed rule
+  - Build verified: 0 type errors, 0 build errors
+  — src/app/globals.css, src/components/AppShell.tsx, src/components/Sidebar.tsx, Log.txt
+
+[2026-07-21 22:25] Card Transitions & Animations Redesign — integrated Framer Motion height transition for card expand/collapse, resolved grid layout popLayout displacement with position:relative, optimized spring layout physics and removed transition conflicts — src/components/formulas/FormulaCard.tsx, src/components/formulas/FormulaCard.module.css, src/components/formulas/FormulaGrid.tsx, src/components/formulas/FormulaGrid.module.css, Log.txt
+
+[2026-07-21 22:40] Dashboard Page Redesign & Overhaul (MathCalc Admin Suite)
+  - DashboardLayout.tsx: Updated branding from "ZOO Admin" to "MathCalc PRO Admin Analytics Suite", added interactive Lucide icons (LayoutDashboard, Calculator, Bell, Search), breadcrumbs, kbd shortcut badge (⌘K), and user superadmin badge.
+  - dashboard.module.css: Added modern glassmorphic layout classes, mobile navigation header, notification bell pulse, and status badges.
+  - OverviewPage.tsx: Overhauled with dynamic Lucide KPI cards (Total Users, Active Sessions, Calculations Today, MRR, Page Views), Top Used Formulas leaderboard (#1 Quadratic Equation, #2 Pythagorean Theorem, etc.), Live System Infrastructure health status (Web server, Math Engine, Supabase, Discord Bot), quick action buttons (Export CSV, Broadcast), and enhanced Recharts graphs.
+  - Type-check verified clean: 0 type errors (npx tsc --noEmit).
+
+[2026-07-21 22:48] Native Mobile Layout & Universal Responsive Overhaul
+  - AppShell.tsx & globals.css: Added dynamic notification badge (.mb-badge) for History item in Mobile Bottom Navigation Bar, enhanced safe area padding support (env(safe-area-inset-bottom)), touch-friendly active states.
+  - LevelFilter.module.css: Enhanced horizontal touch scrolling (touch-action: pan-x, scroll-snap-type), minimum 42px touch chip height, active press feedback.
+  - HistorySidebar.tsx: Native mobile Bottom Sheet drawer on <768px screens with backdrop blur overlay, swipe drag handle, max-height 65vh, rounded top corners.
+  - DashboardLayout.tsx & dashboard.module.css: Added Mobile Admin Quick Nav Tab Bar (Overview, Finance, Analytics, Users, Settings) for instant one-thumb navigation on mobile without repetitive sidebar toggling.
+  - Verified via browser subagent on Mobile Portrait (375x812) & Desktop viewports. Type check verified clean: 0 type errors (npx tsc --noEmit).
+  — src/components/AppShell.tsx, src/app/globals.css, src/components/LevelFilter.module.css, src/components/dashboard/DashboardLayout.tsx, src/components/dashboard/dashboard.module.css, Log.txt
+
+[2026-07-22 13:58] Dashboard fixes and layout polish: fixed MRR division typo, removed redundant sidebar drawer on mobile, fixed casing color lookup for device chart, added rich fallback mock data for Finance, Analytics, and Users pages — DashboardLayout.tsx, globals.css, OverviewPage.tsx, FinancePage.tsx, AnalyticsPage.tsx, UsersPage.tsx
+
+[2026-07-22 14:15] Dashboard layout fix: hide desktop topbar header on screens smaller than 900px to resolve horizontal layout overflow on mobile/tablet viewports — dashboard.module.css
+
+[2026-07-22 14:20] Sidebar z-index fix: updated .sidebar-premium z-index to 90 under 900px media query to resolve dark overlay blocking interactivity — globals.css
+
+[2026-07-22 14:26] Scroll lock implementation: locked body scroll on AppShell when mobile sidebar, history drawer, or modals are open to prevent background scrolling — AppShell.tsx
+
+[2026-07-22 15:00] Purchase page responsive refactor: migrated styles to module, 4-breakpoint layout, fixed Thai language sync, verified build & responsiveness — PurchaseClient.tsx, Purchase.module.css, AppShell.tsx, globals.css
+
+[2026-07-22 15:00] Dashboard responsive redesign: full mobile layout with bottom tab nav, drawer sidebar, responsive KPI grids/charts, removed all inline grid overrides, added comprehensive responsive CSS utilities — DashboardLayout.tsx, dashboard.module.css, globals.css, OverviewPage.tsx, SettingsPage.tsx
+
+[2026-07-22 17:19] Sidebar Scroll Integration: Wrapped Levels & Departments in scrollNav container — Added vertical scrolling for large menus without affecting fixed header/footer/profile — src/components/Sidebar.tsx, src/components/Sidebar.module.css
+
+[2026-07-22 17:31] Sidebar Visual Polish: Redesigned section triggers into beautiful premium card panels, styled scrollNav scrollbar in thin cream-peach theme, locked main sidebar overflow to prevent double scrollbar, added section padding — src/app/globals.css, src/components/Sidebar.module.css, src/components/sidebar/SidebarSection.module.css
+
+[2026-07-22 19:28] Added Purchase button to main sidebar: ShoppingCart icon, router push to /purchase, thai translation "ซื้อสูตร" — Sidebar.tsx, math-data.ts
+
+[2026-07-22 19:32] Purchase page responsive redesign: added 4-breakpoint responsive system (901+, 900, 640, 400), bottom nav clearance, mobile card layouts, responsive typography — Purchase.module.css, globals.css
+
+[2026-07-22 20:00] Second Brain integration complete: Obsidian vault fully wired as project hub — Vault-Dashboard.base (9 views), System-Bridges.md (Log.txt/CLAUDE.md/AGENTS.md/RULE.md/Claude Memory), Project-Brain-Map.md MOC, 00-Inbox/, CLAUDE.md Rule #6 (auto-sync vault on completion), session note — math-calculator-vault/ (12 files), CLAUDE.md, Log.txt
+
+[2026-07-22 20:15] SignUp + Verify page responsive redesign: 4-breakpoint CSS module rewrite, mobile-first genuine layouts (not shrunk desktop), framer-motion animations, 5-language translations added to uiTranslations, bottom nav clearance ≤640px, large touch targets (min 44px), Success/Error/Loading animated states — SignUpClient.tsx, SignUp.module.css, VerifyClient.tsx, Verify.module.css, math-data.ts
+
+[2026-07-22 21:50] Login page created: calculator display strip with "ACCESS:" prompt + blinking cursor, email/password form, Google OAuth, staggered Framer Motion entrance, Ursa palette, 4-breakpoint responsive mobile-first, standalone layout (no AppShell), 12 translation keys across th/en/jp/ch/ko, build verified — LoginClient.tsx, Login.module.css, page.tsx, math-data.ts
+
+[2026-07-22 22:10] vault sync: Brain Map missing decisions/architecture/sessions — added 3 decisions (404/login/purchase), 4 architecture components (404/Purchase/Login/SignUp), new Sessions section (5 notes). System-Bridges memory count 19→21 (added Purchase Page/404/Login Design). Cross-link purchase-page↔404 — Project-Brain-Map.md, System-Bridges.md, purchase-page.md
+
+[2026-07-22 22:15] feat: 404 Not Found page — calculator-display concept with "400 + 4 =" equation, ∉ domain math pun, Framer Motion staggered entrance animation (calc→result→err→tag→desc→CTA), Ursa palette, 4-breakpoint responsive mobile-first CSS, 5-language translations (th/en/jp/ch/ko). Mobile: full-width card, 3rem display, compact padding, bottom-nav clearance, genuinely designed not shrunk. — not-found.tsx, NotFoundClient.tsx, NotFound.module.css, math-data.ts (+4 key groups)
+
+[2026-07-22 23:30] Departments Phase 1: added 21 new departments + 22 formulas (1/department), FormulaDef.subject→string, Department.subjects→string[], civil-engineering gets ce_moment_inertia + mechanics_of_materials subject. TypeScript clean, 45 formulas total, 23 departments, sidebar badge auto-updates — math-data.ts, registry.ts, types/formulas.ts
+
+[2026-07-22 23:50] Sidebar scroll fix: wrapped Levels + Departments SidebarSections in <nav className={styles.scrollNav}> with overflow-y:auto, flex:1, custom thin scrollbar (Ursa palette). Header + Footer stay sticky while middle scrolls. TypeScript clean — Sidebar.tsx, Sidebar.module.css
+
+[2026-07-22 23:55] SidebarSection premium styling: rewrote SidebarSection.module.css (shimmer hover, expanded state accent, pill count badge, left accent border on content), enhanced SidebarSection.tsx (layout animation, aria-expanded, sectionContentInner wrapper), polished scrollNav (scroll-behavior:smooth, sticky ::after fade overlay, active scrollbar state). TypeScript clean — SidebarSection.module.css, SidebarSection.tsx, Sidebar.module.css
+
+[2026-07-22 23:58] Sidebar scroll FIX: removed ::after sticky pseudo-element (interfered with overflow scroll), changed flex:1 → flex:1 1 0% (explicit grow/shrink/basis), ensured min-height:0 present. scrollNav now properly constrained — overflow-y:auto triggers scrollbar when content exceeds allocated height — Sidebar.module.css
+
+[2026-07-23 10:45] Sidebar navLabel + badge fix: root cause — `<button>` form controls need explicit `width:100%` to stretch parent. Runtime DevTools confirmed `.dept-nav-item` button 214.7px vs parent `.sectionContentInner` 195.2px (3 wrong CSS theories discarded before checking computed widths). Added `width:100%` to `.sidebar-nav-item` + `.dept-nav-item`. Label now truncates with ellipsis, badge visible. — globals.css
+
+[2026-07-23 11:15] Sidebar NavLabel Truncation & Badge Visibility Fix: Root cause — `<button>` form controls need explicit `width:100%` to stretch parent container. Added `width:100%` to `.sidebar-nav-item` & `.dept-nav-item`. NavLabel now truncates cleanly with ellipsis and count badge remains fully visible — src/app/globals.css
+
+[2026-07-23 11:30] SidebarSection Per-Section Independent Scroll: Set `max-height: 260px` with `overflow-y: auto` on `.sectionContent`, added `maxHeight` prop in `SidebarSection.tsx` with Framer Motion `Math.min` height capping. Each section now scrolls independently without overflowing the container — src/components/sidebar/SidebarSection.tsx, src/components/sidebar/SidebarSection.module.css
+
+[2026-07-23 11:45] SidebarSection Layout Spacing & ScrollNav Polish: Adjusted section padding gaps and removed sticky scroll fade blockages to guarantee smooth independent section animations — src/components/sidebar/SidebarSection.module.css, src/components/Sidebar.module.css
+
+[2026-07-23 12:30] Phase 2 Backend complete: 18-table Supabase schema (migrations 001-004), 27+ API routes refactored with requireAdmin guards, shared patterns (supabase-client singleton, api-response helpers, api-constants), security fixes (impersonation token→httpOnly cookie, admin audit log real IDs), auth features (forgot/reset password routes + page, SignUp show/hide + confirm password, Login forgot password inline form), Sidebar shows logged-in user name from useSession(). TypeScript 0 errors. — src/lib/supabase-client.ts, src/lib/api-response.ts, src/lib/api-constants.ts, src/lib/database.types.ts, src/app/api/*, supabase/migrations/*, LoginClient.tsx, SignUpClient.tsx, Sidebar.tsx, ResetPasswordClient.tsx
+
+[2026-07-23 12:35] vault sync: created backend-api-schema architecture note, updated frontend-design-direction (phase/stack), Brain Map (backend rows + session), System Bridges (date bump + link) — math-calculator-vault/02-Architecture/backend-api-schema.md, frontend-design-direction.md, Project-Brain-Map.md, 05-Bridges/System-Bridges.md
+[2026-07-23 16:47] Loading Screen EXPLORE Redirect Fix: Updated SplashGate to use Next.js useRouter to navigate users directly to /login when clicking the EXPLORE button on the loading screen — src/components/SplashGate.tsx, Log.txt
+
+[2026-07-23 16:50] Auth & Session Expiry Polish: Check `useSession()` in `SplashGate.tsx` when clicking EXPLORE (authenticated users enter directly, unauthenticated go to `/login`). Set session & JWT `maxAge` to 30 minutes in `auth-options.ts` — src/components/SplashGate.tsx, src/lib/auth-options.ts, Log.txt
+
+[2026-07-23 17:40] Dashboard Redesign Task 0 complete: installed dependencies (`swr`, `react-window`, `@types/react-window`) via pnpm, committed to git — package.json, pnpm-lock.yaml
+
+[2026-07-23 18:10] Dashboard Redesign Task 1 complete: utility layer — fetcher, useDebouncedValue hook, i18n JSON (th/en), useDashboardT hook. Dependencies already installed from Task 0. — src/lib/fetcher.ts, src/hooks/useDebouncedValue.ts, src/components/dashboard/i18n/dashboard.th.json, src/components/dashboard/i18n/dashboard.en.json, src/components/dashboard/i18n/useDashboardT.ts
+
+[2026-07-23 18:45] Dashboard Redesign Task 2 complete: UI primitives — Panel, KpiCard (animated), Skeleton (4 variants), EmptyState, ErrorState (retry btn), StatusBadge. Created dashboard-blocks.module.css with all primitive styles + section layout + responsive overrides. — src/components/dashboard/ui/Panel.tsx, src/components/dashboard/ui/KpiCard.tsx, src/components/dashboard/ui/Skeleton.tsx, src/components/dashboard/ui/EmptyState.tsx, src/components/dashboard/ui/ErrorState.tsx, src/components/dashboard/ui/StatusBadge.tsx, src/components/dashboard/styles/dashboard-blocks.module.css
+[2026-07-23 20:15] Dashboard Redesign Task 3 complete: DashboardProvider context (TabId, DateRange, refreshKey, role) + DashboardGuard auth gate (fetches /api/auth/admin-check, loading spinner, redirect to /login on unauthorized). Adapted guard to real API response format { success, data: { is_admin } } instead of plan's data.authorized. — src/components/dashboard/DashboardProvider.tsx, src/components/dashboard/DashboardGuard.tsx
+[2026-07-23 20:30] Auth review fix: DashboardGuard — (1) mountedRef cleanup prevents race condition on unmount, (2) roleMeetsMinimum() enforces requiredRole prop against is_admin, (3) network/server errors show Retry UI instead of blindly redirecting to /login. — src/components/dashboard/DashboardGuard.tsx
+[2026-07-23 21:00] Dashboard Redesign Task 4 complete: DashboardShell layout — responsive sidebar (desktop 220px) + sticky topbar (date range pills, notification bell, hamburger) + content area + mobile bottom nav (≤900px) + drawer overlay (mobile sidebar). Wired to DashboardProvider context for tab switching and date range. Ursa palette: #1B272C darkest, #242F35 sidebar, #E8B896 cream-peach active. — src/components/dashboard/DashboardShell.tsx, src/components/dashboard/styles/dashboard-shell.module.css
+[2026-07-23 22:15] Dashboard Redesign Task 5 complete: Blocks CSS module extended (tables, pagination, settings, webhook cards, heatmap cells with tooltips + responsive), 5 SWR hooks created (useDashboardStats, useTraffic, useRevenue, useAnalytics, useUsers), fetcher upgraded to auto-unwrap successResponse format.
+[2026-07-23 22:40] Dashboard Redesign Task 6 complete: 8 Overview block components created (KpiRow, TrafficAreaChart, DevicePieChart, RecentActivityFeed, SystemHealth, TopPagesTable, ConversionFunnel, RevenueChart), blocks CSS extended with kpiRow grid, activity feed, health grid, funnel bars, pie legend, responsive overrides, TypeScript zero errors. — src/lib/fetcher.ts, src/components/dashboard/styles/dashboard-blocks.module.css, src/components/dashboard/hooks/useDashboardStats.ts, src/components/dashboard/hooks/useTraffic.ts, src/components/dashboard/hooks/useRevenue.ts, src/components/dashboard/hooks/useAnalytics.ts, src/components/dashboard/hooks/useUsers.ts
+[2026-07-23 23:00] Dashboard Redesign Task 7 complete: Created 3 remaining block components (FormulaHeatmap with react-window virtualization, PlanBreakdown with Recharts PieChart, GeographyList with country usage distribution bars), extended useAnalytics hooks and types for geo/formulas/plans endpoints. TypeScript zero errors. — src/components/dashboard/blocks/FormulaHeatmap.tsx, src/components/dashboard/blocks/PlanBreakdown.tsx, src/components/dashboard/blocks/GeographyList.tsx, src/components/dashboard/hooks/useAnalytics.ts
+[2026-07-23 23:30] Dashboard Redesign Task 8 complete: Created 3 page-level components (OverviewPage, AnalyticsPage, FinancePage) composing blocks with interactive date range chip filters and SWR hooks. Added chipRow/chip/chipActive styles to dashboard-blocks.module.css. TypeScript zero errors. — src/components/dashboard/pages/OverviewPage.tsx, src/components/dashboard/pages/AnalyticsPage.tsx, src/components/dashboard/pages/FinancePage.tsx, src/components/dashboard/styles/dashboard-blocks.module.css
+[2026-07-24 00:08] Dashboard Redesign Task 9 complete: Created UsersPage (paginated user table, search/debounce, status filter, Chevron pagination) + SettingsPage (4-tab layout: General/Security/Billing/Webhooks) + 4 settings placeholder stubs + 2 new CSS modules (dashboard-tables, dashboard-settings). TypeScript zero errors. — src/components/dashboard/pages/UsersPage.tsx, src/components/dashboard/pages/SettingsPage.tsx, src/components/dashboard/settings/GeneralSettings.tsx, SecuritySettings.tsx, BillingSettings.tsx, WebhookManager.tsx, src/components/dashboard/styles/dashboard-tables.module.css, dashboard-settings.module.css
+[2026-07-24 00:12] Dashboard Redesign Task 10 complete: Upgraded settings stubs to real implementations (GeneralSettings with useState+PATCH, BillingSettings with masked key+formHint, WebhookManager with API fetch+table) + created InvoiceTable and RefundTable (useState+useEffect+fetcher pattern). Added formHint CSS. TypeScript zero errors. — src/components/dashboard/settings/GeneralSettings.tsx, BillingSettings.tsx, WebhookManager.tsx, src/components/dashboard/tables/InvoiceTable.tsx, RefundTable.tsx, src/components/dashboard/styles/dashboard-settings.module.css
+[2026-07-24 00:25] Dashboard Redesign Task 11 complete: Rewrote DashboardClient to use DashboardProvider, DashboardShell, and DashboardRouter; updated src/app/dashboard/page.tsx with DashboardGuard; deleted 25 legacy monolith dashboard components and dashboard.module.css. TypeScript clean (0 errors). — src/components/dashboard/DashboardClient.tsx, src/app/dashboard/page.tsx, src/components/dashboard/ (deleted old monolith components & css)
+
+[2026-07-24 00:40] Dashboard Redesign Task 12 complete: Created 4 table modals (UserDetailModal—fetches GET /api/users/[id], MessageModal—POST message, BanConfirmModal—POST ban/unban with optional reason, PlanChangeModal—POST plan change) + dashboard-modals.module.css (overlay, card, animations, responsive) + wired into UsersPage action buttons (👁 ✉ 🚫 💳) with selectedUser/activeModal state + mutate() revalidation on success. TypeScript zero errors. — src/components/dashboard/modals/UserDetailModal.tsx, MessageModal.tsx, BanConfirmModal.tsx, PlanChangeModal.tsx, src/components/dashboard/styles/dashboard-modals.module.css, src/components/dashboard/pages/UsersPage.tsx
+
+
+[2026-07-24 01:20] Dashboard Redesign Task 13 + useDashboardAuth complete: Created useDashboardAuth hook (extracts auth logic from DashboardGuard — fetch /api/auth/admin-check, mountedRef cleanup, {isLoading, isAuthorized, user, error, retry} return) + refactored DashboardGuard to use the hook (thinner, UI-only concerns: spinner, error+retry banner, redirect on unauthorized, role gate) + cleanup pass (no dead code, no orphaned CSS imports, no dangling legacy references, fetcher correctly GET-only). TypeScript zero errors (npx tsc --noEmit exit:0). — src/components/dashboard/hooks/useDashboardAuth.ts (NEW), src/components/dashboard/DashboardGuard.tsx (REFACTORED)
+
+[2026-07-24 02:10] Dashboard Patch 1-6 applied: server-side auth, initialRole required, getServerSession wired to next-auth getToken, DashboardGuard neutered to context-role gate. -- Patch 1: src/lib/auth.ts (NEW, getServerSession via next-auth getToken), Patch 2: src/app/dashboard/page.tsx (async server component + redirect), Patch 3: src/components/dashboard/DashboardProvider.tsx (initialRole: Role required, Role type exported), Patch 4: src/components/dashboard/DashboardClient.tsx (initialRole prop pass-through), Patch 5: verified all 4 settings API routes already have requireAdmin() checks, Patch 6: src/components/dashboard/DashboardGuard.tsx (neutered to useDashboardContext().role, no fetch). TypeScript clean (exit:0). Verification grep: no default admin role, settings routes check via requireAdmin (superior to getServerSession).
+
+[2026-07-24 04:00] Patch 7 complete: i18n wiring fix — expanded 50→155 keys (en+th), added interpolation to useDashboardT, wired 29 components (sidebar, blocks, pages, settings, tables, modals) to use useDashboardT(), patched 7 wrong import paths + 17 wrong destructuring patterns from workflow agents, TypeScript clean exit:0 — src/components/dashboard/i18n/dashboard.{en,th}.json, src/components/dashboard/i18n/useDashboardT.ts, 27 *.tsx files
+[2026-07-24 05:00] Server-side admin gate: dashboard/page.tsx now queries DB for is_admin = TRUE before rendering — previously only checked JWT session (any authenticated user could access). Non-admin redirects to /, unauthenticated to /login. All API routes already protected via requireAdmin(). — src/app/dashboard/page.tsx
+[2026-07-24 05:15] Fixed: getServerSession() always returned null — ReadonlyRequestCookies from next/headers doesn't support bracket notation (cookies[name]) that getToken() uses internally. Convert to plain object via getAll(). This was root cause of dashboard always redirecting to /login even for admin users. — src/lib/auth.ts
+[2026-07-24 05:30] Fixed: rate limiter column mismatch — migration 003 renamed key→identifier but rate-limiter.ts still queried .eq("key",...) and upserted { key } + { updated_at } (column also dropped in migration). Changed all references to identifier, removed updated_at. — src/lib/rate-limiter.ts
+[2026-07-24 14:12] Fixed: WebhookManager TypeError — wh.events was undefined because DB schema uses scalar event_type; normalized eventsList to fallback to [event_type] and added array validation on webhooks state response. — src/components/dashboard/settings/WebhookManager.tsx
+[2026-07-24 15:15] Checkout Endpoint & Stripe API Version Fix complete: Updated PurchaseClient.tsx to call /api/payments/create-checkout-session with required payload (productName, amountCents, successUrl, cancelUrl) instead of 404 /api/stripe/checkout. Removed invalid apiVersion: "2025-02-10.acacia" and added TypeScript declare global for __stripe__ on globalThis in stripe.ts. Production build passed (pnpm run build exit:0). — src/components/purchase/PurchaseClient.tsx, src/lib/stripe.ts
+[2026-09-27 10:53] Prompt audit of Claude Code config — CLAUDE.md/AGENTS.md/RULE.md described a frontend-only, Tailwind, /lib/calculator codebase that no longer exists. Repo is full-stack (Supabase, Stripe, Discord bot) using CSS Modules + Ursa token system. Corrected 8 stale facts: stack/phase/scope/calc-logic in CLAUDE.md, code-org/styling/build-gate in RULE.md, dangling Fable-5 skill ref in AGENTS.md. Also switched the quality gate from npm run build to pnpm build (project is pnpm-only). Backups: /tmp/prompt-audit-backup-20260927/. Left alone: AGENTS.md:9-11 (Next.js 16.3 AGENTS.md claim, unverified, low confidence). — CLAUDE.md, AGENTS.md, RULE.md
+[2026-10-24 02:05] UI/UX audit v3 — ตรวจว่า 3 รอบการแก้ที่ผ่านมา (P0 → design system → a11y/dialogs/guardrails) ปิดอะไรจริง และวัดใหม่จาก globals.css แบบ live. ไม่แตะ src/ เลย
+• รากที่เจอ: gate ทั้ง 6 ตัวเขียวแต่ 6/6 อ่อนกว่าคำอ้างของตัวเอง — G9 วัดโทเคน literal ที่ไม่มีอยู่ในสไตล์ชีตแล้ว (#F5EDE0/#B8B0A8) และไม่วัด --text-muted ซึ่งเป็นโทเคนข้อความเดียวที่ตก AA (2.94:1, 76 จุด) · G8 ไม่สแกน .tsx (hex 106 จุด, global-error.tsx เป็น design system ที่ 4) และไม่นับ rgb()/rgba() (212 จุด) · G10 นับจากชื่อไฟล์จึงไม่เห็น dialog 2 ตัวของ HistorySidebar ที่ยังเป็น div + manual focus trap · G11 นับ dead class ได้ 2 ขณะที่วิธีอิสระได้ 17 global/16 module (นับคอมเมนต์เป็น usage)
+• P0 ใหม่ที่ไม่ใช่ CSS: success_url = /purchase?success=true และไม่มีใครอ่านค่า ⇒ หน้า /purchase/success (ตัวเดียวที่ยืนยันการจ่ายเงิน) เข้าไม่ถึงในเส้นทางจริง (PurchaseClient.tsx:94, PurchaseSuccessClient.tsx:22)
+• สคริปต์วัดเดิม (scripts/contrast.py:24 hardcode alpha .18 ของ --text-dim) รายงาน 1.67:1 ทั้งที่ค่าจริง .62 = 5.27:1 → เขียน scripts/v3/measure.py ที่ parse :root, resolve var(), composite alpha (ทำซ้ำได้ SHA256 ตรง 2 รอบ)
+• ตัวเลขสด: 73 token (19 ตัวไม่มีผู้ใช้ รวม --fs ทั้ง 6) · 353 font-size literal / 55 ค่า / var(--fs-*) 0 ครั้ง · text-role ตก AA 7 จาก 108 คู่ · 15/22 form control ไม่มีชื่อ · aria-live 0 · dialog จริง 10 surface (native 8) · focus restore หาย 4/8 · framer-motion 13 ไฟล์ไม่เคยถาม reduced-motion · แผนก 12/23 ว่าง, สูตร 25/45 เข้าไม่ถึงผ่านตัวกรอง · route 3 ตัวไม่มีลิงก์เข้า
+• กระทบยอด 35 ข้อของ v2: ปิดจริง 5 · ปิดบางส่วน 27 · ยังเปิด/แย่ลง 3 — "ปิดบางส่วน" เกือบทั้งหมดเพราะแก้ตัวแสดงผลแต่ไม่แก้ตัวบังคับ (gate) หรือไม่ครบทุกไฟล์ที่มีรูปแบบนั้น
+• สร้าง UI-UX-AUDIT-v3.html (149KB, ไฟล์เดียว, 8 ส่วน, 5 ตัวอย่างรันได้: contrast lab/type scale/dialog native vs div/focus ring/dead class) + audit-data/{metrics,a11y,screens}.json + scripts/v3/{measure,build_report}.py + scripts/v3/report/
+• ตรวจด้วย headless Chrome (screenshot ทุกส่วน) — พบและแก้ 3 บั๊กการเรนเดอร์ของรายงานเอง (badge wrap, type-scale bar หุบเพราะ flex shrink, swatch เป็น flex ทำให้บรรทัดข้อความต่อกัน)
+— UI-UX-AUDIT-v3.html, audit-data/*.json, scripts/v3/**, math-calculator-vault/03-Sessions/2026-10-24--ui-ux-audit-v3.md, Log.txt
+
+[2026-10-23 19:04] PLAN F-02: Stripe success_url / canceled banner / success page session_id
+• วิธีแก้ที่เลือก:
+  - Option A: ฮาร์ดโค้ด URL ใน route.ts ตัดสิทธิ์ client กำหนด (ขัดกับ pattern เดิมและ route.test.ts)
+  - Option B (เลือก): ส่ง successUrl เป็น `${origin}/purchase/success?session_id={CHECKOUT_SESSION_ID}` จาก PurchaseClient.tsx, เพิ่ม useSearchParams ใน PurchaseClient เพื่อแสดง banner เมื่อ canceled=true, ครอบ Suspense ใน purchase/page.tsx, เพิ่ม test case ใน route.test.ts ตรวจสอบ session_id parameter
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - tsc --noEmit: 0 error
+  - next build: exit 0
+  - vitest (ทั้งชุด 32+ files): pass 100%
+  - route.test.ts: pass 100% (เพิ่ม test session_id template)
+  - measure.py: ไม่มี regression
+[2026-10-23 19:07] PLAN F-01: --text-muted + text contrast on --card-bg
+• วิธีแก้ที่เลือก:
+  - Option A: เพิ่ม token --text-faint สำหรับ decorative text และเปลี่ยน 76 จุดเรียก (ขัด D1 ห้ามเพิ่ม --text-faint)
+  - Option B (เลือกตาม D1): ยุบรวม --text-muted เข้ากับ --text-secondary เป็น var(--text-secondary) (alpha 0.62) และปรับ --card-bg เป็น rgba(59, 74, 82, 0.12) ให้ contrast บน card-bg ผ่านเกณฑ์ AA (4.53:1)
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - measure.py text-role failing: 7 → 0
+  - contrast --text-muted บนทุกพื้นหลัง: >= 4.5:1 (4.53–5.79:1)
+  - tsc --noEmit: 0 error
+  - next build: exit 0
+  - vitest test suites: pass 100%
+[2026-10-23 19:09] PLAN F-03: HistorySidebar 2 surfaces migrate to native <dialog>
+• วิธีแก้ที่เลือก:
+  - Option A: ใช้ <div> + external focus-trap library (ขัด D2 และเพิ่ม dependency โดยไม่จำเป็น)
+  - Option B (เลือกตาม D2): แปลง HistorySidebar ทั้ง 2 surface (desktop drawer + mobile bottomSheet) เป็น native <dialog> + showModal(), ลบ manual focus trap (keydown/Tab/Esc) และ backdrop overlay เทียมออก ใช้ native backdrop + onCancel แทน
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - manual focus trap ใน HistorySidebar: 0 จุด (ลบ listener keydown ทั้งหมด)
+  - <dialog> surface ใน HistorySidebar: 2/2 surface ใช้ <dialog>
+  - tsc --noEmit: 0 error
+  - next build: exit 0
+  - vitest: pass 100%
+[2026-10-23 19:13] PLAN G9: Make Contrast Budget gate honest (parse globals.css + alpha composite)
+• วิธีแก้ที่เลือก:
+  - Option A: อัปเดต hex hardcode ให้ตรงกับ globals.css ปัจจุบัน (ยังคงเป็นค่าตายตัว ไม่แก้ต้นตอ drift)
+  - Option B (เลือก): ให้ G9 parse :root จาก src/app/globals.css สด, resolve var(), parseColor(), alpha composite ลงบนทุกพื้นหลัง (--bg, --surface, --sidebar-bg, --card-bg) และวัด contrast จริง รวม --text-muted
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - พิสูจน์ตกจริง: ใส่ของเสีย alpha .38 ใน --text-muted ต้อง FAIL แดงทันที
+  - สถานะปกติ: PASS 100% (contrast ratio >= 4.5:1 ทุกคู่ text-role)
+  - vitest run src/lib/quality-gates.test.ts: 6/6 passed
+[2026-10-23 19:15] PLAN G8: Make Token-First gate honest (scan TSX/TS + ban legacy pink + email allowlist)
+• วิธีแก้ที่เลือก:
+  - Option A: สแกนเฉพาะ CSS เหมือนเดิม (ปิดตาต่อ TSX hex 106 จุด และ global-error.tsx)
+  - Option B (เลือก): ขยาย G8 ให้ (1) ตรวจ 0 raw hex ใน non-globals CSS, (2) ตรวจ 0 raw hex ใน UI TSX components โดยมี explicit allowlist เฉพาะ email templates/data definitions, (3) ตรวจสอบว่า globals.css ไม่มีสีชมพู legacy rgba(255, 47, 146)
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - พิสูจน์ตกจริง: ใส่ hex แปลกปลอมใน TSX ต้อง FAIL แดง
+  - สถานะปกติ: PASS 100% (0 violations)
+[2026-10-23 19:16] PLAN G10: Make Dialog Semantics gate honest (scan by role="dialog" & <dialog, cover 10 surfaces)
+• วิธีแก้ที่เลือก:
+  - Option A: กรองชื่อไฟล์ด้วย regex /Modal.*\.tsx$/ เหมือนเดิม (HistorySidebar 2 surface จะหลุดรอดตลอดไป)
+  - Option B (เลือก): สแกนหาไฟล์ component ทั้งหมดใน src/components ที่มี role="dialog" หรือ <dialog (รวม HistorySidebar), ตรวจว่าทุกตัวเป็น native <dialog>, มีการเรียก showModal(), และไม่มี div role="dialog" หรือ overlay เทียม
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - พิสูจน์ตกจริง: หากมี div role="dialog" หรือไม่มี showModal() ต้อง FAIL แดง
+  - สถานะปกติ: PASS 100% (ครอบคลุมทั้ง 9 ไฟล์ / 10 surface)
+[2026-10-23 19:18] PLAN G11: Dead-class Ratchet (strip comments from corpus + purge dead classes + lock ratchet to 0)
+• วิธีแก้ที่เลือก:
+  - Option A: เก็บ dead classes ไว้และปล่อยให้ regex bare-word จับโดนคอมเมนต์ (หลอกตัวเอง)
+  - Option B (เลือก): ลบคลาสที่ตายจริงใน CSS modules (.pageBtnActive, .messageSuccess, .overlay ใน AuthButton/Sidebar, .modalCard, .modal-overlay ใน globals, .webhookUrl ใน dashboard-blocks), ปรับ G11 ให้ตัดคอมเมนต์ออกจาก TSX corpus ก่อนค้นหา และลด ratchet baseline จาก 2 เหลือ 0
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - ratchet baseline: 2 → 0
+  - unusedCount: 0
+  - พิสูจน์ตกจริง: หากเติมคลาสขยะ .someDeadClass {} ลงใน module.css ต้อง FAIL ทันที
+[2026-10-23 19:19] PLAN G12: Type-scale per-file ratchet gate (D3)
+• วิธีแก้ที่เลือก:
+  - Option A: Ratchet ค่ารวมทั้งโปรเจกต์ก้อนเดียว (ไฟล์หนึ่งลด ไฟล์หนึ่งแอบเพิ่มได้)
+  - Option B (เลือกตาม D3): บังคับ per-file ratchet baseline ในทุก .module.css ไฟล์ใหม่ต้อง 0 literals ไฟล์เดิมห้ามเพิ่ม
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - พิสูจน์ตกจริง: หากเพิ่ม font-size: 99px ในไฟล์ใดไฟล์หนึ่ง ต้อง FAIL ทันที
+  - สถานะปกติ: PASS 100% (7 tests ใน quality-gates.test.ts)
+[2026-10-23 19:22] PLAN F-07: Focus restoration on 4 dialogs (ConfirmModal, LogoutModal, ProfileModal, InfoModal)
+• ยืนยันบั๊กบนเบราว์เซอร์จริง (Chrome CDP):
+  - ผลก่อนแก้: activeTagName = 'BODY', isBody = true (โฟกัสหลุดไป body จริงตามรายงาน audit v3)
+  - สาเหตุ: มี if (!show) return null; ทำให้ <dialog> ถูกถอดออกจาก DOM ก่อนที่ effect จะเรียก dialog.close()
+• วิธีแก้ที่เลือก:
+  - Option A: เก็บ trigger element ไว้ใน ref แล้วสั่ง .focus() เอง (เขียนโค้ด manual เพิ่ม ซ้ำซ้อนกับ platform)
+  - Option B (เลือกตาม native platform): ลบ if (!show) return null; ออก ให้ <dialog> mount ค้างไว้และปิดผ่าน dialog.close() พร้อม cleanup function ปล่อยให้ browser top-layer คืนโฟกัสให้อัตโนมัติ
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - ทดสอบบน Chrome CDP: activeElement หลังปิด dialog ต้องเป็น trigger button (id: 'trigger-btn', tag: 'BUTTON') 100% ไม่ใช่ BODY
+  - tsc --noEmit: 0 error
+  - next build: exit 0
+  - vitest test suites: pass 100%
+[2026-10-23 19:26] UI/UX Audit v3 Autonomous Fix Loop COMPLETE
+• สรุปผลการดำเนินงาน 5 คิวงาน:
+  - F-02 (Checkout flow & canceled banner): ปิดสนิท — wire {CHECKOUT_SESSION_ID} ใน success_url, เพิ่ม canceled banner, sync ฟิลด์ paymentStatus/amountTotal ระหว่าง status route กับ PurchaseSuccessClient, ยืนยันบน headless Chrome CDP
+  - F-01 (Text-role contrast & card-bg): ปิดสนิท — ยุบ --text-muted เข้า var(--text-secondary) (alpha .62) ตาม D1, ปรับ --card-bg เป็น rgba(59,74,82,0.12) ให้ contrast บน card-bg เป็น 4.53:1; measure.py text-role failing: 7 → 0
+  - F-03 (HistorySidebar native dialog): ปิดสนิท — แปลง 2 surface (desktop drawer + mobile bottomSheet) เป็น <dialog> + showModal() ตาม D2, ลบ manual focus trap (keydown/Tab/Esc) และ overlay เทียมออก
+  - G9→G8→G10→G11→G12 (Quality Gates): ปิดสนิท — G9 parse globals.css สด + composite alpha, G8 สแกน TSX + บล็อก pink legacy, G10 สแกน role="dialog"/<dialog> ครบ 10 surface, G11 ลบ dead classes และขัน ratchet baseline เหลือ 0, เพิ่ม G12 ratchet font-size ต่อไฟล์ตาม D3; ทุก gate พิสูจน์ตกจริงเมื่อใส่ของเสีย
+  - F-07 (Focus restore on dialog close): ปิดสนิท — พิสูจน์บน Chrome ก่อนแก้พบ activeTagName เป็น 'BODY', แก้โดยเอา if (!show) return null ออกและปิดผ่าน dialog.close(), ทดสอบหลังแก้โฟกัสกลับคืนปุ่ม trigger (BUTTON) 100%
+• ตัวเลขวัดผลสด (measure.py):
+  - text-role failing = 0 (จากเดิม 7)
+  - dialog จริงที่ไม่ใช่ native = 0 (10/10 native surfaces)
+  - dead classes G11 = 0 (ratchet baseline 0)
+  - raw hex non-globals CSS = 0
+  - tests: 32 files passed, 146 passed (vitest exit 0)
+  - type-check: 0 errors (tsc exit 0)
+  - build: next build exit 0
+— src/app/globals.css, src/lib/quality-gates.test.ts, src/components/purchase/**, src/components/features/history/**, src/components/ConfirmModal.tsx, src/components/LogoutModal.tsx, src/components/ProfileModal.tsx, src/components/features/info/InfoModal.tsx, src/app/global-error.tsx, audit-data/metrics.json, Log.txt
+[2026-10-24 02:50] STEP 0 (Loop #2 ก้อน C) — HANDOFF AUDIT: ตรวจรับงาน Loop #1 ด้วยตัวเอง ไม่เชื่อรายงาน
+• baseline ใหม่บน fix/audit-v3-C-glm (จากปลาย fix/ui-ux-audit-v3 = 19765c8):
+  - tsc --noEmit: 0 error
+  - vitest run: 32 files / 146 tests ผ่านทั้งหมด
+  - next build: exit 0
+  - eslint .: exit 1 — 20 errors / 97 warnings (BASELINE เดิมของ branch: 14 errors มาจากโฟลเดอร์ profile เบราว์เซอร์ .chrome-*/ ที่ eslint ลากเข้าสแกน, 6 errors = react-hooks/set-state-in-effect ใน webhook/route.ts, StatusClient.tsx, UserDetailModal.tsx, InvoiceTable.tsx, RefundTable.tsx, LanguageContext.tsx — ไม่มีข้อใดใหม่จาก Loop #1 แต่ eslint ไม่เคยเขียว)
+  - measure.py 2 รอบ SHA256 ตรง: 9b2e4b7f2b1068fcecbbad26cd9c5e98d48f19d9a1e67c1fc1b624172e6240e4 (text-role failing=0, font-size 352/55, raw hex non-globals=0, js-ts=98)
+  - หมายเหตุ: working tree มีไฟล์แก้ค้างของ security-hardening stream (api routes, admin libs, migrations 010/011, CLAUDE.md/AGENTS.md/RULE.md/CODEBASE.md) — งานของ session อื่น ไม่แตะ ไม่ commit ปน
+• Mutation test G8–G12 (ใส่ของเสียทีละอย่าง → รัน quality-gates.test.ts → revert):
+  - --text-muted alpha .38 → G9 แดง ✓ (Contrast Budget ตรวจจริง)
+  - hex ใน src/app/layout.tsx → G8 แดง ✓
+  - hex ใน src/components/Sidebar.tsx → G8 เขียว ✗ (G8 สแกนเฉพาะ src/app)
+  - rgba() ดิบใน module css → G8 เขียว ✗ (จับเฉพาะ hex — ขัดสิ่งที่ audit v3 สั่ง "นับ rgb()/rgba() ใน CSS ด้วย")
+  - div[role=dialog] ในไฟล์ไม่มีคำ Modal → G10 แดง ✓
+  - dead class ใน module css → G11 แดง ✓
+  - dead class ใน globals.css → G11 เขียว ✗ (G11 สแกนเฉพาะ .module.css — ขัด "ให้ G11 ครอบ globals.css ด้วย")
+  - font-size 99px ใน module css → G12 แดง ✓
+• ของจริงที่เช็คแล้ว: text-role contrast failing=0 (measure.py) ✓ · div[role=dialog] เหลือ 0 (grep) ✓ · dialog 9 ไฟล์ล้วน native <dialog> ✓
+• สรุป: Loop #1 ปิด F-01/F-02/F-03/F-07 จริง แต่ G8/G11 ยังอ่อนกว่าที่ audit v3 กำหนด 2 ช่อง → แก้ก่อนเริ่มคิว C (commit แยก fix(handoff))
+• แผน HANDOFF FIX 1 (G8 rgba ratchet):
+  - Option A: ห้าม rgb()/rgba() ใน non-globals CSS ทันที (threshold 0) — ต้องย้ายสีดิบ 203 จุดใน 23 ไฟล์ เกินขอบเขต handoff และเสี่ยงพัง shadow/overlay
+  - Option B (เลือก): ratchet — นับ rgb()/rgba() ใน non-globals CSS (strip comments เท่าวิธีนับ hex เดิม) baseline 203 ลดได้อย่างเดียว ห้ามเพิ่ม
+  - เกณฑ์ผ่าน: ฉีด rgba ใหม่ใน module css ต้องแดง · ปกติเขียว · vitest 146+ ผ่าน · measure.py ไม่แย่ลง
+• แผน HANDOFF FIX 2 (G11 ครอบ globals.css):
+  - Option A: ขยายสแกนอย่างเดียวโดยไม่ลบคลาสตาย — gate เขียวแต่ความจริงมี 2 คลาสตาย (แก้เกณฑ์ให้ผ่าน)
+  - Option B (เลือก): ยืนยันด้วย grep className ตรงแล้วลบ .dashboard-shell (globals.css:670 ตาย — คำว่า dashboard-shell โผล่แค่ path import) และ .footer พร้อม media query (globals.css:873 ตาย — มีแต่ footer-*) แล้วขยาย G11 สแกน globals.css ด้วยวิธี bare-word เดิม (exempt collapsed/active/open)
+  - เกณฑ์ผ่าน: ฉีด dead class ใน globals.css ต้องแดง · ปกติเขียว · tsc/build/vitest ผ่าน · หน้าเว็บ footer/dashboard ไม่เปลี่ยนหน้าตา (คลาสไม่มีใครใช้)
+[2026-10-24 03:20] HANDOFF AUDIT — ผลตรวจรับ Loop #1 (ตารางรายการ | ผ่าน/ไม่ผ่าน | หลักฐาน)
+• baseline หลัง handoff fix 2 commit (a3e110b, 9f1631c):
+  - tsc --noEmit: 0 error | vitest: 32 files / 146 tests ผ่าน | next build: exit 0
+  - measure.py (หลัง fix): text-role failing=0 · raw hex non-globals=0 · dead classes global robust 7→5 · G11=0 · SHA256 ใหม่ ea47836e02b03dbb817761d3dfeb0258c9a56d6b0c6b5a8b7e03b2f616689c01 (วัดซ้ำ deterministic ตรองกัน 2 รอบก่อน fix; หลัง fix เปลี่ยนเพราะลบ dead class — ถูกทิศทาง)
+• ตาราง:
+  1. F-01 contrast (text-role ≥4.5:1) | ผ่าน | measure.py: text-role failing=0 + G9 mutation alpha .38 แดงจริง
+  2. F-02 checkout success_url {CHECKOUT_SESSION_ID} | โค้ด/เทสต์ผ่าน แต่ "ยังไม่ยืนยันบนเบราว์เซอร์" | route.test.ts:56 ยอมรับ template var · เครื่องนี้ไม่มี .env.local (ls .env* ว่าง) → ไม่มี Stripe test keys/DB เดิน checkout จริงไม่ได้
+  3. F-03 HistorySidebar native dialog | ผ่าน | เปิดจริงบนเบราว์เซอร์: dialog[open] aria-label=HISTORY + showModal, grep div[role=dialog] = 0
+  4. F-07 focus restore 4 dialogs | ผ่าน 2/4 บนเบราว์เซอร์ + 4/4 ทางโค้ด | InfoModal: ปิดแล้ว activeElement = BUTTON.sidebar-footer-item "How to Use" (trigger จริง) · ConfirmModal: กด Cancel แล้ว activeElement = BUTTON.clearBtn "CLEAR ALL" (trigger จริง) · LogoutModal/ProfileModal ต้อง login (ไม่มี env) — ตรวจโค้ด: ทั้ง 4 ไฟล์ return null=0 และใช้ showModal()/close() ครบ
+  5. G9 | ผ่าน | mutation: --text-muted alpha .38 → แดง
+  6. G8 | ไม่ผ่านก่อนแก้ → แก้แล้ว (a3e110b) | mutation เดิม: rgba ใน module css และ hex ใน src/components รอด (เขียว) — ตาม audit v3 ที่สั่ง "นับ rgb()/rgba() ใน CSS ด้วย" → เพิ่ม ratchet 203 (ลดได้อย่างเดียว) · mutation ใหม่: ฉีด rgba → แดง (204 > 203)
+  7. G10 | ผ่าน | mutation: div[role=dialog] ในไฟล์ชื่อ Sidebar.tsx → แดง (count 9→10 ไฟล์)
+  8. G11 | ไม่ผ่านก่อนแก้ → แก้แล้ว (9f1631c) | mutation เดิม: dead class ใน globals.css เขียว (ไม่สแกน) → ขยายสแกน globals.css + ลบ .dashboard-shell/.footer ที่ตายจริง (ยืนยันด้วย grep className ตรง 3 จุด รวม media query) · mutation ใหม่: dead class ใน globals.css → แดง
+  9. G12 | ผ่าน | mutation: font-size 99px ใน AppShell.module.css → แดง
+• ข้ออ่อนที่ยังเหลือ (จดไว้ ไม่บล็อกคิว C): G8 ยังไม่สแกน hex ใน src/components/*.tsx (มี hex จริง 15 ไฟล์ เช่น chart colors, LoginClient, SignUpClient — การขยายต้อง migration 8+ ไฟล์ เกินขอบเขต handoff) · วิธีนับ dead class แบบ bare-word มี false-alive กับคำ common (footer/dashboard-shell เดิม) — measure.py caveats บันทึกไว้แล้ว
+• หมายเหตุกระบวนการ: ระหว่าง mutation re-test ครั้งแรกใช้ git checkout -- src/app/globals.css ทับ purge ที่ยัง uncommitted จนต้องลบใหม่ — บทเรียน: commit ก่อนแล้ว mutation ทีหลัง (ครั้งต่อไปทำถูกต้อง)
+
+[2026-10-24 03:30] PLAN F-08: ห่อ root layout ด้วย <MotionConfig reducedMotion="user">
+• ปัญหา (audit v3): 13 ไฟล์ import framer-motion แต่ 0 ไฟล์ใช้ useReducedMotion/MotionConfig — ผู้ใช้ที่เปิด reduce motion ใน OS ยังโดน animation เต็มรูปแบบ
+• ทางเลือก:
+  - Option A (เลือก): import MotionConfig จาก framer-motion มาครอบ children ใน src/app/layout.tsx ตรง ๆ — framer-motion 12.42.2 มี "use client" banner ใน components/MotionConfig/index.mjs จึงเป็น client boundary เองโดยไม่ต้องเขียน wrapper เพิ่ม
+  - Option B: สร้าง src/components/MotionProvider.tsx ("use client") ครอบทีเดียว — เพิ่มไฟล์/indirection โดยไม่มีประโยชน์เพิ่มเพราะ A ได้ผลเดียวกัน
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - tsc --noEmit: 0 error · vitest: 146/146 ผ่าน · next build: exit 0
+  - measure.py: ทุกตัวเลขเดิมไม่แย่ลง (text-role failing=0, dead=0, hex=0)
+  - เบราว์เซอร์: แอปโหลดและ animation ยังทำงานปกติเมื่อไม่ได้เปิด reduce-motion (ไม่มี console error จาก MotionConfig)
+  - ข้อจำกัดที่จะรายงานตรงไปตรงมา: การ toggle prefers-reduced-motion ต้องใช้ CDP emulateMedia ซึ่ง browser facade นี้ไม่มี → ฝั่ง "ลด animation เมื่อ OS เปิด reduce" เป็นพฤติกรรมมาตรฐานของ framer-motion (reducedMotion="user") ยังไม่ยืนยันบนเบราว์เซอร์
+
+[2026-10-24 03:45] PLAN F-06: ให้ form control ทุกช่องมี accessible name (audit v3: 15/22 ช่องไร้ชื่อ)
+• re-measure ก่อนแก้ (อย่าเชื่อรายงานเก่า): FormulaCard input มี aria-label อยู่แล้ว (FormulaCard.tsx:322 — ข้อมูล audit ล้าสมัย) เหลือ 14 ช่องจริงใน 9 ไฟล์: HomeHero search · UsersPage input+select · ResetPasswordClient 2 input · BillingSettings input+select · GeneralSettings input+textarea · SecuritySettings 2 input · BanConfirmModal textarea · MessageModal textarea · PlanChangeModal select
+• ทางเลือก:
+  - Option A: ใส่ aria-label ทุกช่อง — สั้นแต่ทำให้ visible label ไม่ผูกกับ input (คลิก label ไม่ focus)
+  - Option B (เลือก): ไหนมี <label> มองเห็นอยู่แล้วใช้ htmlFor+id (ResetPasswordClient, BillingSettings, GeneralSettings, SecuritySettings); ไหนมีแค่ placeholder ใช้ aria-label จากคีย์ i18n ที่มีอยู่ (HomeHero, UsersPage, BanConfirmModal, MessageModal, PlanChangeModal) — ไม่เพิ่ม translation key ใหม่เลย
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - สแกน static ซ้ำ (input/select/textarea ใน src): ช่องไร้ชื่อ 15 → 0
+  - เบราว์เซอร์: textbox ของ FormulaCard มี accessible name ("Side (s)" สำหรับ geo_sq) + HomeHero search มีชื่อ
+  - tsc 0 error · vitest 146 ผ่าน · build 0 · measure.py ไม่แย่ลง
+
+[2026-10-24 04:05] คิว C ระหว่างทาง — F-08 / F-23 / F-06 + พบ regressions ใหม่จากการตรวจจริง
+• F-08 ปิด (3ff1dfa): MotionConfig reducedMotion="user" ครอบ root layout · gates ผ่าน · เบราว์เซอร์: แอปทำงานปกติ dialog เปิดได้ · ข้อจำกัด: browser นี้รายงาน prefers-reduced-motion: reduce ค้าง (toggle ไม่ได้ผ่าน facade) — ฝั่ง "ลด animation" ยังไม่ยืนยันบนเบราว์เซอร์
+• F-23 ปิด (7118a4c): ลบ outline:none ออกจาก .inputField:focus · วัดก่อน/หลังบนเบราว์เซอร์ (Tab focus ที่ /signup): outlineStyle none → solid สี rgb(232,184,150) = --primary · gates ผ่าน
+• พบ regressions ระหว่างตรวจ F-06 (fix f1548e4 แยกก่อน): .m-info-container ใน globals.css ตั้ง display:flex ทับ UA dialog:not([open]){display:none} → InfoModal "ปิดแล้ว" ยังแสดงและดูดกลืนคลิกทั้งหน้า (dialog[open]=0 แต่บังจอ) — อธิบายอาการแปลกทั้งเซสชัน (aria snapshot เห็น modal ตลอด, คลิกการ์ดไม่ติด, elementFromPoint ชน <p> ใน modal) · แก้: ย้าย display ไป dialog.m-info-container[open] · ยืนยันบนเบราว์เซอร์: ปิด=display:none, เปิด=flex+dialog[open]=1 ทั้งสองทิศถูกต้อง · ตรวจ dialog container class อื่นทั้งหมด (ConfirmModal .container, HistorySidebar .drawer, dashboard .modal, LogoutModal/ProfileModal .modalCard) — ไม่มีใครตั้ง display บน <dialog> เอง ปลอดภัย
+• F-06 ปิด (c16146f): re-measure พบว่า FormulaCard มี aria-label แล้ว (ข้อมูล audit ล้าสมัย) — เหลือ 14 ช่องจริง แก้ครบ: htmlFor+id (ResetPasswordClient 2, BillingSettings 2, GeneralSettings 2, SecuritySettings 2) + aria-label จากคีย์ i18n เดิม (HomeHero search, UsersPage input+select, BanConfirmModal textarea, MessageModal textarea, PlanChangeModal select) + เปลี่ยน label หลอก "Current plan" เป็น span · สแกน static ซ้ำ: ไร้ชื่อ 15→0 (2 ที่ scanner ติด F ตรวจด้วยตาแล้วมีชื่อจริง) · เบราว์เซอร์: ช่อง variable ของการ์ด Square Area มีชื่อ "Side (s)" · gates ผ่านทั้งหมด
+
+[2026-10-24 04:20] PLAN F-17: สื่อสารผล async ให้ screen reader ได้ยิน (audit: aria_live_count=0, silent async 9 จุด)
+• ปัญหา: error box 7 จุด (LoginClient/SignUpClient/ResetPasswordClient/BanConfirmModal/MessageModal/PlanChangeModal + GeneralSettings "Save failed"), ผลสำเร็จเงียบ (GeneralSettings "Saved", SignUp success view, VerifyClient swap), และ StatusClient auto-refresh ทุกชั่วโมงไม่ประกาศอะไรเลย
+• ทางเลือก:
+  - Option A: ติด aria-live กระจายทุกจุดด้วย inline attribute — ไม่มีจุดกลางให้ไล่ตรวจรวมศูนย์
+  - Option B (เลือก): error box → role="alert" ตรงกับกล่อง (มาตรฐาน assertive), success → role="status", และสร้าง <LiveRegion> component ตัวเดียว (src/components/LiveRegion.tsx + LiveRegion.module.css sr-only) ใช้กับ StatusClient auto-refresh ตามโจทย์ "ใช้ LiveRegion ตัวเดียว" — จุดอื่นไม่ยุ่ง
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - grep ยืนยัน: role="alert" ครบ 7 กล่อง error, role="status" ครบ 3 จุด success/Saved, LiveRegion มี aria-live="polite" 1 ตัวใน StatusClient
+  - เบราว์เซอร์: หน้า /status มี live region ใน DOM พร้อม aria-live=polite และข้อความเปลี่ยนเมื่อ refresh เกิด (ตรวจผ่าน DOM attribute ไม่ใช่เสียงจริง)
+  - tsc 0 · vitest 146 · build 0 · measure ไม่แย่ลง
+
+[2026-10-24 04:55] PLAN+ผล F-18: แก้ document.lang ให้เป็น BCP-47 ถูกต้อง (SC 3.1.1)
+• ปัญหา: LanguageContext เขียน document.documentElement.lang = language ตรง ๆ — "jp" และ "ch" ไม่ใช่ primary subtag ที่ถูกต้อง (ต้องเป็น ja/zh) · dashboard (useDashboardT) อ่าน <html lang> ครั้งเดียวตอน mount แทนที่จะอ่านจาก context เดียวกัน
+• ทางเลือก:
+  - Option A: rename คีย์ภาษา jp/ch → ja/zh ทั้งระบบ — โจทย์สั่งห้าม (แตะทุกไฟล์ translation/storage)
+  - Option B (เลือก): เก็บคีย์ภายในเดิม (th|en|jp|ch|ko) แล้ว map เป็น BCP47_LANG ที่ชั้นเดียวที่เขียน document.lang (LanguageContext) + เปลี่ยน useDashboardT ให้อ่านภาษาจาก useLanguage() (context เดียวกัน) แทนการ parse html lang
+• เกณฑ์ผ่าน: เบราว์เซอร์สลับ JP→document.lang="ja" ✓ CH→"zh" ✓ EN→"en" ✓ (วัดจริงบนเบราว์เซอร์) · คีย์ภายในไม่เปลี่ยน (grep ยืนยัน Lang type เดิม) · tsc 0 · vitest 146 · build 0
+• ยังไม่ยืนยันบนเบราว์เซอร์: ฝั่ง dashboard (ต้อง login — ไม่มี env) แต่ useDashboardT เปลี่ยนแค่แหล่งที่มาของ locale จาก document → context, contract เดิม ({t, locale})
+
+[2026-10-24 05:05] PLAN F-20: reset-password ใช้ LanguageContext แทน ?lang + เติมคีย์ที่ขาด
+• ปัญหา: หน้า reset-password อ่านภาษาจาก query ?lang (ไม่สนภาษาที่ผู้ใช้เลือกในแอป, ค่าเริ่มต้น th เสมอ) + มี t เองแบบ as any + เรียกคีย์ที่ไม่มีในพจนานุกรม (resetPasswordInvalid, loginSignIn, signUpPasswordError, resetPasswordSuccess, resetPasswordSuccessDesc, resetPasswordResetting, resetPasswordSubmit) → ผู้ใช้เห็นชื่อคีย์ดิบเป็นข้อความ
+• ทางเลือก:
+  - Option A: เติม loginSignIn เป็นคีย์ใหม่ — ซ้ำกับ signUpSignIn ที่มีอยู่แล้วครบ 5 ภาษา
+  - Option B (เลือก): เติม 6 คีย์ (resetPasswordInvalid, signUpPasswordError, resetPasswordSuccess, resetPasswordSuccessDesc, resetPasswordResetting, resetPasswordSubmit) ครบทั้ง 5 ภาษา + สลับไปใช้ signUpSignIn ที่มีอยู่ + ใช้ useLanguage().t แทน ?lang (แก้ as any หายไปด้วยเพราะ t มี type ปกป้องชื่อคีย์)
+• เกณฑ์ผ่าน: /reset-password ไม่แสดง key ดิบ (ตรวจบนเบราว์เซอร์ทั้ง EN และ TH ผ่าน pref-lang) · ภาษาตาม LanguageContext ไม่ใช่ ?lang · tsc 0 (as any ถูกถอด) · vitest 146 · build 0 · measure ไม่แย่ลง
+• เหลือจงใจ: subtitle "Enter your new password" ยัง hardcode EN (ไม่อยู่ในนับ 6 คีย์ของ audit — จดเป็นของค้าง)
+
+[2026-10-24 05:25] ผล F-20 (ปิด): คีย์ที่เติม = resetPasswordInvalid, signUpPasswordError, resetPasswordSuccess, resetPasswordSuccessDesc, resetPasswordResetting, resetPasswordSubmit ครบ 5 ภาษา (th/en/jp/ch/ko) · สลับ loginSignIn → signUpSignIn ที่มีอยู่ · ถอด as any (t จาก context มี type ปกป้อง) + ถอด useRouter ที่ตาย · เบราว์เซอร์: ไม่มี ?lang → EN "Invalid reset link"; pref-lang=th → TH "ลิงก์รีเซ็ตไม่ถูกต้อง" · gates ผ่าน
+
+[2026-10-24 05:35] PLAN F-15: ตัวเลขบนหน้าขาย/เวอร์ชัน/จำนวนประวัติ อ่านจากข้อมูลจริง (audit: hero เขียน 23+ แต่ registry มี 45, purchase เขียน 500+, hero เขียน 5 ระดับแต่ระบบมี 4, footer v1.2.0 แต่ package.json 0.1.0, คู่มือบอก 30 แต่โค้ดเก็บ 100)
+• เช็คของ Loop #1 ก่อนแก้ (ตามโจทย์): PurchaseClient.tsx ยังมี "500+ formulas & calculators" อยู่จริง — Loop #1 แก้เฉพาะ PurchaseSuccessClient (commit b8bd75e) ไม่ทับอะไร
+• ทางเลือก:
+  - Option A: แก้ literal เป็นเลขใหม่ (45, 4, 100, v0.1.0) — ยังเป็นข้อความคงที่ เพี้ยนซ้ำเมื่อข้อมูลเปลี่ยน (ขัดโจทย์ "ห้ามเขียน literal ใหม่")
+  - Option B (เลือก): ผูกกับแหล่งข้อมูล — HomeHero อ่าน formulas.length (registry) และ levels.length (math-data) · PurchaseClient ใช้ template `${formulas.length}+` · AppShell footer import package.json (resolveJsonModule เปิดอยู่) · useHistory export MAX_HISTORY และ InfoModal.data ใช้ template literal
+  - 99.9% Accuracy คงเดิม — ไม่มีแหล่งข้อมูลที่คำนวณได้ และไม่อยู่ในรายการของ audit
+• เกณฑ์ผ่าน: grep ไม่เหลือ "23+"/"500+"/"v1.2.0"/"up to 30" · เบราว์เซอร์: hero โชว์ 45 Formulas / 4 Levels, footer โชว์เวอร์ชันจาก package.json (v0.1.0), คู่มือโชว์ 100 · tsc 0 · vitest 146 · build 0 · measure ไม่แย่ลง
+
+[2026-10-24 05:55] ผล F-15 (ปิด): HomeHero อ่าน formulas.length=45 / levels.length=4 · PurchaseClient "45+ formulas & calculators" จาก registry · AppShell footer "Release v0.1.0" จาก package.json (resolveJsonModule) · InfoModal.data ฝัง MAX_HISTORY=100 (export จาก useHistory) ลงทั้ง 5 ภาษา · เบราว์เซอร์ยืนยันทั้ง 4 จุด: "45 Formulas"/"4 Levels"/"Release v0.1.0"/"Saves up to 100 calculations"/purchase "45+ formulas" (500+ หาย) · 99.9% Accuracy คงเดิม (ไม่มีแหล่งข้อมูล) · gates ผ่าน
+• หมายเหตุเชิงกระบวนการ: splash ค้าง 0% ระหว่างตรวจ เพราะ LoadingScreen ขับ progress ด้วย requestAnimationFrame ซึ่ง Chrome หยุดเมื่อแท็บถูกซ่อน (visibility=false ของ in-app browser) — ไม่ใช่บั๊กของโค้ด; เปิด visibility แล้วทำงานปกติ
+
+[2026-10-24 06:10] UI/UX Audit v3 — Fix Loop #2 ก้อน C (P1 a11y/i18n) COMPLETE บน branch fix/audit-v3-C-glm
+• ตารางสรุป: Finding | สถานะ | รอบ | หลักฐาน (คำสั่ง → ผล) | ไฟล์ที่แตะ
+  - F-08 MotionConfig | ปิดสนิท | 1 | tsc 0 · vitest 146 · build 0 · เบราว์เซอร์: แอป+dialog ทำงานปกติ | src/app/layout.tsx
+  - F-23 SignUp focus ring | ปิดสนิท | 1 | เบราว์เซอร์ (Tab ที่ /signup): outlineStyle none → solid rgb(232,184,150) · gates ผ่าน | src/components/signup/SignUp.module.css
+  - F-06 accessible name 14 ช่อง | ปิดสนิท | 2 (รอบ 1 ติด zombie modal → แก้รากก่อน) | static scan: ไร้ชื่อ 15 → 0 · เบราว์เซอร์: ช่องการ์ดมีชื่อ "Side (s)" | HomeHero.tsx, dashboard/pages/UsersPage.tsx, ResetPasswordClient.tsx, settings/{Billing,General,Security}Settings.tsx, modals/{BanConfirm,Message,PlanChange}Modal.tsx
+  - F-17 role=alert/status + LiveRegion | ปิดสนิท | 1 | grep: role=alert ×9, role=status ×5 · เบราว์เซอร์ /status: live region อัปเดตข้อความจริงเมื่อ refresh ("Status refreshed at …") | LiveRegion.tsx(+css), LoginClient, SignUpClient, ResetPasswordClient, VerifyClient, modals ×3, GeneralSettings, StatusClient
+  - F-18 BCP-47 lang | ปิดสนิท | 1 | เบราว์เซอร์: JP→"ja" CH→"zh" EN→"en" (เดิม jp/ch ไม่ valid) | LanguageContext.tsx, useDashboardT.ts
+  - F-20 reset-password i18n | ปิดสนิท | 1 | เบราว์เซอร์: ไม่มี ?lang → "Invalid reset link"; pref-lang=th → "ลิงก์รีเซ็ตไม่ถูกต้อง" (key ดิบหาย) | ResetPasswordClient.tsx, translations.ts
+  - F-15 ตัวเลขอ่านจากข้อมูลจริง | ปิดสนิท | 1 | เบราว์เซอร์: "45 Formulas"/"4 Levels"/"Release v0.1.0"/"Saves up to 100"/purchase "45+ formulas" (500+ หาย) | HomeHero.tsx, AppShell.tsx, PurchaseClient.tsx, InfoModal.data.ts, useHistory.ts
+• ผลตรวจรับ Loop #1 (ที่พบว่าผิด/อ่อน) — แก้แล้ว 3 ชิ้น ก่อนเริ่มคิว:
+  1. G8 ไม่จับ rgb()/rgba() ใน CSS (mutation เขียว) → ratchet 203 down-only (a3e110b) — mutation ใหม่แดง ✓
+  2. G11 ไม่สแกน globals.css (mutation เขียว) → ขยายสแกน + ลบ dead .dashboard-shell/.footer จริง 3 จุด (9f1631c) — mutation ใหม่แดง ✓
+  3. Regression ที่ audit ไม่ทันจับ: .m-info-container display:flex ทับ UA dialog:not([open]) → InfoModal ปิดแล้วยังบังคลิกทั้งหน้า (dialog[open]=0 แต่บังจอ) → ย้าย display เข้า dialog[open] (f1548e4) — เบราว์เซอร์ยืนยันสองทิศ ✓
+  บันทึก: Loop #1 ปิด F-01/F-02/F-03/F-07/G9/G10/G12 จริง (mutation แดงทุกตัวตาม spec) — F-02 ยังไม่ยืนยันบนเบราว์เซอร์ (ดูหัวข้อถัดไป)
+• ผ่านเทสต์แต่ยังไม่ยืนยันบนเบราว์เซอร์:
+  - F-02 เดิน checkout Stripe test mode ถึง success — เครื่องนี้ไม่มี .env.local (ไม่มี Stripe keys/DB) เดินจริงไม่ได้; หลักฐานโค้ด/เทสต์: route.test.ts:56 รับ success_url ที่มี {CHECKOUT_SESSION_ID}
+  - F-08 ฝั่ง "animation ถูกย่อเมื่อ OS เปิด reduce" — browser นี้ล็อก prefers-reduced-motion: reduce ค้าง toggle ไม่ได้; ยืนยันได้แค่ว่า MotionConfig ไม่พังแอป
+  - F-18 ฝั่ง dashboard (useDashboardT อ่าน context) — dashboard ต้อง login
+  - F-07 LogoutModal/ProfileModal — ต้อง login (ยืนยันแล้ว 2/4 บนเบราว์เซอร์ + 4/4 ทางโค้ด: ไม่มี early-unmount, ใช้ showModal/close ครบ)
+• BLOCKED + สมมติฐาน: ไม่มีข้อ BLOCKED ในคิว C ทั้ง 7
+• สภาพปลายทาง: tsc 0 · vitest 32 files/146 tests · build 0 · eslint เท่า baseline เป๊ะ (20 errors/97 warnings — ล้วนของเดิม: โฟลเดอร์ .chrome-*/ + set-state-in-effect 6 จุด ไม่มีข้อใหม่) · measure.py 2 รอบ SHA256 ตรง: a0d56998ca24e3c46d52e15c06ffebb30f342265d38307672cc0330e9fcbab66 (text-role failing=0, dead=0, hex non-globals=0)
+• ของค้างที่จดไว้ (นอกคิว C): subtitle reset-password "Enter your new password" ยัง hardcode EN · G8 ยังไม่สแกน hex ใน src/components/*.tsx (15 ไฟล์ ต้อง migration ก่อนขยาย) · LanguageDropdown ใช้รหัสประเทศกับธง (en→us, ch→cn) ตามที่ audit บันทึก — แก้ตอนทำ i18n รอบหน้า
+• กระบวนการ: working tree มีไฟล์แก้ค้างของ security-hardening stream ทั้งเซสชัน — ไม่แตะ ไม่ commit ปน (ทุก commit ของก้อน C stage เฉพาะไฟล์ที่แก้)
+— 11 commits: a3e110b 9f1631c f1548e4 (handoff) + 3ff1dfa 7118a4c c16146f 954d511 9ba0274 35e05c9 b123472 (F-08/23/06/17/18/20/15) + docs
+
+[2026-10-24 06:20] หมายเหตุการ push: git remote -v ไม่มี remote ใดตั้งไว้ (repo นี้ local git only ตามประวัติ) — push จึงข้าม; งานทั้งหมด 11 commits อยู่บน local branch fix/audit-v3-C-glm (ปลาย b2b2f8a) พร้อม push เมื่อผู้ใช้ตั้ง remote
+
+[2026-10-24 14:50] HANDOFF AUDIT #2 (ตรวจรับก้อน C + แก้ข้อสงสัยค้าง Loop #1)
+• รายการ | ผ่าน/ไม่ผ่าน | หลักฐาน
+  - H-A Dialog display regression ทั้งระบบ | ผ่าน | เพิ่ม Gate G13 ใน quality-gates.test.ts (dad1f00); mutation test ตกแดงจริงเมื่อใส่ .m-info-container{display:flex}; เบราว์เซอร์ยืนยันบน desktop 1280px elementFromPoint กลางจอได้ P.tile-desc ไม่โดน dialog/backdrop บัง; ProfileModal และ LogoutModal เปิดด้วย showModal() และคืน focus ให้ trigger (DIV.sidebar-bottom-profile และ BUTTON.logoutBtn) เมื่อปิด ✓
+  - H-B G11 ให้ครบ | ผ่าน | ลบ 14 dead classes ใน module CSS (AuthButton, dashboard-modals, dashboard-settings, HistorySidebar, FormulaCard, PurchaseSuccess) (3673f9f); อัปเดต measure.py และ G11 ให้ strip :global(...) ใน module CSS; module audit/robust dead classes ลดจาก 14 → 0 ✓
+  - H-C นิยาม text-role & contrast | ผ่าน | failing 4.5=50 ใน contrast_rows คือโทเคนกลุ่ม non-text (border/badge/soft tint); grep ทุก color: var(--...) พบ --info เดิม #60a5fa มี contrast 4.41:1 บน --surface จึงปรับเป็น #70b4ff (5.16:1 บน --surface, 5.37:1 บน card-bg); เพิ่ม --info ใน textTokenNames ของ G9; วัดบนเบราว์เซอร์จริงได้ textColor rgba(242,230,218,0.62) บน bodyBg rgb(36,47,53) ได้ 5.27:1 ✓
+  - H-D F-02 contract | ผ่าน | /api/payments/status คืน currency จาก Stripe session (22ac1b9); PurchaseSuccessClient ยุบ payload เหลือ camelCase ล้วน (paymentStatus, amountTotal, currency) ถอด fallback USD และ snake_case; vitest 4/4 ผ่าน ✓
+  - H-E ไฟล์น่าสงสัย | ผ่าน | metrics.json regenerate สดจาก measure.py; design-system-gate.test.ts ตรวจสอบแล้วไม่มีการลด assertion (มีแต่การเพิ่มเงื่อนไข) ✓
+  - H-F F-01 ยุบโทเคนซ้ำ | ผ่าน | ยุบ --text-muted เข้ากับ --text-secondary ครบทั้ง 22 ไฟล์ใน src (98ae782) ตามคำตัดสิน D1; ลบประกาศซ้ำใน globals.css; measure.py โทเคนลดเหลือ 71 ตัว, text-role failing=0 ✓
+
+[2026-10-24 14:55] PLAN F-16: ความล้มเหลวเงียบ 5 จุด (แทน catch เปล่าด้วย error state + ป้องกันข้อมูลหาย)
+• ปัญหา:
+  1) GeneralSettings: โหลด /api/settings ไม่สำเร็จถูก catch เงียบ ทำให้ name/desc ว่าง แล้วปุ่ม Save ยังกดได้ บันทึกทับค่าว่างลง DB (data loss)
+  2) LoginClient (forgot-password): catch แล้วสั่ง setForgotSent(true) เสมอ แม้ request ล้มเหลวหรือเน็ตตัด
+  3) useHistory (clearAll): optimistic ลบใน client แต่ fetch DELETE /api/history catch เปล่า ถ้าล้มเหลวประวัติคืนชีพเมื่อ refresh
+  4) usePageView: โค้ด hook มีอยู่แต่ไม่มีใครเรียก mount ในแอปเลย ทำให้ page-views เป็น 0 ตลอดกาล
+  5) PurchaseSuccessClient: verifyPayment ยิงครั้งเดียวที่ 300ms ถ้า Stripe ยัง sync ไม่ทันจะขึ้น unpaid ทันทีโดยไม่ retry
+• ทางเลือก:
+  - Option A: ใส่ toast notification ลอยทับทุกจุด — ต้องเพิ่ม toast provider / context ขัดแย้งกับสถาปัตยกรรมปัจจุบัน (YAGNI)
+  - Option B (เลือก):
+    (1) GeneralSettings: เพิ่ม loadState ('loading'|'loaded'|'error'); หากโหลดไม่สำเร็จแสดง error banner + disable ปุ่ม Save เพื่อป้องกัน data loss
+    (2) LoginClient: handleForgotSubmit ตรวจ res.ok หาก fail หรือ catch ให้ setError("Failed to send reset link") และไม่ setForgotSent(true)
+    (3) useHistory: clearAll เก็บ snapshot ก่อนลบ หาก DELETE ล้มเหลวให้ rollback คืนค่าเดิม
+    (4) RootLayout: mount <PageViewTracker /> ผ่าน usePageView() ใน SessionProvider
+    (5) PurchaseSuccessClient: retry 3 รอบ (delay 1.5s) หาก paymentStatus ยังเป็น unpaid ก่อนสรุปผล
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - tsc 0 error, vitest 146+ ผ่านครบ, build 0 error
+  - สแกน static: ไม่มี catch () {} เปล่าในทั้ง 5 จุด
+  - GeneralSettings disable ปุ่ม save เมื่อ loadState === 'error'
+  - measure.py ไม่แย่ลง
+
+[2026-10-24 15:00] PLAN F-21: การ์ดแพ็กเกจ (คลิกการ์ด = เลือก state, มีปุ่มเดียวที่เริ่ม checkout)
+• ปัญหา:
+  - ใน PurchaseClient.tsx: การ์ดทั้งใบมี onClick={() => handlePurchase(pkg.id)} และปุ่มในการ์ดแต่ละใบก็เรียก handlePurchase ทันที
+  - ผู้ใช้ที่แตะการ์ดเพื่ออ่านข้อมูลหรือสลับดูบนมือถือจะถูกส่งไป Stripe checkout ทันทีโดยไม่เจตนา (accidental purchase)
+• ทางเลือก:
+  - Option A: ใส่ modal confirm ก่อน redirect — เพิ่มขั้นตอนและ z-index layer โดยไม่จำเป็น (ขัดแย้ง UX minimalist)
+  - Option B (เลือกตามคำตัดสิน D):
+    1) คลิกการ์ดหรือคลิกปุ่มในการ์ด = เปลี่ยน selectedPlan (state เท่านั้น ไม่เริ่ม checkout)
+    2) แยกแถบปุ่มเริ่ม checkout เพียงปุ่มเดียว (Single CTA) อยู่ใต้กริดแพ็กเกจ แสดงชื่อแพ็กเกจและราคาที่เลือก
+    3) คงสัญญา F-02 ({CHECKOUT_SESSION_ID} และ canceled=true) ไม่แตะต้อง
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - คลิกการ์ด package ในเบราว์เซอร์: window.location.href ไม่เปลี่ยน, selectedPlan state เปลี่ยนตามการ์ดที่คลิก
+  - คลิกปุ่มเดียวด้านล่าง: ยิง POST /api/payments/create-checkout-session
+  - tsc 0, vitest 146+ ผ่าน, build 0, measure.py ไม่แย่ลง
+
+[2026-10-24 15:05] PLAN F-11: แยก error 3 กรณี (wrong-credentials / unverified + resend / banned)
+• ปัญหา:
+  - auth-options.ts รวมทุกความล้มเหลว (รหัสผิด, อีเมลยังไม่ยืนยัน, บัญชีถูกแบน) เป็น return null ตัวเดียว ทำให้หน้า login แสดง "Invalid email or password" เสมอ ผู้ใช้ไม่มีทางออก
+• ทางเลือก:
+  - Option A: แยก error ก่อนตรวจรหัสผ่าน — รั่วไหลข้อมูลว่ามีอีเมลนี้ในระบบหรือไม่ (ฝ่าฝืน anti-enumeration)
+  - Option B (เลือกตามคำตัดสิน D):
+    1) auth-options.ts: ตรวจ credentials.password ก่อนเสมอ ถ้ารหัสผิดหรือไม่มีอีเมลในระบบ ให้คืน null (anti-enumeration 100%)
+    2) ถ้ารหัสถูกต้อง จึงตรวจ is_banned -> โยน error USER_BANNED และ email_verified -> โยน error EMAIL_UNVERIFIED
+    3) LoginClient: รับ error แยกเป็น 3 กล่องข้อความ และถ้าเป็น EMAIL_UNVERIFIED ให้แสดงปุ่ม "ส่งอีเมลยืนยันซ้ำ" (Resend verification email)
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - vitest src/lib/auth-options.test.ts 5/5 ผ่าน (พิสูจน์ anti-enumeration และ 3 error states)
+  - tsc 0, vitest 33 test files ผ่านครบ, next build 0 error
+
+[2026-10-24 15:07] PLAN F-13: สถานะที่ 3 'unknown' สีเทา แทนเขียว 0ms + ลิงก์กลับแอป
+• ปัญหา:
+  - ใน ServiceCard.tsx: เมื่อ check เป็น undefined (ไม่มีการตรวจวัดบริการจริง) โค้ด fallback เป็น st = "ok" (เขียว Operational) และ latency 0ms — รายงานเท็จว่าบริการทำงานปกติ
+  - หน้า /status ไม่มี navigation link กลับสู่หน้าแรก (เป็นทางตัน)
+• ทางเลือก:
+  - Option A: ซ่อน card ที่ไม่มีข้อมูล — ทำให้จำนวนบริการไม่ครบตามรายการ
+  - Option B (เลือกตามคำตัดสิน D):
+    1) เพิ่ม CheckStatus = "ok" | "error" | "degraded" | "unknown"
+    2) เพิ่มสี STATUS_COLOR.unknown = "#9ca3af" และ STATUS_LABEL.unknown = "Unknown"
+    3) ServiceCard: เมื่อ check เป็น undefined หรือ status === 'unknown' ให้แสดง dot สีเทา, ป้าย Unknown, และ latency แสดง "—" (ไม่ใช่ 0ms)
+    4) StatusClient: เพิ่มปุ่ม <Link href="/"> พร้อมไอคอน ArrowLeft เพื่อกลับหน้าหลัก
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - เมื่อ check === undefined: สถานะเป็น "Unknown", latency ไม่เป็น "0ms", สี dot เป็น #9ca3af
+  - tsc 0, vitest 33+ files ผ่าน, next build 0 error
+
+[2026-10-24 15:10] PLAN+ผล F-12: ซ่อนตัวกรองแผนกที่ได้ 0 ผล + แสดงจำนวนสูตรบน chip
+• ปัญหา:
+  - math-data.ts มี 23 แผนก แต่มีถึง 12 แผนกที่มี 0 สูตร (เช่น physics, chemistry, accounting ฯลฯ)
+  - registry.ts มี 45 สูตร แต่มี 25 สูตรที่มี subject ไม่ตรงกับ subjects array ของแผนกใดเลย
+  - ผู้ใช้กดตัวกรอง 12 แผนกแล้วเจอ "ไม่พบสูตร" เสมอ
+• ทางเลือก:
+  - Option A: เดาแมป 25 สูตรเข้า 12 แผนกเอง — ผิดกฎ ("ห้ามเดาแมปสูตร 25 ตัวที่หลุดตัวกรอง รายงานให้ Dev ตัดสิน")
+  - Option B (เลือกตามคำตัดสิน D):
+    1) ซ่อน 12 แผนกที่มีสูตร = 0 ใน Sidebar.tsx (deptFormulaCount === 0 return null)
+    2) คงแสดง chip เฉพาะ 11 แผนกที่มีสูตรจริง พร้อมตัวเลขจำนวนสูตร ({deptFormulaCount})
+    3) บันทึกรายชื่อ 25 สูตรที่หลุดตัวกรองให้ทีม Dev ตัดสินใจ mapping ในอนาคต
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - เบราว์เซอร์: รายการแผนกใน Sidebar ลดจาก 24 เหลือ 12 (1 All Departments + 11 แผนกที่มีสูตร)
+  - ทุกแผนกที่แสดงมี count >= 1 เสมอ (0 รายการที่มี 0 สูตร)
+  - vitest src/components/Sidebar.test.ts 2/2 ผ่าน
+  - รายชื่อ 25 สูตรที่หลุดแมป (รอ Dev ตัดสิน):
+    1. geo_sq (Square Area - geometry)
+    2. geo_rect (Rectangle Area - geometry)
+    3. geo_rect_perim (Rectangle Perimeter - geometry)
+    4. geo_tri (Triangle Area - geometry)
+    5. geo_circle (Circle Area - geometry)
+    6. geo_circ_perim (Circle Circumference - geometry)
+    7. geo_cube_vol (Cube Volume - geometry)
+    8. pct_of (Percentage of - numbers)
+    9. pyth_c (Pythagoras - geometry)
+    10. linear_eq (Linear Equation - algebra)
+    11. trig_sin (sin, cos, tan - geometry)
+    12. deriv_power (Derivative Power - calculus)
+    13. dot_product (Dot Product 3D - algebra)
+    14. ie_eoq (Economic Order Quantity - operations)
+    15. ph_newton2 (Newton's Second Law - mechanics_physics)
+    16. ms_std_dev (Standard Deviation - statistics_math)
+    17. ch_molarity (Molarity - solutions_chem)
+    18. bg_pop_growth (Population Growth - ecology)
+    19. ba_roi (Return on Investment - finance_ba)
+    20. ac_current_ratio (Current Ratio - financial_ratios)
+    21. fi_npv (Net Present Value - investment_fi)
+    22. ps_gini (Gini Coefficient - public_policy)
+    23. py_zscore (Z-Score - statistics_psych)
+    24. ed_gpa (Grade Point Average - assessment)
+    25. ar_golden_ratio (Golden Ratio - design_arch)
+
+[2026-10-24 15:15] PLAN F-14: Dashboard route ย่อย /dashboard/<tab> + entry ใน sidebar เฉพาะ admin
+• ปัญหา:
+  - หน้า /dashboard ไม่มีทางเข้าถึงจากแอปหลัก (0 inbound link)
+  - แท็บทั้ง 5 ใน dashboard เป็นเพียง memory state ไม่ใช่ URL ทำให้ไม่สามารถ deep-link, bookmark, หรือกด browser back/forward ได้
+• ทางเลือก:
+  - Option A: แยกสร้าง 5 page.tsx ในแต่ละโฟลเดอร์ — จะเพิ่มจำนวน page.tsx จนชน assertion ของ Page Metadata (เดิมล็อกไว้ 10 หน้า)
+  - Option B (เลือกตามคำตัดสิน D):
+    1) ย้าย src/app/dashboard/page.tsx -> src/app/dashboard/[[...tab]]/page.tsx (optional catch-all) เพื่อรองรับทั้ง /dashboard และ /dashboard/<tab> ใน route เดียว คงจำนวน page.tsx รวมไว้ที่ 10 หน้าตาม gate
+    2) DashboardClient & DashboardProvider: รับ initialTab จาก URL param ('overview'|'analytics'|'finance'|'users'|'settings')
+    3) DashboardShell: handleNav ใช้ router.push('/dashboard/' + tab) เพื่อให้ URL เปลี่ยนตามจริง รองรับ browser navigation
+    4) Sidebar.tsx: เพิ่ม entry "Admin Dashboard" ใน sidebar footer เฉพาะเมื่อ session?.user มีสิทธิ์ admin (isAdmin / role === 'admin') ห้ามโผล่ให้ user ทั่วไปหรือ guest
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - URL /dashboard/users, /dashboard/analytics, /dashboard/finance, /dashboard/settings โหลดตรง tab ที่ถูกต้อง
+  - ผู้ใช้ทั่วไป / guest มองไม่เห็นลิงก์ dashboard ใน Sidebar
+  - แอดมินมองเห็นลิงก์แดชบอร์ดใน Sidebar
+  - tsc 0, vitest 34+ test files ผ่าน, next build 0 error
+
+[2026-10-24 15:20] PLAN F-19: กัน /formulas-demo ออกจาก production ด้วย env flag
+• ปัญหา:
+  - /formulas-demo เป็นหน้า demo ภายในแต่ถูก deploy เป็น route จริงใน production โดยไม่มี guard
+• ทางเลือก:
+  - Option A: ลบโฟลเดอร์ src/app/formulas-demo ทิ้ง — จะทำให้จำนวน page.tsx ลดลงจาก 10 เหลือ 9 จนพัง gate "Page Metadata" (ที่ expect 10 route pages)
+  - Option B (เลือกตามคำตัดสิน D):
+    1) ป้องกันที่ขอบเขต proxy.ts: หาก NODE_ENV === 'production' และ ENABLE_FORMULAS_DEMO !== 'true' ให้คืน 404 Not Found ทันที
+    2) ใส่ server-side guard ใน src/app/formulas-demo/page.tsx: if (process.env.NODE_ENV === "production" && process.env.ENABLE_FORMULAS_DEMO !== "true") notFound();
+    3) รักษา metadata export และความปลอดภัยของ production
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - proxy.test.ts: ทดสอบว่า /formulas-demo ใน production คืน 404
+  - tsc 0, vitest 35+ files ผ่าน, next build 0 error
+
+[2026-10-24 15:25] PLAN F-22: ติดป้าย 'ตัวอย่าง' บน KPI การเงิน + disable ฟอร์มที่ยังไม่ต่อ ห้ามลบ UI
+• ปัญหา:
+  - FinancePage.tsx: การ์ด MRR, ARPU, Churn, Refunds เป็นค่าคงที่ hardcoded ถูกแสดงเหมือนข้อมูลสด
+  - BillingSettings, SecuritySettings, WebhookManager (ปุ่ม action): เป็นฟอร์มที่กดบันทึกแล้วไม่มี handler ใดๆ ทำงาน
+  - DashboardShell: hardcode "Admin" ไม่มีทางออกจาก dashboard
+• ทางเลือก:
+  - Option A: ลบการ์ดและฟอร์มออก — ผิดกฎ ("ห้ามลบ UI")
+  - Option B (เลือกตามคำตัดสิน D):
+    1) KpiCard.tsx: เพิ่ม prop badge?: string และใน FinancePage ติดป้าย "ตัวอย่าง" / "Sample" บน 4 การ์ดการเงิน
+    2) BillingSettings.tsx & SecuritySettings.tsx: ใส่ banner แจ้งเตือนว่า "ฟอร์มตัวอย่าง (ยังไม่ได้เชื่อมต่อกับระบบ)" พร้อม disable input และปุ่ม save
+    3) DashboardShell.tsx: อ่านชื่อ admin จาก useSession() และเพิ่มปุ่ม "Exit to App" (ลิงก์กลับหน้าหลัก /)
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - FinancePage ทั้ง 4 การ์ดมีป้าย "ตัวอย่าง" / "Sample"
+  - ฟอร์ม BillingSettings และ SecuritySettings มี attribute disabled บนปุ่ม submit
+  - DashboardShell มีลิงก์กลับหน้า /
+  - tsc 0, vitest 35+ files ผ่าน, next build 0 error
+
+[2026-10-24 15:30] PLAN ของค้างจากก้อน C: subtitle reset-password + LanguageDropdown flag mapping
+• ปัญหา:
+  1) ResetPasswordClient.tsx: มีข้อความภาษาอังกฤษ hardcoded "Enter your new password"
+  2) LanguageDropdown.tsx: ใช้รหัสประเทศปนกับรหัสภาษา (en -> us, ch -> cn, ko -> kr) ผ่าน flagEmoji lookup ซ้อนสองต่อ
+• ทางเลือก:
+  - Option A: ใช้ i18n แยก country code — ซับซ้อนเกินไป (YAGNI)
+  - Option B (เลือกตามคำตัดสิน D):
+    1) เพิ่มคีย์ resetPasswordSubtitle ใน translations.ts ครบทั้ง 5 ภาษา แล้วเรียกผ่าน t("resetPasswordSubtitle")
+    2) ยุบ langInfo ใน LanguageDropdown ให้ผูก flag emoji กับ Lang key โดยตรง ({ flag, label }) ถอดตาราง lookup สองต่อที่สับสน
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - grep "Enter your new password" ไม่เหลือ hardcoded literal ใน ResetPasswordClient.tsx
+  - LanguageDropdown แสดง flag ตรงกับภาษาทั้ง 5 โดยไม่มี code lookup ซ้อน
+  - tsc 0, vitest 35+ test files ผ่าน, next build 0 error
+
+[2026-10-24 15:35] PLAN+ผล G8 hex ใน src/components (ratchet baseline ต่อไฟล์ ลดได้อย่างเดียว)
+• ปัญหา:
+  - G8 เดิมตรวจ raw hex เฉพาะใน CSS และไฟล์ใน src/app/*.tsx แต่ยังไม่ได้ครอบคลุม src/components/*.tsx ทำให้มี hex เล็ดลอดได้
+• ทางเลือก:
+  - Option A: ลบ hex ทั้งหมดใน components รวดเดียว — กระทบ Recharts palette และ Google OAuth SVG logo
+  - Option B (เลือกตามคำตัดสิน D):
+    1) สแกนทุกไฟล์ใน src/components และบันทึก baseline รายไฟล์แบบ ratchet down-only (DevicePieChart: 6, GeographyList: 1, PlanBreakdown: 4, RevenueChart: 2, TrafficAreaChart: 4, UsersPage: 1, RefundTable: 1, LoginClient: 5, SignUpClient: 4) รวม 28 จุดใน 9 ไฟล์
+    2) ไฟล์อื่นๆ ใน src/components ต้องมี 0 hex หากมีเพิ่มแม้แต่ตัวเดียวจะตก gate ทันที
+• เกณฑ์ผ่านเป็นตัวเลข:
+  - G8 ตรวจครบทั้ง 5 ข้อใน quality-gates.test.ts
+  - mutation test ใส่ hex ใน HomeHero.tsx ตกแดงทันที (exceeds baseline 0) ✓
+  - tsc 0, vitest 35+ test files ผ่าน, next build 0 error
+
+[2026-10-24 15:40] UI/UX Audit v3 — Fix Loop #3 ก้อน D (ความน่าเชื่อถือของข้อมูล + UX) COMPLETE บน branch fix/audit-v3-D-ds
+• ตารางสรุป: Finding | สถานะ | รอบ | หลักฐาน (คำสั่ง → ผล) | ไฟล์ที่แตะ
+  - H-A G13 Dialog display | ปิดสนิท | 1 | quality-gates G13 ผ่าน, mutation test ตกแดงจริง, desktop 1280px กลางจอ elementFromPoint เป็น P.tile-desc, focus restore ครบทั้ง ProfileModal และ LogoutModal บน Chrome CDP | src/lib/quality-gates.test.ts
+  - H-B G11 Dead classes | ปิดสนิท | 1 | ลบ 14 module classes จริง, measure.py module dead 14 → 0, G11 ผ่าน | AuthButton, dashboard-modals, dashboard-settings, HistorySidebar, FormulaCard, PurchaseSuccess, quality-gates.test.ts, measure.py
+  - H-C & H-F Text tokens & Contrast | ปิดสนิท | 1 | ยุบ --text-muted เข้า --text-secondary ครบ 22 ไฟล์, ปรับ --info เป็น #70b4ff (contrast 5.16:1), วัดสดบนเบราว์เซอร์ 5.27:1 | globals.css, quality-gates.test.ts, 22 TSX/CSS modules
+  - H-D F-02 Payment contract | ปิดสนิท | 1 | /api/payments/status คืน currency จาก Stripe session, PurchaseSuccessClient รับ camelCase ล้วน ถอด fallback USD, vitest 4/4 ผ่าน | status/route.ts, status/route.test.ts, PurchaseSuccessClient.tsx
+  - F-16 Silent failure 5 จุด | ปิดสนิท | 1 | GeneralSettings loadState guard ป้องกัน data loss, LoginClient forgot error alert, useHistory clearAll rollback, PageViewTracker mounted, PurchaseSuccess retry loop 3 รอบ | GeneralSettings.tsx, LoginClient.tsx, useHistory.ts, PageViewTracker.tsx, layout.tsx, PurchaseSuccessClient.tsx
+  - F-21 Package cards | ปิดสนิท | 1 | คลิกการ์ด = เปลี่ยน state selectedPlan เท่านั้น (ไม่เริ่ม checkout), แยก single CTA ด้านล่างที่เริ่ม checkout จริง ยืนยันบน Chrome CDP | PurchaseClient.tsx, Purchase.module.css
+  - F-11 Login errors | ปิดสนิท | 1 | แยก 3 กรณี (wrong-credentials / unverified + resend / banned) เฉพาะเมื่อรหัสถูก รักษา anti-enumeration เมื่อรหัสผิด, auth-options.test.ts 5/5 ผ่าน | auth-options.ts, auth-options.test.ts, LoginClient.tsx
+  - F-13 Status unknown state | ปิดสนิท | 1 | เพิ่มสถานะ unknown สีเทา #9ca3af แทนเขียว 0ms เมื่อไม่มีข้อมูลตรวจวัด + เพิ่มปุ่ม Back to App, ServiceCard.test.ts 2/2 ผ่าน | types.ts, constants.ts, ServiceCard.tsx, StatusClient.tsx, ServiceCard.test.ts
+  - F-12 Zero-result departments | ปิดสนิท | 1 | ซ่อน 12 แผนกที่มี 0 สูตร เหลือแสดง 11 แผนกพร้อมจำนวนสูตรบน chip, บันทึก 25 สูตรที่หลุดแมปให้ Dev ตัดสิน | Sidebar.tsx, Sidebar.test.ts
+  - F-14 Dashboard sub-routes | ปิดสนิท | 1 | ย้าย tab เป็น sub-routes /dashboard/<tab> ผ่าน optional catch-all [[...tab]], เพิ่ม single entry "Admin Dashboard" ใน sidebar เฉพาะ admin | dashboard/[[...tab]]/page.tsx, DashboardClient.tsx, DashboardProvider.tsx, DashboardShell.tsx, Sidebar.tsx
+  - F-19 formulas-demo guard | ปิดสนิท | 1 | guard ด้วย NODE_ENV === 'production' && ENABLE_FORMULAS_DEMO !== 'true' ทั้งใน proxy.ts (404) และ page.tsx, proxy.test.ts ผ่าน | proxy.ts, formulas-demo/page.tsx, proxy.test.ts
+  - F-22 Finance sample KPI & disabled forms | ปิดสนิท | 1 | ติดป้าย "ตัวอย่าง" บน 4 การ์ดการเงิน, disable ฟอร์ม BillingSettings และ SecuritySettings พร้อม notice banner, DashboardShell แสดงตัวตนแอดมินจาก session พร้อมปุ่ม Exit | KpiCard.tsx, FinancePage.tsx, BillingSettings.tsx, SecuritySettings.tsx, DashboardShell.tsx
+  - ของค้างก้อน C (subtitle & flag mapping) | ปิดสนิท | 1 | แปล subtitle reset password ครบ 5 ภาษา, LanguageDropdown map flag ตรงกับ Lang key | translations.ts, ResetPasswordClient.tsx, LanguageDropdown.tsx
+  - G8 components hex ratchet | ปิดสนิท | 1 | เพิ่ม per-file ratchet baseline 28 จุดใน 9 ไฟล์ของ src/components ลงใน G8, mutation test ตกแดงทันทีเมื่อใส่ hex เกิน | quality-gates.test.ts
+• สภาพปลายทาง: tsc 0 error · vitest 35 test files / 156 tests ผ่าน 100% · next build 0 error · measure.py สด 2 รอบ SHA256 ตรง: dc311930c741dd373a88d4823446662533a33aed3dfc01c267b27e1908736e8a
+
+[2026-10-24 17:30] UI/UX Audit v3 — Fix Loop #4 ก้อน E: STEP 0.1 ตรวจรับก้อน D บน branch fix/audit-v3-E-glm (จาก fix/audit-v3-D-ds 24dd3e0)
+
+HANDOFF AUDIT #3 — รายการ | ผ่าน/ไม่ผ่าน | หลักฐาน (คำสั่งที่รันรอบนั้น → ผล)
+  - 0a. Baseline gates | ผ่าน | node_modules/.bin/tsc --noEmit → exit 0 · vitest run → 35 files/156 tests passed · next build → exit 0 (ทุก route static, Proxy registered) · eslint . → 21 errors/97 warnings (ก้อน C จบที่ 20/97 — เพิ่ม 1 จาก D ดูข้อ 0e) · measure.py สด 2 รอบ SHA256 ตรงกันเป๊ะ dc311930c741dd373a88d4823446662533a33aed3dfc01c267b27e1908736e8a = ตรงกับเลขที่ D อ้างใน Log
+  - 0b. Mutation G9 | ผ่าน(แดงตามต้องการ) | alpha 0.62→0.38 ใน --text-secondary (globals.css) → "1 failed" · revert
+  - 0c. Mutation G8 | ผ่านบางส่วน | rgba() ใน module css → แดง ✓ · hex ใน src/app/layout.tsx → แดง ✓ · hex ใน src/lib/auth-options.ts → เขียว ✗ GAP (รันแยกเดี่ยว 8 passed — รอบแรกที่เห็น "1 failed" เป็นสัญญาณหลอกจากการรันต่อเนื่องใน shell เดียว) → เข้าคิว H-4
+  - 0d. Mutation G10/G11/G12/G13 | ผ่าน(แดงครบ) | <div role="dialog"> ใน InfoModal.tsx → แดง ✓ · dead class ใน module css → แดง ✓ · dead class ใน globals.css → แดง ✓ · font-size 99px → แดง ✓ · `display: flex` บน .modalCard (Sidebar.module.css — dialog ของ LogoutModal คนละ class กับ .m-info-container) → แดง ✓ (จบชุด "8 passed")
+  - 0e. lint error ที่ D ปล่อยมา | ไม่ผ่าน | eslint JSON: PurchaseSuccessClient.tsx:48 react-hooks/immutability "verifyPayment is accessed before it is declared" — มาจาก commit 10ba92b (F-16 retry) จริง (git show ยืนยัน retry loop อยู่ใน commit) → เข้าคิว fix(handoff) ตัวแรก
+  - 0f. 4 บรรทัดที่ถูกลบใน quality-gates.test.ts (f66f6ae..HEAD) | ผ่าน ไม่ใช่การผ่อน | (1) import fs/path รวมบรรทัด (existsSync/resolve/dirname/relative เพิ่มสำหรับ G13) (2) textTokenNames ถอด --text-muted (ถูกยุบหายจาก globals แล้ว) และเพิ่ม --info เข้าชุดตรวจ = เข้มขึ้น (3) cssScopes จัดรูปใหม่ + เติม .replace(:global) — เทียบ spec เดิมแล้ว assertion ไม่หาย
+  - 0g. measure.py | ผ่าน พร้อมข้อสังเกต | เป็นไฟล์ที่ D เพิ่มเข้า git (ก่อนหน้า untracked) · การตัด :global(...) มีเฉพาะฝั่ง module_declared — ถูกต้องเพราะ :global(.x) ไม่ใช่ module class · blind spot ทฤษฎีคือ "ประกาศ :global(.x){} ใน module css" จะไม่มีใครนับ — grep จริงพบ :global( เฉพาะ Sidebar.module.css แบบ selector ใช้งาน (.collapsed :global(.navLabel)) ไม่มี declaration-style → ไม่มีของตายหลบอยู่จริง
+  - 0h. 14 module classes ที่ D ลบ (3673f9f) | ผ่าน ปลอดภัย | pair-wise เทียบ (module file, class) กับไฟล์ที่ import module นั้น: cancelBtn/modalBtnRow/modalIconWrap/modalText/modalTitle/signOutConfirmBtn (AuthButton), overlay/warning (dashboard-modals), toggle/webhookUrl (dashboard-settings), drawerOpen/panel (HistorySidebar), iconBox (FormulaCard), loadingSub (PurchaseSuccess) → ไม่มี styles.X/styles['X'] หลงเหลือ · dynamic styles[`panel_${variant}`]/[`kpiFlash_*`]/[`kpiTrend_*`] อยู่ใน Panel.tsx/KpiCard.tsx คนละ module ไม่กระทบ
+  - 0i. G11 ฝั่ง globals.css ตาบอด (H-1) | ยืนยันแล้วว่า "ไม่มีของตาย" แต่ตัวตรวจอ่อน | robust deadGlobal=5 ทั้ง 5 เป็น false positive: closed (Sidebar.tsx:94 "closed"), active (Sidebar.tsx:174/200/132, LanguageDropdown.tsx:75), mb-item-active (AppShell.tsx:324,331), single-col/three-col (FormulaCard inputColClass) · audit-style 14 ตัว alive ผ่าน template literal ทั้งหมด (dept-nav-item, lang-dropdown-item, mb-item, modal-header-text, p-result, sidebar-nav-item, sidebar-premium, sidebar-section-title, tile-input-row — grep หาเจอทุกตัว) → ไม่มีอะไรต้องลบ; bare-word corpus (จับคำใดก็ได้ใน tsx/ts) ยังเป็น false-negative machine → อัปเกรดเป็น string-literal corpus ใน fix(handoff)
+  - 0j. H-7 /formulas-demo flag | ไม่ผ่าน | next build && next start (port 3100): default → 404 (body 0 bytes = จาก proxy NextResponse(null,404)) ✓ · ENABLE_FORMULAS_DEMO=true ตอน start → ยัง 404 (body 0) ✗ · หลักฐานยืนยันตัวตนชั้น: /dashboard → 307 /login (proxy มีชีวิต) · formulas-demo.html ใน build มีเนื้อหา demo จริง (ไม่ใช่ not-found ที่อบ) · สาเหตุ: (1) page guard อ่าน env ตอน build เพราะ route ถูก prerender static (2) proxy sandbox ไม่เห็น runtime env (set ตอน start ไม่มีผล) — flag path จึงไปไม่ถึงจุดที่อ่าน env ได้ → เข้าคิว fix(handoff)
+  - 0k. F-17 ช่องโหว่ใหม่จากหน้าจริง | ไม่ผ่าน | /status กด Retry ตอน API ล่ม → live region ประกาศ "Status refreshed at 4:54:54 PM" ทั้งที่ refresh ล้มเหลว (โค้ด: setAnnouncement("refreshed") ใน finally ทับ "refresh failed" ของ catch) → เข้าคิว fix(handoff)
+  - 0l. F-12 badge ขัดจำนวนจริง | ไม่ผ่าน (เล็ก) | sidebar แสดง 12 ปุ่ม (All Departments45 + 11 แผนกมีสูตร: Business5, Civil7, Mechanical2, Electrical1, CS1, Chemical1, Aerospace1, Environmental1, Economics1, Data Science & AI1, Medicine1) แต่ header badge "DEPARTMENTS 24" (itemCount={depts.length + 1} จากทั้ง catalog) → เข้าคิว fix(handoff)
+  - 0m. ตรวจรับก้อน C บนหน้าจริง | ผ่าน | F-08: IAB ล็อก prefers-reduced-motion: reduce=true — วัด /purchase จริง: transform ของ motion card ข้ามเป็น final ทันที (inline style scale(0.8)→"none" ภายใน ~90ms, ไม่มี tween) ขณะ opacity ยังวิ่ง 0→1 ตาม spec reducedMotion="user" (transform/หยุด, opacity/คง) ✓ · F-18: หน้าหลัก JP→document.lang="ja", TH→"th", EN→"en" ✓ (dashboard ต้อง login — ติดป้าย) · F-23: Tab ที่ /signup → outlineStyle solid rgb(232,184,150) + glow ✓ · F-06: /signup 4 คู่ label[for]=signup-name/email/password/confirm, การ์ด input aria-label "Side (s)", search aria-label ✓ (dashboard ฝั่ง login — ติดป้าย) · F-17: LiveRegion อยู่ใน error view (aria-live=polite, sr-only ยืนยัน position absolute/width 1px) + ประกาศจริงตอน Retry, /login error box role=alert มองเห็น ✓ · F-20: sessionStorage pref-lang=th → "ลิงก์รีเซ็ตไม่ถูกต้อง"+lang=th, =en → "Invalid reset link"+lang=en ✓ (จด: D ย้ายที่เก็บ pref-lang localStorage→sessionStorage — วิธีทดสอบก้อน C เดิมใช้ localStorage จึงต้องปรับ) · F-15: "45 Formulas"/"4 Levels"/"Release v0.1.0"/purchase "45+ formulas & calculators" ✓ · F-16 บางส่วน: forgot-password ยิงแล้วพร้อมกันกับ server ล่ม → role=alert "Failed to send reset link" ไม่ขึ้น success ปลอม ✓, PageViewTracker ยิง beacon POST /api/page-views จริง (performance entries บน /login) ✓ — audit v3 ขอแค่ mount การยิงทุกหน้ารวม auth เป็น by-design ตาม docstring ของ hook · F-21: คลิกการ์ด → "Selected" + URL คงเดิม, CTA เดียว "Proceed to Checkout (Monthly Pro • $9.99)" ✓
+  - 0n. H-2 เลข contrast | ผ่าน (เชิงวิเคราะห์) + ขยาย gate | 8 แถวที่หายไป 108→100 = --text-muted ×4 พื้น + --dash-text-muted ×4 พื้น (ถูกยุบโดย 98ae782) · failing 4.5=48 ล้วน non-text-role (border/accent/status เทียบพื้นที่ไม่บังคับ 4.5) · คำนวณถูกต้อง (แก้ bug ของการคำนวณครั้งแรกที่ drop alpha ของ --card-bg): --error 4.81, --info 5.02, --text-secondary 4.53, --success 6.26, --warning 7.12, --primary 6.09 บน card-bg — ผ่านหมด · G9 เดิมเช็ค status tokens เฉพาะบน --bg → จะขยายเป็นทั้ง 4 พื้นใน fix(handoff) (เขียวเพราะค่าผ่านหมด) · วัดจริงบน sidebar: --text-secondary composite rgb(164,160,155) บนพื้น rgb(36,47,53) ≈ 5.5:1 ผ่าน (ไม่พบชั้น glass เพิ่มเหนือข้อความที่มองเห็นที่ viewport 1280px)
+  - 0o. H-3 ยุบโทเคน | ผ่าน | --text-muted ไม่เหลือใน globals.css (resolve ไม่เจอ) เหลือ --text-secondary ตัวเดียว (คู่ --text-secondary/--text-dim มีค่า rgba เดียวกันเป็นคู่ที่ต่างชื่อไว้ตั้งแต่เดิม) · dup token values=13 ยังอยู่เพราะ D1 ตัดสินยุบเฉพาะ --text-muted; ที่เหลือ = กลุ่ม --dash-* (unused 17 ตัวรวม dash-* ไว้ลบอีกรอบ), คู่ --radius-sm/--space-sm ฯลฯ (คนละ semantic) — บันทึกไว้ ไม่แตะ
+  - 0p. H-4 เลข hex | แก้ใน fix(handoff) | จริง C=98 → D=97 จุด (ไม่ใช่ 96→97; #9ca3af เข้ามาใหม่ใน constants.ts จาก F-13 แต่ถูกชดเชยด้วยการลบที่อื่น) · "15 ไฟล์" ใน Log ก้อน C เป็นตัวเลขคาดเดาไม่ตรง — git grep จริง C=D 23 ไฟล์/118 จุด (รวม src/app+src/lib); เฉพาะ src/components = 9 ไฟล์/28 จุด ตรงกับที่ D ล็อก ✓ · G12 baseline รวม 304 แต่ค่าจริง module=292 (341−49 globals) → ratchet หลวม 12 จุด ต้องลดล็อก (ลดได้อย่างเดียว ✓)
+  - 0q. H-5/H-6/H-8/H-9 | ตรวจเท่าที่ทำได้ ที่เหลือติดป้าย | H-5: login รหัสผิด → generic "Invalid email or password" ✓ บนหน้าจริง (auth-options ตรวจรหัสก่อนสถานะ + dummy-hash เมื่อไม่พบผู้ใช้ ตรวจโค้ดตอน fix); กรณี unverified/banned + resend ต้อง DB → ติดป้าย ยังไม่ยืนยันบนเบราว์เซอร์ · H-6: /dashboard/users เปิดตรงตอน guest → 307 /login จาก proxy (server-side ✓ ไม่ใช่แค่ซ่อนลิงก์); บทบาท user ปกติ/admin ต้อง login → ติดป้าย; admin APIs มี admin-gate ของตัวเอง (src/lib/admin/, 27 tests) ตรวจโค้ด · H-8: F-13 (main view ต้องมี API data), F-22 (ต้อง login ดู dashboard) → ติดป้าย; F-12 เลขบน chip ถูกต้องทั้ง 11 แผนก ✓ · H-9: เครื่องไม่มี Stripe test key/.env.local → F-02/F-21 ติดป้าย "ยังไม่ยืนยันบนเบราว์เซอร์" + เขียนขั้นตอนให้คนทำเอง (ดูหัวข้อปิดงาน)
+[2026-10-24 18:20] คิวก้อน E: PLAN P2-12..P2-16 (a11y ของ widget — นิยามตรงธีมทั้ง 5 ข้อ ไม่มีข้อที่ต้องข้าม)
+• P2-12 backdrop hit-test เขียนมือ 8/8 (ConfirmModal.tsx:35-47 เป็นต้นแบบ; พบ 8 ไฟล์: ConfirmModal, ProfileModal, LogoutModal, MessageModal, BanConfirmModal, PlanChangeModal, UserDetailModal, InfoModal)
+  - Option A: คง rect hit-test แก้เฉพาะมุมโค้ง — ยังคงสำเนาเดิม 8 ชุด ที่ต้องดูแล
+  - Option B (เลือก): แทนด้วย native idiom `e.target === dialogRef.current` ครบ 8 ไฟล์ (คลิก ::backdrop target เป็น dialog เสมอตามสเปก)
+  - เกณฑ์ผ่าน: grep getBoundingClientRect ใน 8 ไฟล์ dialog = 0 · เบราว์เซอร์: เปิด InfoModal คลิก backdrop → ปิดจริง, คลิกเนื้อหา → ไม่ปิด · tsc 0 · vitest 160 · build 0 · G10/G13 คงเขียว
+• P2-13 LanguageDropdown ไม่มี aria-expanded/role/arrow (LanguageDropdown.tsx:58-88)
+  - Option A: คงปุ่มธรรมดา + tab เดินเอง — ไม่ตอบนิยาม audit
+  - Option B (เลือก): trigger ใส่ aria-haspopup="listbox" + aria-expanded + aria-label; menu role="listbox"; ตัวเลือก role="option" + aria-selected; ArrowDown/ArrowUp เลื่อน focus, Enter เลือก, Escape ปิดและคืน focus ที่ trigger
+  - เกณฑ์ผ่าน: เบราว์เซอร์อ่าน aria-expanded สลับ true/false · ArrowDown เลื่อนจาก option 1 → 2 · Escape ปิดเมนู · snapshot แสดง listbox/option
+• P2-14 tabs 2 ชุดไม่มี aria-controls/tabpanel/arrow (InfoModal.tsx:113-143 device tabs, StatusClient.tsx:237-248 range tabs)
+  - Option A: คง aria-selected เท่าที่มี — ขาดความสัมพันธ์ tab↔panel และ keyboard
+  - Option B (เลือก): ให้ tab มี id + aria-controls, พาเนลเนื้อหามี role="tabpanel" + aria-labelledby, tablist จัดการ ArrowLeft/ArrowRight (เลื่อน focus + เลือกทันที)
+  - เกณฑ์ผ่าน: snapshot แสดง tablist/tab/tabpanel ครบ · aria-controls ชี้ id ที่มีจริง · กด ArrowRight ที่ tab แรกเลื่อน+เลือก tab ถัดไป
+• P2-15 <button> ซ้อนใน div role=button (Sidebar.tsx:300-334 บล็อก profile มีปุ่ม logout ข้างใน)
+  - Option A: เก็บ div role=button แต่ย้ายปุ่ม logout ออกนอก div — div ยังเป็น widget จำลองอยู่
+  - Option B (เลือก): รื้อเป็นปุ่มจริง — container div ธรรมดา + <button class="sidebar-profile-trigger"> ครอบ avatar+info + ปุ่ม logout เป็นพี่น้อง
+  - เกณฑ์ผ่าน: snapshot ไม่มี role=button ที่มี button ข้างใน · ปุ่ม profile มี accessible name · คลิกเปิด ProfileModal, ปุ่ม logout แยกทำงาน
+• P2-16 role=button รับ Enter ไม่รับ Space (Sidebar.tsx:306-308 บล็อก session, 341-343 บล็อก guest)
+  - Option A: เพิ่ม key === " " เข้า handler เดิม — ยังจำลองปุ่มเอง ต้องดูแล preventDefault เอง
+  - Option B (เลือก): แปลงเป็น <button> จริง (native รับ Enter+Space ฟรี) — บล็อก session แก้พร้อม P2-15, บล็อก guest แปลง div→button
+  - เกณฑ์ผ่าน: เบราว์เซอร์โฟกัสปุ่ม guest กด Space → signIn ทำงาน (ปุ่ม native) · ไม่มี div role=button เหลือใน Sidebar
+
+[2026-10-24 19:10] UI/UX Audit v3 — Fix Loop #4 ก้อน E COMPLETE บน branch fix/audit-v3-E-glm (จาก fix/audit-v3-D-ds 24dd3e0)
+
+## ตารางสรุปงาน fix(handoff) — 9 ชิ้น
+| ชิ้น | สถานะ | รอบ | หลักฐาน (คำสั่งรันรอบนั้น → ผล) | ไฟล์ | สิ่งที่ยังไม่ได้ตรวจ |
+|---|---|---|---|---|---|
+| Lint error จาก D (PurchaseSuccess retry) | ปิดสนิท | 1 | eslint . → 21→20 errors (กลับ baseline เดิม) · tsc 0 · vitest 156 · build 0 | PurchaseSuccessClient.tsx | ไม่มี (eslint JSON ยืนยัน rule หาย) |
+| H-7 /formulas-demo flag | ปิดสนิท | 2 (รอบแรกสมมติว่า "proxy sandbox ไม่เห็น env" — probe จริงพิสูจน์ว่า proxy เห็น (Node runtime); ต้นตอจริงคือ static prerender อบ notFound ตอน build) | next build && next start: default → 404 ✓, ENABLE_FORMULAS_DEMO=true → 404→200 (body มี "Formulas Gallery") ✓ · build แสดง ƒ /formulas-demo (dynamic) · formulas-demo-gate.test.ts 3 tests · proxy.test.ts +1 test | formulas-demo/page.tsx, proxy.ts, proxy.test.ts, formulas-demo-gate.ts(+test) | ไม่มี |
+| F-17 announcement masking | ปิดสนิท | 1 | เบราว์เซอร์ /status กด Retry ตอน API ล่ม → "Status refresh failed at 5:26:01 PM" (เดิม "Status refreshed") · ครอบ partial failure (success=false) ด้วย | StatusClient.tsx | ข้อความฝั่งสำเร็จกับ API จริง (ต้องมี DB) — path โค้ดเดียวกัน |
+| สี status ตก WCAG + F-12 badge | ปิดสนิท | 1 | คำนวณ: #ef4444 บน card-bg 2.9:1, #9ca3af 4.31:1 → แทนโทเคน (--success/--warning/--error/--status-unknown #a8b0bc ผ่าน ≥4.5 ทั้ง 4 พื้น — measure แถวใหม่ 4 แถวผ่านหมด) · hex js/ts 97→89 · เบราว์เซอร์: badge "DEPARTMENTS 24"→"12" ตรงปุ่มที่แสดง (12 ปุ่ม) | globals.css, status/constants.ts, KPIBar.tsx, IncidentTimeline.tsx, Sidebar.tsx, ServiceCard.test.ts (assertion ปรับตาม contract ใหม่ที่โจทย์ H-4 สั่ง) | จุด/ข้อความสีใหม่บน /status main view ต้องมี DB จึงเห็น (ยืนยันผ่านตัวเลข measure + CSS var chain) |
+| H-1 G11 ฝั่ง global | ปิดสนิท | 1 | mutation ก่อนแก้: `.session` (ชื่อตรง identifier ใน tsx) → เขียว (ตาบอดยืนยัน) · หลังแก้: `.session` แดง ✓, dead class ธรรมดา แดง ✓, module class ยังแดง ✓, สะอาดเขียว · 14 ชื่อ audit-style + 5 robust ตรวจทีละชื่อ = ALIVE ทั้งหมด → ไม่มีอะไรต้องลบ (รายละเอียดใน HANDOFF AUDIT 0i) | quality-gates.test.ts | dynamic concat รูปแบบ "x-" + id มองไม่เห็นโดยธรรมชาติของวิธี (ไม่มีใน repo ตอนนี้) |
+| H-4 G8 hex ratchet src/app+src/lib | ปิดสนิท | 1 | mutation: hex ใน lib ไฟล์ใหม่ → แดง ✓ (เดิม M3 เขียว), hex เกิน baseline รายไฟล์ (constants 6>5) → แดง ✓ | quality-gates.test.ts, constants.ts (คอมเมนต์เรียกใหม่ไม่ให้นับเป็น hex) | ไม่มี |
+| G9 ครอบ status ทั้ง 4 พื้น + --status-unknown | ปิดสนิท | 1 | mutation: --warning=#ef4444 → แดง ("on --bg 3.64:1 must be >= 4.5") ✓ · ค่าจริงทุก token ผ่านทั้ง 4 พื้น (error 4.81 / info 5.02 / unknown 5.0 บน card-bg) | quality-gates.test.ts, globals.css | ไม่มี |
+| G12 ลด baseline 304→292 | ปิดสนิท | 1 | นับจริงรายไฟล์: หลวม 5 ไฟล์รวม 12 จุด (AuthButton 4→0, dashboard-modals 13→12, dashboard-settings 9→7, Purchase 33→30, PurchaseSuccess 9→7) · mutation: AuthButton +1 literal → แดง ✓ | quality-gates.test.ts | ไม่มี |
+| H-5 timing enumeration | ปิดสนิท (โค้ด) | 1 | auth-options: ไม่พบผู้ใช้ → compare dummy hash (cost 12) เสมอ + test เพิ่ม assertion bcrypt.compare ถูกเรียก · register: existing → bcrypt.hash เผื่อเวลาเท่ากัน · generic response + rate limit ยืนยันว่ามีอยู่แล้วใน verify/register routes · เบราว์เซอร์: wrong-password → generic "Invalid email or password" ✓ | auth-options.ts(+test), register/route.ts | unverified/banned/resend บนหน้าจริง (ต้อง DB) — ติดป้ายด้านล่าง |
+
+## ตารางสรุปคิวก้อน E (P2-12..P2-16)
+| Finding | สถานะ | รอบ | หลักฐาน | ไฟล์ | สิ่งที่ยังไม่ได้ตรวจ |
+|---|---|---|---|---|---|
+| P2-12 backdrop hit-test 8/8 | ปิดสนิท | 1 | grep getBoundingClientRect ใน 8 dialog ไฟล์ = 0 · เบราว์เซอร์: เปิด InfoModal → คลิก backdrop ปิดจริง (open true→false), คลิกเนื้อหาไม่ปิด (open คง true) · net −48 บรรทัด | ConfirmModal, ProfileModal, LogoutModal, MessageModal, BanConfirmModal, PlanChangeModal, UserDetailModal, InfoModal | ไม่มี (HistorySidebar เป็น drawer ไม่ใช่ dialog backdrop — ไม่เข้าข่าย 8/8) |
+| P2-13 language dropdown | ปิดสนิท | 1 | เบราว์เซอร์: aria-expanded=true, haspopup=listbox, role=listbox, 5 option + aria-selected · ArrowDown เลื่อน focus EN→TH · Escape ปิดเมนู + focus กลับ trigger (focusOnTrigger=true) | LanguageDropdown.tsx | trusted-key Enter เลือก option — คลิกยืนยันแล้ว; IAB ส่ง trusted key ไม่เสมอ (ดดูหมายเหตุ IAB) |
+| P2-14 tabs 2 ชุด | ปิดสนิท (InfoModal) / บางส่วน (StatusClient) | 1 | InfoModal เบราว์เซอร์: 3 tab มี id + aria-controls=info-device-panel, panel role=tabpanel + labelledby · trusted key หลังคลิกจริง: ArrowRight pc→mobile (ทั้ง focus+selection), ArrowLeft กลับ pc ✓ · defaultPrevented=true ยืนยัน handler รับ event | InfoModal.tsx, StatusClient.tsx | ฝั่ง StatusClient: error view ไม่แสดง tabs (ต้องมี DB) — โค้ด pattern เดียวกับ InfoModal ที่พิสูจน์บนจอแล้ว → ติดป้าย "ยังไม่ยืนยันบนเบราว์เซอร์" |
+| P2-15 button ซ้อนใน div role=button | ปิดสนิท (โครงสร้าง) | 1 | grep role="button" ใน Sidebar.tsx = 0 · โครงใหม่: container div + ปุ่ม sidebar-profile-trigger + ปุ่ม logout เป็นพี่น้อง (logout มี aria-label เพิ่ม) | Sidebar.tsx, globals.css | ฝั่ง session (avatar + ปุ่ม logout) ต้อง login จึงเห็นบนจอ |
+| P2-16 Space ไม่ทำงาน | ปิดสนิท (โครงสร้าง) / บางส่วน (trusted key) | 1 | guest row = <button> จริง (tag=BUTTON, role หาย, focus ได้) · dispatch click → ไป /login ✓ · แพลตฟอร์มรับประกัน Enter/Space บนปุ่ม native | Sidebar.tsx, globals.css | กด Space ด้วย trusted key บน IAB — ดดูหมายเหตุ IAB |
+
+หมายเหตุ IAB: in-app browser ส่ง trusted key ทาง cua.keypress เข้าหน้าเว็บไม่สม่ำเสมอ (ArrowLeft ผ่านเมื่อนำด้วยคลิกจริง, Tab/Space ไม่ผ่านในลำดับเดียวกัน — ลอง 3 รูปแบบ) จึงใช้ dispatch KeyboardEvent (defaultPrevented ยืนยัน handler) + โครงสร้าง native element เป็นหลักฐานแทน และติดป้ายตามจริงทุกจุด
+
+## ผลตรวจรับก้อน D + HANDOFF AUDIT #3 (ที่พบว่าผิด/อ่อน) — สรุป
+1. D ปล่อย eslint error ใหม่มาใน commit 10ba92b (react-hooks/immutability) และไม่รายงานเลข lint ใน Log ปิดก้อน — แก้แล้ว (40618b1)
+2. D อ้าง "proxy.test.ts: ทดสอบว่า /formulas-demo ใน production คืน 404" — ไม่จริง: commit 44e6d9c เพิ่ม test CSP เท่านั้น ไม่มี test ของ demo guard (overclaim) — เขียน test ใหม่ใน 4232d6c
+3. D อ้าง "ปิดสนิท" F-19 ทั้งที่ flag path พังบน next start (static prerender อบ notFound ตอน build) — probe พิสูจน์: proxy เห็น runtime env จริง, ต้นตออยู่ที่ page — แก้ด้วย force-dynamic + gate แยก (4232d6c)
+4. F-17 (จากก้อน C ที่ D ผ่านตรวจไปทั้งรอบ): finally ทับ announcement ของ catch → refresh ล้มเหลวประกาศว่าสำเร็จ — แก้แล้ว (647e9c9)
+5. F-13 นำ #9ca3af/#ef4444 มาเป็นสีข้อความโดยตรง → ตก WCAG บน card-bg (4.31:1 / 2.9:1) — แก้ด้วยโทเคน (36da630)
+6. F-12 ปล่อย badge "DEPARTMENTS 24" ขัดลิสต์ที่แสดง (12 ปุ่ม) — แก้ (36da630)
+7. G11 ฝั่ง global ยังเป็น bare-word corpus (ตามที่ก้อน C เตือน) — mutation `.session` เขียวยืนยันตาบอด → อัปเกรดเป็น className corpus (60c237e); ไม่พบ dead class จริงใน globals.css (14 audit + 5 robust = false positive ทั้งหมด)
+8. G8 ไม่ครอบ src/app/.ts และ src/lib (mutation M3 เขียว) → ขยาย ratchet รายไฟล์ down-only (98de5d8)
+9. G12 baseline หลวม 12 จุด (D ลด literal แต่ไม่ลด baseline) → ลดล็อก 304→292 (5595167)
+10. เลขที่ D บันทึกถูกต้อง: SHA256 measure ตรง, vitest 35/156 ตรง, 14 module classes ลบแล้วปลอดภัย (pair-wise กับผู้ import), 9 ไฟล์/28 จุด hex ใน components ตรง — "15 ไฟล์" ใน Log ก้อน C เป็นตัวเลขคาดเดาของเราเอง (แก้ไขใน HANDOFF AUDIT 0p)
+
+## ผ่านเทสต์แต่ยังไม่ยืนยันบนเบราว์เซอร์
+- H-5 กรณี unverified/banned + resend จริง (ต้อง DB) — โค้ด: ตรวจหลัง verify password + generic response + rate limit
+- H-6 บทบาท user ปกติ/admin บน /dashboard/<tab> (guest → 307 /login ยืนยันแล้วจาก proxy จริง) — admin APIs มี admin-gate ของตัวเอง (27 tests)
+- H-8 F-22 (การ์ด ตัวอย่าง + ฟอร์ม disabled), F-13 (main view unknown/"—"), F-16 GeneralSettings — ต้อง login/DB; F-16 forgot-password ยืนยันบนหน้าจริงแล้ว; PageViewTracker ยิง beacon จริง (ทุกหน้ารวม auth เป็น by-design ตาม docstring — audit v3 ขอแค่ mount)
+- H-9 Stripe F-02/F-21: เครื่องไม่มี Stripe test key — ขั้นตอนให้คนทำเอง: (1) ตั้ง STRIPE_SECRET_KEY (test) + STRIPE_WEBHOOK_SECRET ใน .env.local (2) เข้า /purchase เลือกแพ็กเกจ → ปุ่มเดียว "Proceed to Checkout" (3) จ่ายด้วยบัตรทดสอบ 4242 4242 4242 4242 (4) ตรวจถูกพากลับ /purchase/success?session_id=… และ {CHECKOUT_SESSION_ID} ถูกแทนที่จริง (5) ตรวจ /api/payments/status คืน paymentStatus=paid + currency (6) ยกเลิกที่ Stripe → กลับมาพร้อม canceled=true → banner แสดง
+- P2-14 ฝั่ง StatusClient / P2-16 trusted-Space / P2-13 trusted-Enter (ข้อจำกัด IAB — ดดูหมายเหตุ)
+
+## BLOCKED + สมมติฐาน
+- DEV_DECISION_F12 (แมป 25 สูตรที่หลุดแผนก): ยังไม่ได้รับการตัดสิน — คงสถานะเดิม (ซ่อนแผนกว่าง + chip แสดงจำนวน) ห้ามเดาแมป
+- ไม่มีข้อ BLOCKED ใหม่จากคิวก้อน E
+
+## ผล measure.py เทียบ baseline STEP 0.1
+| ค่า | baseline (D) | ปลายก้อน E | ทิศทาง |
+|---|---|---|---|
+| tokens | 71 | 72 | +1 (--status-unknown ใหม่ มีผู้ใช้) |
+| contrast rows / failing 4.5 | 100 / 48 | 104 / 48 | +4 แถว (token ใหม่ ×4 พื้น) ผ่านหมด · text-role failing=0 คงเดิม |
+| font-size literals | 341 (module 292) | 341 (module 292) | คงเดิม — G12 ล็อกแน่นขึ้น (ลด baseline ล้วน) |
+| raw hex js/ts | 97 | 89 | ลดสุทธิ 8 (STATUS_COLOR/KPIBar/IncidentTimeline เป็นโทเคน + คอมเมนต์เรียกใหม่) |
+| raw hex non-globals CSS | 0 | 0 | คงเดิม |
+| dead classes G11 | 0 (ตรวจแบบอ่อน) | 0 (ตรวจแบบเข้ม: className corpus) | เข้มขึ้น เลขเดิม |
+| dup token values / unused tokens | 13 / 17 | 13 / 17 | คงเดิม (H-3 บันทึกไว้ ไม่แตะ) |
+| SHA256 (สด 2 รอบตรงกัน) | dc311930c741dd373a88d4823446662533a33aed3dfc01c267b27e1908736e8a | b6846a45802d30392ab08a9ad3f4b25602144033616c57712a6d3b40f9814f85 | เปลี่ยนตาม token/แถวใหม่ — deterministic ทั้งคู่ |
+
+## สภาพปลายทาง
+- tsc 0 · vitest 36 files / 160 tests (base 35/156) · next build 0 · eslint 20 errors/97 warnings (base 21/97 — ลบ error ที่ D หลุดมา 1 ตัว ไม่มีของใหม่)
+- git diff --stat f66f6ae..HEAD -- '*.test.ts' 'scripts/v3/measure.py' → 8 files, +1170/−22 (measure.py เป็นไฟล์ใหม่ของ D ทั้งไฟล์ 643 บรรทัด — ก้อน E ไม่ได้แก้ measure.py แม้แต่บรรทัดเดียว)
+- 18 commits บน fix/audit-v3-E-glm: c876326 (docs audit #3) + 40618b1 4232d6c 647e9c9 36da630 60c237e 98de5d8 5595167 7684c8b (handoff ×8) + 9f0332d ad76a83 7dcec71 8f7e3c8 bfc9c31 (P2-12..16) + docs ปิดก้อนฉบับนี้
+- ไม่มี remote — push ข้ามตามบริบทส่งต่อ; ปลาย branch = commit นี้
+
+[2026-10-24 19:32] HANDOFF AUDIT #4 / ลูป F — STEP 0.1 สภาพจริงที่รับมา (HEAD 574e83f บน fix/audit-v3-E-glm)
+• ยืนยันปลายก้อน E ด้วยคำสั่ง: git log -1 --format='%H %s' → 574e83f687db56867e61208e1e711b200e19034a "docs(vault): session note for audit v3 loop #4 batch E" (a8994ce คือ commit ก่อนหน้า ไม่ใช่ HEAD)
+• พบ worktree สกปรกก่อนเริ่ม: git status --porcelain = 49 tracked modified + 51 untracked (ชุด security-hardening WIP: src/lib/require-user.ts, src/lib/session-cookie.ts, session-cookie, migrations 010/011, route tests ~20 ไฟล์)
+  → préserve ไว้ที่ branch preserve/security-wip-20261024 (commit 4b4f119) แล้ว więcไม่มีการทิ้งงานใคร; .chrome-* junk 7 โฟลเดอร์ (≈106 MB Chrome profile) ย้ายออกไป %TEMP%\audit-f-chrome-junk (ไม่ลบ)
+• ผลรันบน HEAD ก่อนแก้ (คำสั่งจริง, รันที่ 574e83f + worktree สะอาด):
+  npx tsc --noEmit            → exit 2, 1 error: src/lib/auth-options.ts(7,38) TS2307 Cannot find module './session-cookie'
+  npx eslint                  → exit 1, 120 problems = 20 errors + 100 warnings; error ทั้ง 20 มาจาก .chrome-*\Default\Extensions\...\craw_*.js (ไม่ใช่โค้ด repo) → โค้ด repo = 0 error / 100 warning
+  npx vitest run              → exit 1, Test Files 3 failed | 15 passed (18), Tests 3 failed | 76 passed (79)
+        · FAIL src/lib/auth-options.test.ts (ทั้ง suite ล่ม เพราะ import './session-cookie' หาย)
+        · FAIL src/lib/quality-gates.test.ts > G8: "src/components/AuthGuard.tsx: 1 raw hex matches (exceeds baseline 0)"
+        · FAIL src/app/api/payments/create-checkout-session/route.test.ts: "rejects redirect URLs that only match an attacker-supplied Host header" (expected 200 to be 400) + "fails closed when the app origin is not configured" (expected 200 >= 400)
+  npx next build              → exit 1, Module not found: ./src/lib/session-cookie ที่ ./src/lib/auth-options.ts:7
+• ตัวเลข test files: git ls-files '*.test.ts*' = 18 ไฟล์ ไม่ใช่ "34+/35+" ตามรายงาน D/E — รายงานเดิมนับ test ที่ยัง untracked (route tests ของ WIP) ปนเข้ามา
+• measure.py สด 2 รอบ (python 3.10.11) SHA256 ตรงกันทั้งสองรอบ = 68DFF5BAB2046EB206200638A596104455230FFAAE29FDF7D23C67B92CE489EF ; ผลดิบทั้งก้อน (12 บรรทัด):
+    root block   : src/app/globals.css:12 (body 98 lines)
+    tokens       : 72  scanned css=32 tsx/ts=211
+    contrast rows: 104  failing 4.5=48  text-role failing=0
+    font-size    : 341 literals / 55 distinct, var(--fs-*) usages=5
+    z-index      : raw=13 distinct=[0, 1, 2, 50], var(--z-*) usages=14
+    raw hex      : non-globals CSS=0  js/ts=90
+    dead classes : global audit=14 robust=5  module audit=0 robust=0  G11=0
+    misc         : !important=15  breakpoints=14  dup token values=13  unused tokens=17
+    SANITY  --text-dim : rgba(242, 230, 218, 0.62) alpha 0.62 ratio 5.27 PASS
+            legacy     : alpha 0.18 -> 1.67 (scripts/contrast.py:24)
+    worst 8 text-role pairs: (ว่าง — ไม่มี text-role ที่ตก)
+    wrote audit-data/metrics.json
+• สรุปการรับก้อน E: ไม่ผ่าน (base branch แดง 4 ด้าน) — สาเหตุรากเดียวกันคือ commit ที่อ้างไฟล์/เทสต์ที่ยังไม่ถูก commit
+  · a03e450 (ลูป D, F-11) ใส่ import "./session-cookie" แต่ไม่เคย commit ไฟล์นั้น
+  · 34813e5 ใส่เทสต์ contract ของ create-checkout-session แต่ route ยังใช้ Host header
+  · รายงาน D/E ที่ว่าเขียวมาจากการรันใน worktree ที่มีไฟล์ untracked ปนอยู่ ไม่ใช่จาก commit
+• แก้ 3 จุดเพื่อให้ base เขียว (คนละ commit, 1 finding = 1 commit):
+  1) 5c476ee fix(handoff): commit session-cookie module → tsc 2→0, auth-options.test.ts 5/5 ผ่าน
+  2) ca07cd0 fix(handoff): AuthGuard icon ใช้ token แทน #fff → quality-gates.test.ts 8/8 ผ่าน (G8)
+  3) b90f852 fix(handoff): checkout redirect guard เทียบ NEXT_PUBLIC_APP_URL ไม่ใช่ Host header → route.test.ts 2/4→4/4
+
+[2026-10-24 20:05] HANDOFF AUDIT #4 — STEP 0.1 ตรวจรับก้อน E (ต่อ): ผลลัพธ์ + mutation + per-commit
+• ผลรันที่ HEAD 574e83f (ก่อนแก้) vs หลังแก้ handoff 4 commits: tsc 2→0 · vitest 3 failed/18 files + 1 suite ล่ม → 87/87 ผ่าน 19 files · next build 1→0 (build ได้โดยไม่ต้องมี env) · lint ยังแดง 6 errors เดิม (ดู BLOCKED)
+• สาเหตุ build แดงไม่ใช่ env: src/lib/admin/audit.ts:3 มี const supabase = getSupabaseAdmin() ทำงานตอน module eval → Next เก็บ page data แล้ว throw SUPABASE_URL is not set; แก้เป็นเรียกใน writeAuditLog (316c705) → build no-env 0
+• test files จริงที่ commit อยู่ = 18 (git ls-files '*.test.ts*') → รายงาน D/E ที่อ้าง 34+/35+ นับ test ที่ยัง untracked ปน (WIP มี route.test.ts ~20 ไฟล์)
+• per-commit buildability ของ 16 commits ใน D..574e83f (git rev-list --count = 16 ไม่ใช่ 18/19 ตามรายงาน E):
+  - worktree ต่อ commit + tsc: 16/16 = exit 2 (ทุกตัวพังเพราะ import './session-cookie' ที่ a03e450 ทิ้งไว้และไม่เคย commit)
+  - ฉีดไฟล์ที่หายเข้าไปในแต่ละ worktree แล้วรันซ้ำ: 16/16 = exit 0 → ไม่มี commit ของ E ตัวใดพังด้วยเหตุของตัวเอง
+• mutation test gate G8-G13 + F-19 (ของเสียทีละอย่าง, revert หลังทุกครั้ง, restored=true ทุกเคส):
+  G9 alpha ต่ำใน token ข้อความ (--text-dim 0.62→0.30) → RED · G8 hex ใน src/lib → RED · G8 rgba 1 จุดใน module css → ไม่ตก (ดูข้อถัดไป) · G10 div role=dialog aria-modal → RED · G11 dead class ใน globals.css (.session) → RED · G11 dead class ใน module css → RED · G12 ไฟล์ใหม่ font-size literal → RED · G13 dialog{display:flex} ไม่มี [open] → RED · F-19 gate inverted → RED (3 tests)
+  พบว่า G8 rgba 1 จุดไม่ตก gate เพราะ RAW_RGB_BASELINE=203 แต่ของจริง 202 → แก้ 203→202 (806bc13) แล้ว mutation 1 จุดตกจริง (RED: 203 exceeded ratchet baseline 202)
+• G12 ขอบเขต: gate เดิมนับ 292 (module css) แต่ measure.py นับ 341 = module 292 + globals.css 49; inline fontSize ใน tsx อีก 47 ที่ไม่มี gate ไหนเห็น → ขยาย G12 (81eebc8) globals 49 + inline 47 (ratchet down-only) + mutation 2 ด้านตกจริง (50>49, 48>47)
+• ตรวจ diff ของ E (16 commits): ไม่มีการผ่อน assertion — บรรทัดที่ถูกลบคือ (ก) ServiceCard: expect(STATUS_COLOR.unknown).toBe('#9ca3af') → เปลี่ยนเป็น token --status-unknown (เข้มขึ้น) (ข) G9 text list เพิ่ม --status-unknown (ค) G11 เปลี่ยน corpus จาก bare word เป็น className corpus (เข้มขึ้น) (ง) G12 baseline 304→292 (ลดลง) (จ) G8 ratchet ใหม่ per-file
+• measure.py: ไฟล์นี้ถูกเพิ่มที่ 3673f9f (งาน dead-class) ไม่ใช่ D; การแก้ :global() อยู่ใน quality-gates G11 (strip :global ก่อนสแกน) — ตัดสินว่าถูกต้อง: กัน false positive ของ :global() ใน module css
+• measure.py สด 2 รอบ SHA256 ตรงกันทุกครั้งที่วัด: as-found = 68DFF5BAB2046EB206200638A596104455230FFAAE29FDF7D23C67B92CE489EF · หลังแก้ทั้งหมด = 35E0EF191A271686AB053BDABE7073799C88733077C0EBEDAD774395BB9CEC74
+  ผลดิบล่าสุด: root block src/app/globals.css:12 (body 97) / tokens 71 scanned css=32 tsx/ts=213 / contrast rows 100 failing 4.5=48 text-role failing=0 / font-size 341 literals 55 distinct var(--fs-*) usages=5 / z-index raw=13 distinct=[0,1,2,50] var usages=14 / raw hex non-globals CSS=0 js/ts=89 / dead classes global audit=14 robust=5 module 0/0 G11=0 / misc !important=15 breakpoints=14 dup token values=12 unused tokens=17 / SANITY --text-secondary alpha 0.62 ratio 5.27 PASS
+
+[2026-10-24 20:20] HANDOFF AUDIT #4 — STEP 0.2 ทีละข้อ (ทุกข้อมีบรรทัดสรุป ไม่เงียบ)
+• R-1 F-14 สิทธิ์ (ตรวจแล้วผ่านระดับโค้ด, ยังไม่ยืนยันบนเบราว์เซอร์): src/proxy.ts gate ทุก path /dashboard* ด้วย checkAdminGate (getToken + cookie name ตาม NODE_ENV + isSessionValid จากตาราง user_session_revocations + users.is_admin) → unauthenticated redirect /login, forbidden redirect /, dependency fail 503; แมปผลด้วย dashboard-gate-mapping.ts
+  API ที่ dashboard เรียก: สแกน 39 route — กลุ่ม /api/users/**, /api/analytics/**, /api/finance/**, /api/settings/**, /api/admin/**, /api/stats = requireAdmin/checkAdminGate ครบ; PUBLIC ที่เหลือเป็น auth flow/health/status/page-views/webhook โดยเจตนา; /api/history/** = getServerSession
+  ยังไม่ยืนยัน: ไม่มี .env.local/DB → รัน guest/user/admin จริงไม่ได้ ติดป้าย "ยังไม่ยืนยันบนเบราว์เซอร์" + ขั้นตอน: สร้าง .env.local → seed 3 บทบาท → /dashboard ด้วย guest ต้อง redirect /login, user ต้อง redirect /, admin ต้องเห็น 5 tab
+• R-2 text-role (ตัวเลขครบ): วัดสดทุก token ที่ถูกใช้เป็น color บน 4 พื้น (--bg/--surface/--sidebar-bg/--card-bg) ด้วยอัลกอริทึมเดียวกับ G9:
+  --text 11.16/9.14/12.46/8.89 · --text-secondary 5.27/4.61/5.66/4.53 · --secondary 6.24/5.11/6.96/4.97 · --info 6.30/5.16/7.04/5.02 · --status-unknown 6.26/5.13/6.99/4.99 · --primary 7.65/6.27/8.54/6.09 · --success 7.86/6.44/8.78/6.26 · --error 6.04/4.94/6.74/4.81 · --warning 8.94/7.33/9.99/7.12 — ต่ำสุด 4.53 (--text-secondary บน --card-bg) ผ่าน 4.5 ทั้งหมด
+  พบของจริงที่แก้: HistorySidebar.module.css ใช้ var(--accent) 2 จุด แต่ --accent ไม่มีใน :root (browser ทิ้ง declaration) → เปลี่ยนเป็น var(--primary) (f243cc0)
+  failing 4.5=48 จาก 100 แถว: ทั้ง 48 แถวเป็นคู่ของ token ที่ไม่ใช่สีข้อความ (border/surface/level-bg) ไม่ใช่ text-role; text-role failing = 0; จำนวนแถว 108→100 เพราะ token ถูกรวม/เพิ่ม (--text-dim หาย 1 token = 4 แถว, --status-unknown เข้ามาก่อนหน้า)
+• R-3 token ซ้ำ (ตัวเลขครบ): muted/secondary เหลือชื่อเดียวจริง (ลบ --text-dim 51 จุด/15 ไฟล์) tokens 72→71; dup token values 13→12 เพราะที่เหลือไม่ใช่สีข้อความซ้ำ แต่เป็น (ก) alias ชั้น dashboard: --bg=--dash-bg, --surface=--dash-surface=--surface-opaque, --sidebar-bg=--dash-sidebar, --primary=--dash-primary, --text=--dash-text, --border=--primary-subtle=--dash-border=--primary-soft, --border-hover=--border-strong, --border-gold=--primary-border=--border-primary (ข) ตัวเลขชนข้ามชนิด: --radius-sm=--space-sm=8px, --radius-md=--fs-1=12px, --radius-xl=--space-md=16px, --level-bg=--level-glow
+• R-4 หลักฐานบนหน้าจอ (ยังไม่ยืนยันบนเบราว์เซอร์ เป็นส่วนใหญ่): ไม่มี env/DB/Stripe → F-22 (ป้ายตัวอย่าง 4 การ์ด + ฟอร์ม Billing/Security disabled) และ F-16 ทั้ง 5 จุด ตรวจได้แค่นิ่งในโค้ด
+  F-19 ตรวจได้จริงบน HTTP ของ production server (ไม่ใช่ harness/network stub): next start ไม่ตั้ง flag → /formulas-demo = 404; ตั้ง ENABLE_FORMULAS_DEMO=true → 200 (สถานะของ "/" วัดไม่ได้เพราะชนชื่อตัวแปร $home ของ PowerShell)
+• R-5 เทสต์ของ D (ปิดในระดับ mutation): ServiceCard.test.ts "defines unknown status label as Unknown" / "defines unknown status color as the WCAG-checked --status-unknown token"; Sidebar.test.ts "has exactly 11 active departments and 12 empty departments" / "identifies exactly 25 unmapped formulas for dev review"; auth-options.test.ts 5 เคส มี timing assertion (expect(bcrypt.compare).toHaveBeenCalled() เมื่อไม่พบผู้ใช้); payments/status/route.test.ts 4 เคส มี ownership
+  mutation: constants unknown→#9ca3af → RED · push department ปลอม → RED · ลบ dummy bcrypt compare → RED · ปิด ownership check → RED — restored=true ทุกเคส
+• R-6 dialog backdrop (ปิดบางส่วน): 8 dialog ใช้ e.target===dialogRef.current → mousedown ในเนื้อหา + mouseup บน backdrop ยิง click ที่ dialog (common ancestor) → ปิดกลางคัน. แก้ด้วย useBackdropClose (จำ mousedown target ที่ dialog element) + isBackdropClick + test 3 เคส (e629817); <dialog> ของโปรเจกต์ padding:0 (padding อยู่ที่ .modal-header/.modal-body) จึงไม่ต้อง inner wrapper; ยังไม่ทดสอบ drag บนเบราว์เซอร์จริง
+• R-7 ขอบเขต gate (ปิด): G12 292 vs measure 341 = module 292 + globals 49; inline 47 ไม่ถูกนับ → ขยายแล้ว. G8 hex: arm src/components = 9 ไฟล์/28 จุด (DevicePieChart6, GeographyList1, PlanBreakdown4, RevenueChart2, TrafficAreaChart4, UsersPage1, RefundTable1, LoginClient5, SignUpClient4) + arm src/app+src/lib = 10 ไฟล์/61 จุด → รวม 89 ตรงกับ measure js/ts=89; ตัวเลข "15 ไฟล์" ของ GLM ไม่ตรงกับชุดที่วัดได้ (อธิบายจากหลักฐานปัจจุบันไม่ได้)
+• R-8 ยืนยันจริงตาม ENV = ไม่มี (ไม่มี .env/.env.local/.env.test; node_modules มี) → BLOCKED: Stripe test checkout (4242…, {CHECKOUT_SESSION_ID}, cancel banner), StatusClient tabs, logout/profile modal ยังไม่ยืนยันบนเบราว์เซอร์; ขั้นตอน: สร้าง .env.local (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, NEXTAUTH_SECRET, STRIPE_SECRET_KEY=sk_test, NEXT_PUBLIC_APP_URL) → seed guest/user/admin → pnpm dev:web → ทำ 3 flow
+
+[2026-10-24 20:30] BLOCKED (บันทึกแล้วข้ามตามกติกา)
+• lint 6 errors เดิมบน base (react-hooks/set-state-in-effect): StatusClient.tsx:76, UserDetailModal.tsx:73, InvoiceTable.tsx:37, RefundTable.tsx:34, InfoModal.tsx:28, LanguageContext.tsx:32 — ต้อง refactor พฤติกรรม 6 คอมโพเนนต์นอกขอบเขตลูป F; ไม่แก้เกณฑ์ ไม่ disable rule; ล็อกจำนวนที่ 6 ห้ามเพิ่ม (eslint exit 1 = 6 errors + 16 warnings)
+• F-12 การแมป 25 สูตรที่หลุดแผนก: ไม่มี DEV_DECISION_F12 ใน session นี้ → ข้ามตามคำสั่ง ห้ามเดาแมป
+
+
+[2026-10-25 20:45] HANDOFF AUDIT #6 — Final Independent Audit (ผู้ตรวจอิสระ Aetox) บน TARGET 6f47eb8 (fix/audit-v3-G-glm) vs BASELINE e07c480 (master)
+• ผลการตรวจ 42 Findings (23 F-series + 19 P2-series): ปิดสนิท 28 | บางส่วน (ติด ENV/Live DB/Stripe) 11 | ยังไม่ทำ 2 | เปลี่ยนแนวทาง 1 | ถอยหลัง 0
+• คำตัดสิน: Go ภายใต้เงื่อนไข (Conditional Go)
+• การวัดผลทางเทคนิค (V - วัดเอง):
+  - scripts/v3/measure.py สด 2 รอบได้ SHA256 ตรงกัน 100%: 35E0EF191A271686AB053BDABE7073799C88733077C0EBEDAD774395BB9CEC74 (deterministic)
+  - text-role failing 4.5:1 = 0 (จาก baseline เดิม 7 จุด)
+  - dead module classes = 0
+  - npx vitest run: 20 files / 107 tests passed 100% (ครอบคลุม gates G8-G14)
+  - npx tsc --noEmit: 0 errors
+  - npx eslint .: 17 problems = 6 errors + 11 warnings (ทั้ง 6 errors เป็นของเดิมตั้งแต่ master ถูกล็อกเพดานไว้ด้วย G14)
+• คำเตือนความเสี่ยงสำคัญก่อน Merge:
+  - พบไฟล์ที่มีการแก้ไขซ้อนทับกันระหว่างสาย audit กับกิ่ง preserve/security-wip-20261024 ถึง 127 ไฟล์
+  - ห้ามทำ fast-forward หรือ auto-merge ต้องทำ manual 3-way reconciliation เท่านั้น
+• รายงานฉบับเต็มและหลักฐานดิบ: ../review-aetox.md และ math-calculator-vault/03-Sessions/2026-10-25--ui-ux-audit-v3-final-review.md

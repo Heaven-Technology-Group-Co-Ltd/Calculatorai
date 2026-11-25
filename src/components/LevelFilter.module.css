@@ -1,0 +1,50 @@
+/* ── LevelFilter styles ── */
+
+.filterRow {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  flex-wrap: wrap;
+}
+@media (max-width: 768px) {
+  .filterRow {
+    padding: 8px 12px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+  }
+  .filterRow::-webkit-scrollbar { display: none; }
+}
+
+.filterChip {
+  white-space: nowrap;
+  padding: 8px 16px;
+  min-height: 42px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  scroll-snap-align: start;
+}
+.filterChip:hover { border-color: rgba(255,255,255,0.12); }
+.filterChip:active { transform: scale(0.96); }
+.filterChip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.filterChipActive {
+  background: rgba(232, 184, 150, 0.12);
+  border-color: var(--border-gold);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.icon { display: inline-flex; }

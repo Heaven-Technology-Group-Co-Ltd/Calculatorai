@@ -1,0 +1,65 @@
+$ next dev
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.108.65.215:3000
+✓ Ready in 417ms
+
+ GET /api/health 200 in 212ms (next.js: 53ms, proxy.ts: 142ms, application-code: 18ms)
+ GET / 200 in 276ms (next.js: 82ms, proxy.ts: 7ms, application-code: 187ms)
+ GET / 200 in 34ms (next.js: 3ms, proxy.ts: 3ms, application-code: 28ms)
+ GET /api/auth/session 200 in 119ms (proxy.ts: 7ms)
+ GET /api/auth/session 200 in 450ms (next.js: 429ms, proxy.ts: 3ms, application-code: 17ms)
+ POST /api/auth/_log 200 in 569ms (next.js: 544ms, proxy.ts: 7ms, application-code: 18ms)
+ GET / 200 in 92ms (next.js: 26ms, proxy.ts: 28ms, application-code: 38ms)
+ GET / 200 in 78ms (next.js: 21ms, proxy.ts: 25ms, application-code: 31ms)
+ GET / 200 in 31ms (next.js: 4ms, proxy.ts: 4ms, application-code: 23ms)
+ GET / 200 in 17ms (next.js: 3ms, proxy.ts: 3ms, application-code: 12ms)
+ GET / 200 in 67ms (next.js: 20ms, proxy.ts: 24ms, application-code: 23ms)
+ GET / 200 in 21ms (next.js: 3ms, proxy.ts: 3ms, application-code: 15ms)
+ GET / 200 in 17ms (next.js: 3ms, proxy.ts: 3ms, application-code: 11ms)
+✓ Compiled in 735ms
+ GET / 200 in 104ms (next.js: 43ms, proxy.ts: 30ms, application-code: 31ms)
+✓ Compiled in 440ms
+ GET / 200 in 126ms (next.js: 60ms, proxy.ts: 33ms, application-code: 33ms)
+✓ Compiled in 144ms
+ GET / 200 in 98ms (next.js: 48ms, proxy.ts: 26ms, application-code: 24ms)
+✓ Compiled in 196ms
+ GET / 200 in 105ms (next.js: 44ms, proxy.ts: 29ms, application-code: 32ms)
+✓ Compiled in 252ms
+ GET / 200 in 109ms (next.js: 46ms, proxy.ts: 30ms, application-code: 33ms)
+ GET / 200 in 94ms (next.js: 28ms, proxy.ts: 30ms, application-code: 36ms)
+ GET / 200 in 88ms (next.js: 24ms, proxy.ts: 28ms, application-code: 37ms)
+ GET / 200 in 71ms (next.js: 22ms, proxy.ts: 26ms, application-code: 23ms)
+ GET / 200 in 64ms (next.js: 20ms, proxy.ts: 25ms, application-code: 19ms)
+ GET / 200 in 72ms (next.js: 24ms, proxy.ts: 25ms, application-code: 23ms)
+ GET / 200 in 61ms (next.js: 19ms, proxy.ts: 24ms, application-code: 19ms)
+ GET / 200 in 67ms (next.js: 25ms, proxy.ts: 24ms, application-code: 19ms)
+ GET / 200 in 94ms (next.js: 26ms, proxy.ts: 29ms, application-code: 39ms)
+ GET / 200 in 90ms (next.js: 24ms, proxy.ts: 29ms, application-code: 36ms)
+ GET / 200 in 69ms (next.js: 22ms, proxy.ts: 27ms, application-code: 19ms)
+[Status] Error: Error: SUPABASE_URL is not set
+    at getSupabaseUrl (src\lib\supabase-client.ts:16:19)
+    at getSupabaseAdmin (src\lib\supabase-client.ts:34:31)
+    at GET (src\app\api\status\route.ts:268:38)
+  14 | function getSupabaseUrl(): string {
+  15 |   const url = process.env.SUPABASE_URL;
+> 16 |   if (!url) throw new Error("SUPABASE_URL is not set");
+     |                   ^
+  17 |   return url;
+  18 | }
+  19 |
+ GET /api/status 500 in 154ms (next.js: 42ms, proxy.ts: 4ms, application-code: 108ms)
+[Status] Error: Error: SUPABASE_URL is not set
+    at getSupabaseUrl (src\lib\supabase-client.ts:16:19)
+    at getSupabaseAdmin (src\lib\supabase-client.ts:34:31)
+    at GET (src\app\api\status\route.ts:268:38)
+  14 | function getSupabaseUrl(): string {
+  15 |   const url = process.env.SUPABASE_URL;
+> 16 |   if (!url) throw new Error("SUPABASE_URL is not set");
+     |                   ^
+  17 |   return url;
+  18 | }
+  19 |
+ GET /api/status 500 in 62ms (next.js: 3ms, proxy.ts: 3ms, application-code: 56ms)
+[?25h
+[ELIFECYCLE] Command failed with exit code 1.

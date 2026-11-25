@@ -1,0 +1,109 @@
+/* src/components/dashboard/styles/dashboard-settings.module.css */
+/* Task 9 — settings layout, forms, toggles, webhook cards */
+
+/* ── Layout ── */
+.settingsLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.settingsTabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.settingsTab {
+  background: rgba(36, 47, 53, 0.5);
+  border: 1px solid rgba(232, 184, 150, 0.06);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 150ms ease;
+}
+.settingsTab:hover {
+  background: rgba(232, 184, 150, 0.06);
+  color: var(--text);
+}
+.settingsTabActive {
+  background: rgba(232, 184, 150, 0.12);
+  color: var(--primary);
+  border-color: rgba(232, 184, 150, 0.2);
+}
+.settingsContent {
+  min-height: 300px;
+}
+
+/* ── Forms ── */
+.formGroup {
+  margin-bottom: 18px;
+}
+.formLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.formInput {
+  width: 100%;
+  background: rgba(27, 39, 44, 0.6);
+  border: 1px solid rgba(232, 184, 150, 0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 150ms ease;
+  box-sizing: border-box;
+}
+.formInput:focus {
+  border-color: rgba(232, 184, 150, 0.35);
+}
+.formInput::placeholder {
+  color: var(--text-secondary);
+}
+.formSelect {
+  composes: formInput;
+  cursor: pointer;
+}
+.formHint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+.formTextarea {
+  composes: formInput;
+  resize: vertical;
+  min-height: 100px;
+}
+.saveBtn {
+  background: rgba(232, 184, 150, 0.12);
+  border: 1px solid rgba(232, 184, 150, 0.2);
+  border-radius: 10px;
+  color: var(--primary);
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.saveBtn:hover {
+  background: rgba(232, 184, 150, 0.22);
+}
+
+/* ── Webhook cards ── */
+/* ── Finance tables ── */
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .settingsTab { padding: 8px 14px; font-size: 13px; }
+  .formInput { font-size: 13px; padding: 8px 12px; }
+  }

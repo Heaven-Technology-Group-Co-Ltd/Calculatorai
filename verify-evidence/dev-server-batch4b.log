@@ -1,0 +1,122 @@
+$ next dev
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.108.65.215:3000
+✓ Ready in 378ms
+
+ GET / 200 in 406ms (next.js: 72ms, proxy.ts: 128ms, application-code: 206ms)
+ GET /api/auth/session 200 in 671ms (next.js: 649ms, proxy.ts: 3ms, application-code: 19ms)
+[Status] Check failed: Error: Invalid API Key provided: sk_test_**************lder
+    at checkStripe (src\app\api\status\route.ts:91:43)
+    at async GET (src\app\api\status\route.ts:273:67)
+  89 |   try {
+  90 |     const { getStripe } = await import("@/lib/stripe");
+> 91 |     await withTimeout(getStripe().balance.retrieve(), 3_000, "Stripe timeout");
+     |                                           ^
+  92 |     result = { status: "ok", latencyMs: Date.now() - start };
+  93 |   } catch (err) {
+  94 |     result = fail(start, err, "Stripe API unreachable"); {
+  type: 'StripeAuthenticationError',
+  raw: {
+    message: 'Invalid API Key provided: sk_test_**************lder',
+    type: 'invalid_request_error',
+    headers: {
+      server: 'nginx',
+      date: 'Sun, 18 Oct 2026 14:57:49 GMT',
+      'content-type': 'application/json',
+      'content-length': '128',
+      connection: 'keep-alive',
+      'access-control-allow-credentials': 'true',
+      'access-control-allow-methods': 'GET, HEAD, PUT, PATCH, POST, DELETE',
+      'access-control-allow-origin': '*',
+      'access-control-expose-headers': 'Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required',
+      'access-control-max-age': '300',
+      'cache-control': 'no-cache, no-store',
+      'content-security-policy': "base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests",
+      vary: 'Origin',
+      'www-authenticate': 'Bearer realm="Stripe"',
+      'x-robots-tag': 'none',
+      'x-wc': '383',
+      'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'
+    },
+    statusCode: 401,
+    requestId: undefined
+  },
+  rawType: 'invalid_request_error',
+  code: undefined,
+  doc_url: undefined,
+  param: undefined,
+  detail: undefined,
+  headers: {
+    server: 'nginx',
+    date: 'Sun, 18 Oct 2026 14:57:49 GMT',
+    'content-type': 'application/json',
+    'content-length': '128',
+    connection: 'keep-alive',
+    'access-control-allow-credentials': 'true',
+    'access-control-allow-methods': 'GET, HEAD, PUT, PATCH, POST, DELETE',
+    'access-control-allow-origin': '*',
+    'access-control-expose-headers': 'Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required',
+    'access-control-max-age': '300',
+    'cache-control': 'no-cache, no-store',
+    'content-security-policy': "base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests",
+    vary: 'Origin',
+    'www-authenticate': 'Bearer realm="Stripe"',
+    'x-robots-tag': 'none',
+    'x-wc': '383',
+    'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'
+  },
+  requestId: undefined,
+  statusCode: 401,
+  userMessage: undefined,
+  charge: undefined,
+  decline_code: undefined,
+  payment_intent: undefined,
+  payment_method: undefined,
+  payment_method_type: undefined,
+  setup_intent: undefined,
+  source: undefined
+}
+[Status] Check failed: Error: Supabase timeout
+    at Timeout._onTimeout (src\app\api\status\route.ts:60:59)
+  58 |   return Promise.race([
+  59 |     Promise.resolve(promise),
+> 60 |     new Promise<T>((_, reject) => setTimeout(() => reject(new Error(message)), ms)),
+     |                                                           ^
+  61 |   ]);
+  62 | }
+  63 |
+ GET /api/health 200 in 26ms (next.js: 19ms, proxy.ts: 3ms, application-code: 4ms)
+[Status] Persist failed: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: connect ECONNREFUSED 127.0.0.1:54321 (ECONNREFUSED)\n' +
+    'Error: connect ECONNREFUSED 127.0.0.1:54321\n' +
+    '    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2021:16)\n' +
+    '    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:131:17)',
+  hint: '',
+  code: ''
+}
+ GET /api/status 200 in 10.1s (next.js: 29ms, proxy.ts: 3ms, application-code: 10.1s)
+ GET / 200 in 33ms (next.js: 4ms, proxy.ts: 4ms, application-code: 26ms)
+ GET /api/auth/session 200 in 27ms (next.js: 8ms, proxy.ts: 3ms, application-code: 16ms)
+ GET / 200 in 28ms (next.js: 2ms, proxy.ts: 3ms, application-code: 23ms)
+ GET /api/auth/session 200 in 34ms (next.js: 3ms, proxy.ts: 3ms, application-code: 28ms)
+ GET / 200 in 33ms (next.js: 3ms, proxy.ts: 4ms, application-code: 26ms)
+ GET /api/auth/session 200 in 27ms (next.js: 9ms, proxy.ts: 4ms, application-code: 14ms)
+ GET / 200 in 29ms (next.js: 2ms, proxy.ts: 3ms, application-code: 23ms)
+ GET /api/auth/session 200 in 41ms (next.js: 4ms, proxy.ts: 4ms, application-code: 34ms)
+ GET / 200 in 32ms (next.js: 3ms, proxy.ts: 3ms, application-code: 27ms)
+ GET /api/auth/session 200 in 26ms (next.js: 7ms, proxy.ts: 3ms, application-code: 17ms)
+ GET / 200 in 27ms (next.js: 3ms, proxy.ts: 4ms, application-code: 21ms)
+ GET /api/auth/session 200 in 41ms (next.js: 3ms, proxy.ts: 3ms, application-code: 35ms)
+ GET / 200 in 29ms (next.js: 2ms, proxy.ts: 3ms, application-code: 23ms)
+ GET /api/auth/session 200 in 36ms (next.js: 8ms, proxy.ts: 3ms, application-code: 25ms)
+ GET / 200 in 35ms (next.js: 3ms, proxy.ts: 3ms, application-code: 28ms)
+[browser] [RUM] ArmsEventBridge is not available, events dropped (<anonymous>:9:4511)
+ GET /api/auth/session 200 in 25ms (next.js: 16ms, proxy.ts: 3ms, application-code: 6ms)
+ GET / 200 in 29ms (next.js: 2ms, proxy.ts: 3ms, application-code: 24ms)
+ GET /api/auth/session 200 in 37ms (next.js: 3ms, proxy.ts: 4ms, application-code: 30ms)
+[?25h
+[ELIFECYCLE] Command failed with exit code 1.

@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "project-vault": {
+      "command": "node",
+      "args": [
+        "C:/Users/krmak/.dsh/mcp/second-brain/server/index.js"
+      ],
+      "env": {
+        "SECOND_BRAIN_ROOT": "E:/testtt/Web_project/projectreal/webcalculater/math-calculator-vault"
+      }
+    },
+    "second-brain": {
+      "command": "node",
+      "args": [
+        "C:/Users/krmak/.dsh/mcp/second-brain/server/index.js"
+      ],
+      "env": {
+        "SECOND_BRAIN_ROOT": "C:/Users/krmak/Documents/Obsidian/Second Brain Claude"
+      }
+    }
+  }
+}
