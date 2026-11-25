@@ -66,13 +66,14 @@ export function FormulaHeatmap() {
       <div className={styles.panelHeader}>
         <span className={styles.panelTitle}>{t("dashboard.formula.heatmap")}</span>
         {formulas.length > 50 && (
-          <span
+          <button
+            type="button"
             className={styles.panelAction}
             onClick={() => setShowAll((v) => !v)}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", background: "none", border: "none", padding: 0, font: "inherit" }}
           >
             {showAll ? t("dashboard.formula.showTop50") : `${t("dashboard.formula.showAll")} (${formulas.length})`}
-          </span>
+          </button>
         )}
       </div>
       <div style={{ height: Math.min(rowCount * CELL_SIZE, 320) }}>

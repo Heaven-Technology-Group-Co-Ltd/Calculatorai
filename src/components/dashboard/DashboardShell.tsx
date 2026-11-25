@@ -131,8 +131,17 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
       {/* ── Mobile drawer ── */}
       <div
+        role="button"
+        tabIndex={0}
+        aria-label="Close navigation menu"
         className={`${styles.drawerOverlay}${drawerOpen ? ` ${styles.drawerOverlayOpen}` : ""}`}
         onClick={() => setDrawerOpen(false)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setDrawerOpen(false);
+          }
+        }}
       />
 
       <aside

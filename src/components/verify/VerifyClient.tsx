@@ -48,7 +48,7 @@ export function VerifyClient() {
     if (!isValid || called.current) return;
     called.current = true;
 
-    (async () => {
+    void (async () => {
       try {
         const res = await fetch("/api/auth/verify", {
           method: "POST",

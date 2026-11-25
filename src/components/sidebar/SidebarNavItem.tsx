@@ -105,7 +105,7 @@ const SidebarNavItemInner: React.FC<SidebarNavItemProps> = ({
       <span className="navLabel">{label}</span>
 
       {/* ── Badge ── */}
-      {badge && badge}
+      {badge}
 
       {/* ── Active Dot Indicator ── */}
       {showDot && (

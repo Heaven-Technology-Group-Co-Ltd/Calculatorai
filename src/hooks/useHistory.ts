@@ -82,7 +82,7 @@ export function useHistory() {
 
     if (status === "authenticated" && userId) {
       fetch("/api/history")
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`History fetch failed: ${r.status}`))))
         .then((res) => {
           if (res.success && Array.isArray(res.data)) {
             setHistory(res.data.map(mapApiRow));
@@ -140,7 +140,10 @@ export function useHistory() {
       // crypto.randomUUID is unavailable on non-secure (plain HTTP) origins
       const optimisticId = typeof crypto.randomUUID === "function"
         ? crypto.randomUUID()
-        : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+        : `${Date.now().toString(36)}-${Array.from(
+            crypto.getRandomValues(new Uint8Array(8)),
+            (b) => b.toString(16).padStart(2, "0"),
+          ).join("")}`;
       const newItem: HistoryItem = {
         ...item,
         id: optimisticId,

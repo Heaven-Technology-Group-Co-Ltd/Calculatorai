@@ -118,6 +118,17 @@ describe("GET /api/status", () => {
     expect(body.data.checks.discord.message).toBe("No bot heartbeat recorded");
   });
 
+  it("marks discord error when the bot heartbeat timestamp is malformed", async () => {
+    heartbeat = { last_seen: "not-a-timestamp" };
+    const { GET } = await loadRoute();
+
+    const body = await (await GET(request())).json();
+
+    expect(body.data.checks.discord.status).toBe("error");
+    expect(body.data.checks.discord.message).toBe("Invalid bot heartbeat timestamp");
+    expect(body.data.status).toBe("degraded");
+  });
+
   it("serves a second request inside the TTL from cache without touching any upstream", async () => {
     const { GET } = await loadRoute();
 

@@ -135,7 +135,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
 
       <div className="modal-body">
         {/* Device Segmented Control Tabs */}
-        <div className={styles.deviceTabs} role="tablist" aria-label="Device view" onKeyDown={handleDeviceTablistKeyDown}>
+        <div className={styles.deviceTabs} role="tablist" tabIndex={0} aria-label="Device view" onKeyDown={handleDeviceTablistKeyDown}>
           <button
             type="button"
             id="info-device-tab-all"

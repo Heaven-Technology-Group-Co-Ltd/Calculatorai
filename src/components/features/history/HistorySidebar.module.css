@@ -104,11 +104,23 @@
 
 
 /* ── Item Row ── */
-.itemRow {
+.itemCard {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
+  gap: 8px;
+}
+
+.itemRestoreBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
 }
 
 .itemTitle {

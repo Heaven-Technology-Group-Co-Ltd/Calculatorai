@@ -71,4 +71,7 @@ async function seedAdmin() {
   console.log("🔑 Password: Admin@123456");
 }
 
-seedAdmin();
+seedAdmin().catch((err) => {
+  console.error("❌ Failed to seed admin:", err);
+  process.exit(1);
+});

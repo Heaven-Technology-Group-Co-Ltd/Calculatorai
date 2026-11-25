@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
@@ -8,10 +9,18 @@ import { getSessionCookieName } from "./session-cookie";
 
 let supabase: SupabaseClient | null = null;
 
-// bcrypt compare against this dummy hash runs when the email is unknown, so
-// an early return cannot be timed to enumerate which addresses exist (a real
-// compare costs ~100ms at cost 12; skipping it is measurable).
-const TIMING_EQUALIZER_HASH = "$2b$12$L4FAm.EwLKyVtxFTtGdOM.wi9J5lWjoCOciRxBMJbZiCrG/2/lZAq";
+// bcrypt compare against a runtime-generated dummy hash runs when the email is
+// unknown, so an early return cannot be timed to enumerate which addresses exist
+// (a real compare costs ~100ms at cost 12; skipping it is measurable).
+let timingEqualizerHashPromise: Promise<string> | null = null;
+
+function getTimingEqualizerHash(): Promise<string> {
+  timingEqualizerHashPromise ??= bcrypt.hash(randomUUID(), 12).catch((err) => {
+    timingEqualizerHashPromise = null;
+    throw err;
+  });
+  return timingEqualizerHashPromise;
+}
 
 function getSupabase(): SupabaseClient {
   if (!supabase) {
@@ -46,7 +55,7 @@ export const authOptions: NextAuthOptions = {
           .single();
 
         if (error || !user || !user.password_hash) {
-          await bcrypt.compare(credentials.password, TIMING_EQUALIZER_HASH);
+          await bcrypt.compare(credentials.password, await getTimingEqualizerHash());
           return null;
         }
 

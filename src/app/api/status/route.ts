@@ -158,7 +158,11 @@ async function checkDiscord(db: SupabaseClient<any>): Promise<ServiceCheck> {
     if (!hb.data) {
       return { status: "error", latencyMs: Date.now() - start, message: "No bot heartbeat recorded" };
     }
-    const ageMs = Date.now() - new Date(hb.data.last_seen as string).getTime();
+    const seenMs = new Date(hb.data.last_seen as string).getTime();
+    if (Number.isNaN(seenMs)) {
+      return { status: "error", latencyMs: Date.now() - start, message: "Invalid bot heartbeat timestamp" };
+    }
+    const ageMs = Date.now() - seenMs;
     if (ageMs > BOT_HEARTBEAT_THRESHOLD_MS) {
       return {
         status: "error",

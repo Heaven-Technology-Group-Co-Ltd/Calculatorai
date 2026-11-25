@@ -157,7 +157,15 @@ export function PurchaseClient() {
           return (
             <div
               key={pkg.id}
+              role="button"
+              tabIndex={0}
               onClick={() => setSelectedPlan(pkg.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelectedPlan(pkg.id);
+                }
+              }}
               className={`${styles.planCard} ${pkg.highlighted ? styles.active : ""} ${loading ? styles.planCardDisabled : ""} ${isActive ? styles.planCardActive : ""}`}
               style={{
                 transform: isActive ? "scale(0.97)" : "scale(1)",
@@ -229,14 +237,10 @@ export function PurchaseClient() {
                 })}
               </ul>
 
-              {/* ── Select Card Button (F-21) ── */}
-              <button
-                type="button"
+              {/* ── Select Card CTA (F-21) ── */}
+              <span
+                aria-hidden="true"
                 className={`${styles.selectCardBtn} ${isActive ? styles.selectedCardBtn : ""}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedPlan(pkg.id);
-                }}
               >
                 {isActive ? (
                   <>
@@ -246,7 +250,7 @@ export function PurchaseClient() {
                 ) : (
                   lang === "th" ? `เลือก ${planName}` : `Select ${planName}`
                 )}
-              </button>
+              </span>
             </div>
           );
         })}

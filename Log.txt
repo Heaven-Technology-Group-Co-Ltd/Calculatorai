@@ -1018,3 +1018,17 @@ HANDOFF AUDIT #3 — รายการ | ผ่าน/ไม่ผ่าน | �
 • gate: tsc 0 · eslint exit 0 (0 errors / 15 warnings; base 6/16) · vitest 21 ไฟล์ / 100 tests (base 19/87) · next build 0 · discord-bot tsc 0 · suppression เพิ่มใน diff = 0
 • เพดาน lint error = 0 (เดิมล็อก 6) ห้ามเพิ่ม; ยังเหลือ eslint-disable เดิม 4 จุดใน FormulaCard/SplashGate/useHistory/VerifyClient (ไม่ใช่ของรอบนี้)
 • baseline: สเปกเขียน d2b754b แต่ HEAD จริงตอนเริ่มคือ b437d02 (merge ที่ได้ netlify.toml + Log.txt + Report) — ไฟล์ต้องห้าม (discord-bot/, src/lib/auth-options.ts, supabase/migrations/) diff = 0
+
+[2026-11-25 17:12] WEB-SONAR-FIX2 ปิด SNR-01..SNR-08 + SonarCloud 20/20 OPEN issues + CI pipeline
+• SNR-01: client-ip.ts รับ x-nf-client-connection-ip ก่อน XFF/x-real-ip + sanitize IPv4 :port/IPv6 (client-ip.test.ts 6 tests); status/route.ts guard Number.isNaN(seenMs) ใน checkDiscord (route.test.ts 7 tests); AppShell.tsx conditional-mount InfoModal เพื่อ reset tabChoice
+• SNR-02..SNR-06: ปิดทั้ง 20 OPEN issues บน SonarCloud โดย 0 suppressions (0 hotspots): auth-options.ts เปลี่ยน dummy hash เป็น lazy bcrypt.hash(randomUUID(), 12); LoginClient.tsx ใช้ crypto.randomUUID() แทน literal; useHistory.ts ใช้ crypto.getRandomValues + new Error; measure.py แก้ ReDoS regex (S8786); แก้ a11y (S6848/S6852), S1764, S9383, S7773 ครบ 20 รายการ
+• SNR-07..SNR-08: เพิ่ม sonar-project.properties และ .github/workflows/ci.yml (type-check, lint, test, build, discord-bot tsc)
+• gate: tsc 0 · eslint exit 0 (0 errors, 15 warnings, 0 added suppressions) · vitest 21 ไฟล์ / 103 tests · next build 0 · discord-bot tsc 0 · bcrypt regex 0 matches · supabase/migrations & discord-bot diff = 0
+• report: reports/web-phase-sonar-fix2-luna-report.md (branch fix/web-sonar-fix2)
+
+[2026-11-25 17:32] WEB-SONAR-FIX2-FIX3: Surgical closure of D-1, D-2, OBS-3, PurchaseClient nested-interactive cleanup, and OBS-1/7/8/13 hardening
+  - CLS-F3-01 (D-2): Refactored HistorySidebar.tsx HistoryItem so div.hs-item is a non-interactive container with two sibling <button type="button"> controls (.itemRestoreBtn + .itemDeleteBtn); removed unused .itemRow from HistorySidebar.module.css; replaced nested <button> in PurchaseClient.tsx planCard with <span aria-hidden="true">; added HistorySidebar.test.tsx (3 tests) and enabled *.test.tsx in vitest.config.mjs.
+  - CLS-F3-02 (OBS-3): Deleted sonar-project.properties and created .sonarcloud.properties for SonarQube Cloud Automatic Analysis.
+  - CLS-F3-03 (OBS-1/7/8): Added .catch() reset on timingEqualizerHashPromise in src/lib/auth-options.ts; added memoization test in src/lib/auth-options.test.ts and bracketed IPv6 + IPv4-mapped IPv6 assertions in src/lib/client-ip.test.ts.
+  - CLS-F3-04 (D-1): Verified all 6 gates (type-check 0, lint 0 errors / 15 warnings / 0 added suppressions, vitest 22 files / 108 tests, next build 38/38, discord-bot tsc 0, measure.py 0) and committed cleanly on fix/web-sonar-fix2.
+  — src/components/features/history/HistorySidebar.tsx, HistorySidebar.module.css, HistorySidebar.test.tsx, src/components/purchase/PurchaseClient.tsx, vitest.config.mjs, .sonarcloud.properties, src/lib/auth-options.ts, src/lib/auth-options.test.ts, src/lib/client-ip.test.ts, Log.txt
