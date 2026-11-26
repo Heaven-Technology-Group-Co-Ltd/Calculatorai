@@ -1,16 +1,27 @@
 CREATE TABLE IF NOT EXISTS public.payments (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id BIGSERIAL PRIMARY KEY,
   user_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
-  stripe_session_id TEXT NOT NULL,
+  stripe_session_id TEXT,
   stripe_payment_intent_id TEXT,
   amount_cents INTEGER NOT NULL,
   currency TEXT NOT NULL DEFAULT 'usd',
-  status TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
   customer_email TEXT,
-  product_name TEXT NOT NULL,
-  metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  product_name TEXT NOT NULL DEFAULT 'Unknown',
+  failure_reason TEXT,
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+DO $$
+DECLARE payment_sequence TEXT := pg_get_serial_sequence('public.payments', 'id');
+BEGIN
+  IF payment_sequence IS NULL THEN
+    RAISE EXCEPTION 'payments.id must have an owned sequence';
+  END IF;
+  EXECUTE format('REVOKE ALL ON SEQUENCE %s FROM PUBLIC, anon, authenticated', payment_sequence::regclass);
+  EXECUTE format('GRANT USAGE, SELECT ON SEQUENCE %s TO service_role', payment_sequence::regclass);
+END $$;
 ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 DO $$
 BEGIN

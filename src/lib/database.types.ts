@@ -176,43 +176,49 @@ export interface Database {
       };
       payments: {
         Row: {
-          id: string;
+          id: number;
           user_id: string | null;
-          stripe_session_id: string;
+          stripe_session_id: string | null;
           stripe_payment_intent_id: string | null;
           amount_cents: number;
           currency: string;
           status: string;
           customer_email: string | null;
           product_name: string;
-          metadata: Json;
+          failure_reason: string | null;
+          metadata: Json | null;
           created_at: string;
+          updated_at: string;
         };
         Insert: {
-          id?: string;
+          id?: number;
           user_id?: string | null;
-          stripe_session_id: string;
+          stripe_session_id?: string | null;
           stripe_payment_intent_id?: string | null;
           amount_cents: number;
           currency?: string;
-          status: string;
+          status?: string;
           customer_email?: string | null;
-          product_name: string;
-          metadata?: Json;
+          product_name?: string;
+          failure_reason?: string | null;
+          metadata?: Json | null;
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
-          id?: string;
+          id?: number;
           user_id?: string | null;
-          stripe_session_id?: string;
+          stripe_session_id?: string | null;
           stripe_payment_intent_id?: string | null;
           amount_cents?: number;
           currency?: string;
           status?: string;
           customer_email?: string | null;
           product_name?: string;
-          metadata?: Json;
+          failure_reason?: string | null;
+          metadata?: Json | null;
           created_at?: string;
+          updated_at?: string;
         };
       };
       stripe_events: {
