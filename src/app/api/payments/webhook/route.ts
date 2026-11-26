@@ -304,13 +304,14 @@ async function revokeUserEntitlement(userId: string): Promise<void> {
 
 async function handleChargeRefunded(event: StripeWebhookEvent): Promise<void> {
   const charge = event.data.object as {
-    payment_intent?: string | null;
+    payment_intent?: string | { id: string } | null;
     refunded?: boolean;
     amount?: number;
     amount_refunded?: number;
   };
 
-  if (!charge.payment_intent) return;
+  const paymentIntentId = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id ?? null;
+  if (!paymentIntentId) return;
 
   const isFullRefund =
     charge.refunded === true ||
@@ -323,7 +324,7 @@ async function handleChargeRefunded(event: StripeWebhookEvent): Promise<void> {
   const { data: payment, error: lookupErr } = await supabase
     .from("payments")
     .select("id, user_id, created_at")
-    .eq("stripe_payment_intent_id", charge.payment_intent)
+    .eq("stripe_payment_intent_id", paymentIntentId)
     .maybeSingle();
 
   if (lookupErr) {
@@ -385,7 +386,7 @@ async function handleChargeRefunded(event: StripeWebhookEvent): Promise<void> {
     const refundedAtMs = payment.created_at ? new Date(payment.created_at).getTime() : 0;
     const hasNewerActiveSub = (newerSubs ?? []).some((sub) => {
       const subTs = new Date(sub.started_at ?? sub.created_at).getTime();
-      return Number.isFinite(subTs) && subTs > refundedAtMs;
+      return Number.isFinite(subTs) && subTs > refundedAtMs + 60_000;
     });
 
     if (hasNewerActiveSub) {

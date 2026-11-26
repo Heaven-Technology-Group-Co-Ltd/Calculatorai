@@ -428,7 +428,7 @@ describe("POST /api/payments/webhook", () => {
       type: "charge.refunded",
       data: {
         object: {
-          payment_intent: "pi_sole",
+          payment_intent: { id: "pi_sole" },
           refunded: true,
           amount: 7999,
           amount_refunded: 7999,
@@ -479,7 +479,7 @@ describe("POST /api/payments/webhook", () => {
         return {
           select: () => ({
             eq: () => ({
-              eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+              eq: vi.fn().mockResolvedValue({ data: [{ id: "sub_sole", started_at: "2026-01-01T00:00:02.000Z", created_at: "2026-01-01T00:00:02.000Z" }], error: null }),
             }),
           }),
           update: subsUpdate,

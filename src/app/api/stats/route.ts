@@ -1,3 +1,4 @@
+import { computePercentages } from "./percentages";
 /**
  * Stats API — serves real data to the dashboard Overview page.
  *
@@ -31,103 +32,47 @@ export async function GET(request: NextRequest) {
       return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
     }
 
-    // ── Total users ──
-    const { count: totalUsers, error: usersErr } = await supabase
-      .from("users")
-      .select("*", { count: "exact", head: true });
-
-    if (usersErr) throw new Error(`users: ${usersErr.message}`);
-
-    // ── Users registered in last 24h ──
-    const yesterday = new Date(Date.now() - 86_400_000).toISOString();
-    const { count: recentUsers } = await supabase
-      .from("users")
-      .select("*", { count: "exact", head: true })
-      .gte("created_at", yesterday);
-
-    // ── Active sessions (users with a valid session = "online now") ──
-    const now = new Date().toISOString();
-    const { count: activeSessions } = await supabase
-      .from("sessions")
-      .select("*", { count: "exact", head: true })
-      .gt("expires", now);
-
-    // ── Device breakdown from sessions (real data) ──
-    const { data: deviceRows } = await supabase
-      .from("sessions")
-      .select("user_agent")
-      .gt("expires", now);
-
-    const deviceCounts = { desktop: 0, mobile: 0, tablet: 0 };
-    let deviceTotal = 0;
-    if (deviceRows) {
-      for (const row of deviceRows) {
-        const type = parseDeviceType(row.user_agent);
-        deviceCounts[type]++;
-        deviceTotal++;
-      }
-    }
-
-    // Fallback: if no active sessions with user_agent, estimate from all recent sessions
-    if (deviceTotal === 0) {
-      const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
-      const { data: recentSessions } = await supabase
-        .from("sessions")
-        .select("user_agent")
-        .gte("expires", weekAgo);
-
-      if (recentSessions) {
-        for (const row of recentSessions) {
-          const type = parseDeviceType(row.user_agent);
-          deviceCounts[type]++;
-          deviceTotal++;
-        }
-      }
-    }
-
-    const deviceData = [
-      { device: "Desktop", name: "Desktop", count: deviceCounts.desktop, value: deviceTotal > 0 ? Math.round((deviceCounts.desktop / deviceTotal) * 100) : 0 },
-      { device: "Mobile", name: "Mobile", count: deviceCounts.mobile, value: deviceTotal > 0 ? Math.round((deviceCounts.mobile / deviceTotal) * 100) : 0 },
-      { device: "Tablet", name: "Tablet", count: deviceCounts.tablet, value: deviceTotal > 0 ? 100 - Math.round((deviceCounts.desktop / deviceTotal) * 100) - Math.round((deviceCounts.mobile / deviceTotal) * 100) : 0 },
-    ];
-
-    // ── Page views total (last 7 days) ──
-    const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
-    const { count: totalPageViews7d, error: pvErr } = await supabase
-      .from("page_views")
-      .select("*", { count: "exact", head: true })
-      .gte("created_at", sevenDaysAgo);
-
-    if (pvErr && pvErr.code !== "42P01") {
-      // 42P01 = table doesn't exist yet (migration not run) — fallback silently
-      console.warn("page_views query:", pvErr.message);
-    }
-
-    // ── Revenue from subscriptions (real MRR) ──
-    const { data: activeSubs, error: subErr } = await supabase
-      .from("subscriptions")
-      .select("amount_monthly")
-      .eq("status", "active");
-
-    if (subErr && subErr.code !== "42P01") {
-      console.warn("subscriptions query:", subErr.message);
-    }
-
-    let monthlyRevenue = 0;
-    if (activeSubs && activeSubs.length > 0) {
-      // Sum all active subscription amounts (stored in cents)
-      monthlyRevenue = activeSubs.reduce((sum, s) => sum + (s.amount_monthly || 0), 0) / 100;
-    }
-    // If no subscriptions table or no subs, revenue = 0 (no more fake estimate)
-
-    // ── User growth: signups per month for the last 12 months ──
+    const nowMs = Date.now();
+    const yesterday = new Date(nowMs - 86_400_000).toISOString();
+    const sevenDaysAgo = new Date(nowMs - 7 * 86_400_000).toISOString();
+    const chartStart = new Date();
+    chartStart.setDate(chartStart.getDate() - 6);
+    chartStart.setHours(0, 0, 0, 0);
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-    const { data: signups } = await supabase
-      .from("users")
-      .select("created_at")
-      .gte("created_at", twelveMonthsAgo.toISOString())
-      .order("created_at", { ascending: true });
+    const [users, recent, viewsTotal, viewRows, subscriptions, signupRows, latest] = await Promise.all([
+      supabase.from("users").select("id", { count: "exact", head: true }),
+      supabase.from("users").select("id", { count: "exact", head: true }).gte("created_at", yesterday),
+      supabase.from("page_views").select("id", { count: "exact", head: true }).gte("created_at", sevenDaysAgo),
+      supabase.from("page_views").select("session_id, user_agent, created_at").gte("created_at", sevenDaysAgo < chartStart.toISOString() ? sevenDaysAgo : chartStart.toISOString()).order("created_at", { ascending: false }).limit(10000),
+      supabase.from("subscriptions").select("amount_monthly").eq("status", "active"),
+      supabase.from("users").select("created_at").gte("created_at", twelveMonthsAgo.toISOString()).order("created_at", { ascending: true }),
+      supabase.from("users").select("name, created_at").order("created_at", { ascending: false }).limit(8),
+    ]);
+    if (users.error) throw new Error(`users: ${users.error.message}`);
+    if (viewRows.error) throw new Error(`page_views: ${viewRows.error.message}`);
+    const totalUsers = users.count;
+    const recentUsers = recent.count;
+    const totalPageViews7d = viewsTotal.count;
+    const signups = signupRows.data;
+    const latestUsers = latest.data;
+    const monthlyRevenue = (subscriptions.data ?? []).reduce((sum, sub) => sum + (sub.amount_monthly || 0), 0) / 100;
+    const views = viewRows.data ?? [];
+    const activeRows = views.filter((view) => new Date(view.created_at).getTime() >= nowMs - 300_000);
+    const activeSessions = new Set(activeRows.filter((view) => view.session_id).map((view) => view.session_id)).size
+      + activeRows.filter((view) => !view.session_id).length;
+    const seenDevices = new Set<string>();
+    const deviceCounts = { desktop: 0, mobile: 0, tablet: 0 };
+    for (const view of views) {
+      if (view.created_at < sevenDaysAgo || (view.session_id && seenDevices.has(view.session_id))) continue;
+      if (view.session_id) seenDevices.add(view.session_id);
+      deviceCounts[parseDeviceType(view.user_agent)]++;
+    }
+    const percentages = computePercentages(deviceCounts);
+    const deviceData = (["desktop", "mobile", "tablet"] as const).map((device) => ({
+      device: device[0].toUpperCase() + device.slice(1), name: device[0].toUpperCase() + device.slice(1),
+      count: deviceCounts[device], value: percentages[device],
+    }));
 
     const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const monthlySignups: Record<string, number> = {};
@@ -148,13 +93,6 @@ export async function GET(request: NextRequest) {
       userGrowth.push({ month: monthLabels[d.getMonth()], value: monthlySignups[key] || 0 });
     }
 
-    // ── Recent users (last 8, for activity feed) ──
-    const { data: latestUsers } = await supabase
-      .from("users")
-      .select("name, created_at")
-      .order("created_at", { ascending: false })
-      .limit(8);
-
     const recentActivity = (latestUsers || []).map((u) => {
       const minsAgo = Math.max(0, Math.floor((Date.now() - new Date(u.created_at).getTime()) / 60_000));
       const timeLabel = minsAgo < 1 ? "Just now" : minsAgo < 60 ? `${minsAgo} min ago` : `${Math.floor(minsAgo / 60)}h ago`;
@@ -167,39 +105,16 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // ── Sessions per day + page views per day (last 7 days) ──
-    const visitorChart: { day: string; date?: string; visitors: number; pageViews: number; views?: number }[] = [];
-    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    for (let i = 6; i >= 0; i--) {
-      const dayStart = new Date();
-      dayStart.setDate(dayStart.getDate() - i);
-      dayStart.setHours(0, 0, 0, 0);
+    const visitorChart = Array.from({ length: 7 }, (_, index) => {
+      const dayStart = new Date(chartStart);
+      dayStart.setDate(dayStart.getDate() + index);
       const dayEnd = new Date(dayStart);
-      dayEnd.setHours(23, 59, 59, 999);
-      const dayStartISO = dayStart.toISOString();
-      const dayEndISO = dayEnd.toISOString();
-
-      const { count: daySessions } = await supabase
-        .from("sessions")
-        .select("*", { count: "exact", head: true })
-        .gte("expires", dayStartISO)
-        .lte("expires", dayEndISO);
-
-      // Real page views per day
-      const { count: dayPageViews, error: dpvErr } = await supabase
-        .from("page_views")
-        .select("*", { count: "exact", head: true })
-        .gte("created_at", dayStartISO)
-        .lte("created_at", dayEndISO);
-
-      visitorChart.push({
-        day: dayNames[dayStart.getDay()],
-        date: dayStartISO.slice(0, 10),
-        visitors: daySessions || 0,
-        pageViews: dpvErr ? 0 : (dayPageViews || 0),
-        views: dpvErr ? 0 : (dayPageViews || 0),
-      });
-    }
+      dayEnd.setDate(dayEnd.getDate() + 1);
+      const dayViews = views.filter((view) => view.created_at >= dayStart.toISOString() && view.created_at < dayEnd.toISOString());
+      const visitors = new Set(dayViews.filter((view) => view.session_id).map((view) => view.session_id)).size
+        + dayViews.filter((view) => !view.session_id).length;
+      return { day: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][dayStart.getDay()], date: dayStart.toISOString().slice(0, 10), visitors, pageViews: dayViews.length, views: dayViews.length };
+    });
 
     return successResponse({
       totalUsers: totalUsers || 0,

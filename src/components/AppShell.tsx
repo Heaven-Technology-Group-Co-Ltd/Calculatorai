@@ -41,10 +41,12 @@ export function AppShell() {
         window.location.assign("/dashboard/users");
         return;
       }
+    } catch (error) {
+      console.error("[Impersonation] Exit failed:", error);
     } finally {
       setExitingImpersonation(false);
     }
-  }, [sessionUser?.id]);
+  }, [sessionUser]);
 
   const [search, setSearch] = useState("");
   const [activeLevel, setActiveLevel] = useState<string>("all");

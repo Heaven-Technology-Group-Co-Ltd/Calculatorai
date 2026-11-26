@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import { useSession } from "next-auth/react";
+
 
 /**
  * Tracks page views by sending a POST to /api/page-views on mount and
  * when the pathname changes. Debounced to avoid duplicate sends.
  */
 export function usePageView(path?: string) {
-  const { data: session } = useSession();
+  const sessionIdRef = useRef<string | null>(null);
   const lastPathRef = useRef<string | null>(null);
 
   const track = useCallback(
@@ -18,9 +18,21 @@ export function usePageView(path?: string) {
       lastPathRef.current = currentPath;
 
       // Use sendBeacon for reliability during page unload, fallback to fetch
+      if (!sessionIdRef.current) {
+        try {
+          sessionIdRef.current = sessionStorage.getItem("analytics-session-id");
+          if (!sessionIdRef.current && typeof globalThis.crypto?.randomUUID === "function") {
+            sessionIdRef.current = globalThis.crypto.randomUUID();
+            sessionStorage.setItem("analytics-session-id", sessionIdRef.current);
+          }
+        } catch (error) {
+          console.warn("[PageViews] Session storage unavailable", error);
+        }
+      }
       const payload = JSON.stringify({
         path: currentPath,
-        sessionId: (session as unknown as { accessToken?: string })?.accessToken || null,
+        sessionId: sessionIdRef.current,
+        referrer: document.referrer || undefined,
       });
       const blob = new Blob([payload], { type: "application/json" });
 
@@ -37,7 +49,7 @@ export function usePageView(path?: string) {
         });
       }
     },
-    [session]
+    []
   );
 
   useEffect(() => {
