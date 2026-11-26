@@ -3,9 +3,8 @@ import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { ChangePlanSchema } from "@/lib/admin/schemas";
 import { writeAuditLog } from "@/lib/admin/audit";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
-
-const PLAN_PRICES: Record<string, number> = { basic: 500, pro: 1200, enterprise: 3000 };
+import { getAdminPlanPriceCents } from "@/lib/plans";
+import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/plan
@@ -28,16 +27,34 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const parsed = ChangePlanSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ success: false, error: `Validation failed: ${parsed.error.issues.map((i) => i.message).join("; ")}` }, { status: 422 });
 
+    const newPlan = parsed.data.plan;
+    const amountMonthly = getAdminPlanPriceCents(newPlan);
+    const nowIso = new Date().toISOString();
+
+    const { error: userErr } = await supabase
+      .from("users")
+      .update({ plan: newPlan })
+      .eq("id", id);
+
+    if (userErr) throw new Error(userErr.message);
+
     const { data: existing } = await supabase.from("subscriptions").select("id").eq("user_id", id).eq("status", "active").limit(1).single();
 
     if (existing) {
-      await supabase.from("subscriptions").update({ plan: parsed.data.plan, amount_monthly: PLAN_PRICES[parsed.data.plan], updated_at: new Date().toISOString() }).eq("id", existing.id);
+      const { error: subErr } = await supabase
+        .from("subscriptions")
+        .update({ plan: newPlan, amount_monthly: amountMonthly, updated_at: nowIso })
+        .eq("id", existing.id);
+      if (subErr) throw new Error(subErr.message);
     } else {
-      await supabase.from("subscriptions").insert({ user_id: id, plan: parsed.data.plan, amount_monthly: PLAN_PRICES[parsed.data.plan], status: "active" });
+      const { error: subErr } = await supabase
+        .from("subscriptions")
+        .insert({ user_id: id, plan: newPlan, amount_monthly: amountMonthly, status: "active", started_at: nowIso });
+      if (subErr) throw new Error(subErr.message);
     }
 
-    void writeAuditLog({ adminUserId: admin.id, action: "change_plan", targetType: "user", targetId: id, metadata: { plan: parsed.data.plan } });
-    return successResponse({ plan: parsed.data.plan });
+    void writeAuditLog({ adminUserId: admin.id, action: "change_plan", targetType: "user", targetId: id, metadata: { plan: newPlan } });
+    return successResponse({ plan: newPlan });
   } catch (err) {
     console.error("[Change Plan] Error:", err);
     return adminGateErrorResponse(err) ?? serverErrorResponse();

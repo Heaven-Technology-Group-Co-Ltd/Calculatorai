@@ -36,8 +36,24 @@ interface ApiResponse<T = unknown> {
 // Client
 // ---------------------------------------------------------------------------
 
-const API_URL = process.env.NEXTJS_API_URL ?? "http://localhost:3000";
-const CONTROL_URL = `${API_URL}/api/admin/control`;
+function getControlUrl(): string {
+  const rawUrl = process.env.NEXTJS_API_URL?.trim();
+  if (!rawUrl) {
+    throw new Error("NEXTJS_API_URL is not configured");
+  }
+  let parsed: URL;
+  try {
+    parsed = new URL(rawUrl);
+  } catch {
+    throw new Error("NEXTJS_API_URL must be a valid http:// or https:// URL");
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new Error("NEXTJS_API_URL must use http:// or https://");
+  }
+  return `${parsed.origin}/api/admin/control`;
+}
+
+const CONTROL_URL = getControlUrl();
 
 /**
  * Send a signed admin command to the Next.js API.

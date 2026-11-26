@@ -13,7 +13,7 @@ vi.mock("@/lib/stripe", () => ({ getStripe: () => ({ balance: { retrieve: mocks.
 vi.mock("@/lib/admin/state", () => ({ getState: mocks.getState }));
 vi.mock("node:net", () => ({ default: { connect: mocks.connect } }));
 
-let heartbeat: { last_seen: string } | null = null;
+let historyRows: { service: string; status: string; latency_ms: number; created_at: string }[] = [];
 
 function chain() {
   const node: Record<string, unknown> = {};
@@ -21,10 +21,8 @@ function chain() {
   node.eq = () => node;
   node.gte = () => node;
   node.order = () => node;
-  node.limit = () => Promise.resolve({ data: [], error: null });
+  node.limit = () => Promise.resolve({ data: historyRows, error: null });
   node.insert = () => Promise.resolve({ error: null });
-  node.maybeSingle = () => Promise.resolve({ data: heartbeat, error: null });
-  node.single = () => Promise.resolve({ data: heartbeat, error: null });
   return node;
 }
 
@@ -41,7 +39,7 @@ async function loadRoute() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  heartbeat = { last_seen: new Date().toISOString() };
+  historyRows = [];
   process.env.SMTP_HOST = "smtp.example";
   process.env.SMTP_PORT = "587";
   delete process.env.DISCORD_BOT_TOKEN;
@@ -87,46 +85,38 @@ describe("GET /api/status", () => {
     fetchSpy.mockRestore();
   });
 
-  it("marks discord ok when the bot heartbeat is fresh and no bot token exists in the web env", async () => {
+  it("checks only the 4 active services (no discord), never queries bot_heartbeats, and returns operational", async () => {
     const { GET } = await loadRoute();
 
-    const body = await (await GET(request())).json();
+    const res = await GET(request());
+    const body = await res.json();
 
-    expect(process.env.DISCORD_BOT_TOKEN).toBeUndefined();
-    expect(body.data.checks.discord.status).toBe("ok");
+    expect(res.status).toBe(200);
     expect(body.data.status).toBe("operational");
+    expect("discord" in body.data.checks).toBe(false);
+    expect(Object.keys(body.data.checks).sort()).toEqual(["nextjs", "smtp", "stripe", "supabase"]);
+    expect(mocks.from).not.toHaveBeenCalledWith("bot_heartbeats");
   });
 
-  it("marks discord error when the bot heartbeat is older than the 2h threshold", async () => {
-    heartbeat = { last_seen: new Date(Date.now() - 3 * 3_600_000).toISOString() };
+  it("ignores historical discord error rows in health_checks when computing uptime stats", async () => {
+    const nowIso = new Date().toISOString();
+    historyRows = [
+      { service: "supabase", status: "ok", latency_ms: 10, created_at: nowIso },
+      { service: "stripe", status: "ok", latency_ms: 20, created_at: nowIso },
+      { service: "smtp", status: "ok", latency_ms: 15, created_at: nowIso },
+      { service: "nextjs", status: "ok", latency_ms: 5, created_at: nowIso },
+      { service: "discord", status: "error", latency_ms: 0, created_at: nowIso },
+    ];
     const { GET } = await loadRoute();
 
-    const body = await (await GET(request())).json();
+    const res = await GET(request());
+    const body = await res.json();
 
-    expect(body.data.checks.discord.status).toBe("error");
-    expect(body.data.checks.discord.message).toBe("Bot last seen 3h ago");
-    expect(body.data.status).toBe("degraded");
-  });
-
-  it("marks discord error when no heartbeat row exists", async () => {
-    heartbeat = null;
-    const { GET } = await loadRoute();
-
-    const body = await (await GET(request())).json();
-
-    expect(body.data.checks.discord.status).toBe("error");
-    expect(body.data.checks.discord.message).toBe("No bot heartbeat recorded");
-  });
-
-  it("marks discord error when the bot heartbeat timestamp is malformed", async () => {
-    heartbeat = { last_seen: "not-a-timestamp" };
-    const { GET } = await loadRoute();
-
-    const body = await (await GET(request())).json();
-
-    expect(body.data.checks.discord.status).toBe("error");
-    expect(body.data.checks.discord.message).toBe("Invalid bot heartbeat timestamp");
-    expect(body.data.status).toBe("degraded");
+    expect(res.status).toBe(200);
+    expect(body.data.stats["24h"].uptimePct).toBe(100);
+    expect(body.data.stats["24h"].incidents).toBe(0);
+    expect(body.data.stats["24h"].checks).toBe(4);
+    expect("discord" in body.data.stats["24h"].services).toBe(false);
   });
 
   it("serves a second request inside the TTL from cache without touching any upstream", async () => {

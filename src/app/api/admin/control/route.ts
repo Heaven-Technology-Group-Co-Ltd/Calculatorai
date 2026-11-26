@@ -19,42 +19,70 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
+import { adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { verifyHmacSignature } from "@/lib/admin/hmac";
 import { AdminActionSchema } from "@/lib/admin/schemas";
 import { sendAdminLog } from "@/lib/admin/log-dispatcher";
 import { getState, setMaintenance, recordCommand } from "@/lib/admin/state";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import {
+  successResponse,
+  badRequestResponse,
+  unauthorizedResponse,
+  forbiddenResponse,
+  serverErrorResponse,
+  serviceUnavailableResponse,
+} from "@/lib/api-response";
+
+function isCallerAllowed(callerId: string): boolean {
+  const raw = process.env.DISCORD_ADMIN_IDS ?? process.env.ADMIN_DISCORD_IDS;
+  if (!raw || raw.trim().length === 0) {
+    return true;
+  }
+  const allowlist = new Set(
+    raw
+      .split(",")
+      .map((id) => id.trim())
+      .filter((id) => id.length > 0)
+  );
+  return allowlist.has(callerId);
+}
 
 // ---------------------------------------------------------------------------
 // Route handler
 // ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  // ── Step 1: Admin session verification ──────────────────────────────────
-  try {
-    const admin = await requireAdmin(request);
-  } catch (__err){
-    return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-  }
-
-  // ── Step 2: Extract raw body + security headers ──────────────────────────
+  // ── Step 1: Extract raw body + security headers ──────────────────────────
   const rawBody = await request.text(); // MUST be raw string for HMAC
 
   const signature = request.headers.get("x-signature");
   const timestamp = request.headers.get("x-timestamp");
-  const callerId  = request.headers.get("x-caller-id") ?? "unknown";
-  const callerTag = request.headers.get("x-caller-tag")  ?? "unknown";
+  const callerId = request.headers.get("x-caller-id");
+  const callerTag = request.headers.get("x-caller-tag") ?? "unknown";
 
-  // ── Step 3: HMAC verification ─────────────────────────────────────────────
-  if (!signature || !timestamp) {
-    await sendAdminLog("auth_missing_headers", { callerId, callerTag }, "WARN");
+  // ── Step 2: Fail closed if shared secret is unconfigured ─────────────────
+  if (!process.env.ADMIN_API_SHARED_SECRET) {
+    return serviceUnavailableResponse("Admin control secret is not configured");
+  }
+
+  // ── Step 3: HMAC + caller allowlist verification ─────────────────────────
+  if (!signature || !timestamp || !callerId) {
+    await sendAdminLog(
+      "auth_missing_headers",
+      { callerId: callerId ?? "unknown", callerTag },
+      "WARN"
+    );
     return unauthorizedResponse("Missing security headers");
   }
 
   if (!verifyHmacSignature(rawBody, signature, timestamp, callerId, callerTag)) {
     await sendAdminLog("auth_invalid_signature", { callerId, callerTag }, "WARN");
     return forbiddenResponse("Invalid or expired signature");
+  }
+
+  if (!isCallerAllowed(callerId)) {
+    await sendAdminLog("auth_unauthorized_caller", { callerId, callerTag }, "WARN");
+    return forbiddenResponse("Caller is not authorized");
   }
 
   // ── Step 4: JSON parse + Zod validation ───────────────────────────────────

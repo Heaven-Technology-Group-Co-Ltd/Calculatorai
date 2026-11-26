@@ -270,19 +270,64 @@ describe("checkAdminGate", () => {
     });
   });
 
-  it("decodes a fallback session cookie when the primary secure cookie is absent", async () => {
-    vi.mocked(getToken).mockResolvedValueOnce(null).mockResolvedValueOnce({
+  it("uses getSessionCookieName() consistently for token extraction", async () => {
+    vi.mocked(getToken).mockResolvedValue({
       sub: "user-1",
       iat: 1000,
     } as JWT);
 
     const result = await checkAdminGate(makeRequest());
 
-    expect(vi.mocked(getToken)).toHaveBeenNthCalledWith(1, expect.objectContaining({ cookieName: "__Secure-next-auth.session-token" }));
-    expect(vi.mocked(getToken)).toHaveBeenNthCalledWith(2, expect.objectContaining({ cookieName: "next-auth.session-token" }));
+    expect(vi.mocked(getToken)).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(getToken)).toHaveBeenCalledWith(
+      expect.objectContaining({ cookieName: "next-auth.session-token" })
+    );
     expect(result).toEqual({
       ok: true,
       user: { id: "user-1", name: "Admin", email: "admin@example.com", is_admin: true },
+    });
+  });
+
+  it("rejects banned admin users immediately even with a valid JWT", async () => {
+    vi.mocked(getToken).mockResolvedValue({ sub: "user-1", iat: 1000 } as JWT);
+    vi.mocked(isSessionValid).mockResolvedValue(true);
+    mockDbUser({
+      id: "user-1",
+      name: "Banned Admin",
+      email: "banned@example.com",
+      is_admin: true,
+      is_banned: true,
+    } as MockDbUser & { is_banned: boolean });
+
+    const result = await checkAdminGate(makeRequest());
+
+    expect(result).toEqual({
+      ok: false,
+      failure: {
+        kind: "unauthenticated",
+        status: 401,
+        message: "Account has been banned",
+      },
+    });
+  });
+
+  it("rejects impersonated tokens from admin privileges", async () => {
+    vi.mocked(getToken).mockResolvedValue({
+      sub: "user-2",
+      iat: 1000,
+      impersonatedBy: "admin-1",
+    } as unknown as JWT);
+
+    const result = await checkAdminGate(makeRequest());
+
+    expect(isSessionValid).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      ok: false,
+      failure: {
+        kind: "forbidden",
+        status: 403,
+        message: "Admin privileges disabled during impersonation",
+      },
     });
   });
 

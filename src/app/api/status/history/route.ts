@@ -3,7 +3,7 @@
  *
  * Public. Health-check history aggregated into chart-ready buckets.
  * Query params:
- *   service — one of supabase|stripe|smtp|discord|nextjs (omit = all)
+ *   service — one of supabase|stripe|smtp|nextjs (omit = all)
  *   range   — 24h (hourly buckets) | 7d | 30d (daily buckets; default 24h)
  */
 import { NextRequest } from "next/server";
@@ -17,7 +17,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const SERVICES = ["supabase", "stripe", "smtp", "discord", "nextjs"] as const;
+const SERVICES = ["supabase", "stripe", "smtp", "nextjs"] as const;
 type Service = (typeof SERVICES)[number];
 type Range = "24h" | "7d" | "30d";
 
@@ -79,7 +79,9 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
 
     // Group rows by bucket timestamp (use numeric ms to avoid ISO format mismatch)
-    const typedRows = (rows ?? []) as HealthHistoryRow[];
+    const typedRows = ((rows ?? []) as HealthHistoryRow[]).filter((row) =>
+      (SERVICES as readonly string[]).includes(row.service),
+    );
     const byBucket = new Map<number, HealthHistoryRow[]>();
     for (const row of typedRows) {
       const ts = new Date(row.bucket).getTime();

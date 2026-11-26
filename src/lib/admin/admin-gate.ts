@@ -4,6 +4,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { RATE_LIMIT } from "@/lib/api-constants";
 import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import { isSessionValid } from "@/lib/admin/session-store";
+import { getSessionCookieName } from "@/lib/session-cookie";
 import type { AdminUser } from "@/lib/admin/auth-middleware";
 
 export type AdminGateFailure =
@@ -60,29 +61,13 @@ export async function checkAdminGate(
     }
   }
 
-  const isSecure = process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
-  const cookieName = isSecure
-    ? "__Secure-next-auth.session-token"
-    : "next-auth.session-token";
-
   let decoded;
   try {
     decoded = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
-      cookieName,
+      cookieName: getSessionCookieName(),
     });
-
-    if (!decoded) {
-      const fallbackName = isSecure
-        ? "next-auth.session-token"
-        : "__Secure-next-auth.session-token";
-      decoded = await getToken({
-        req: request,
-        secret: process.env.NEXTAUTH_SECRET,
-        cookieName: fallbackName,
-      });
-    }
   } catch {
     return failure(FAILURES.unauthenticated("Authentication required"));
   }
@@ -91,20 +76,24 @@ export async function checkAdminGate(
     return failure(FAILURES.unauthenticated("Authentication required"));
   }
 
+  if (decoded.impersonatedBy) {
+    return failure(FAILURES.forbidden("Admin privileges disabled during impersonation"));
+  }
+
   const tokenIat = decoded.iat;
   if (typeof tokenIat !== "number" || !Number.isFinite(tokenIat) || tokenIat <= 0) {
     return failure(FAILURES.unauthenticated("Invalid session token"));
   }
 
   let sessionValid: boolean;
-  let user: AdminUser | null;
+  let user: (AdminUser & { is_banned?: boolean }) | null;
   try {
     const supabase = getSupabaseAdmin();
     const [isValid, userResult] = await Promise.all([
       isSessionValid(decoded.sub, tokenIat),
       supabase
         .from("users")
-        .select("id, name, email, is_admin")
+        .select("id, name, email, is_admin, is_banned")
         .eq("id", decoded.sub)
         .single(),
     ]);
@@ -124,6 +113,9 @@ export async function checkAdminGate(
   }
   if (!user) {
     return failure(FAILURES.unauthenticated("Authentication required"));
+  }
+  if (user.is_banned === true) {
+    return failure(FAILURES.unauthenticated("Account has been banned"));
   }
   if (user.is_admin !== true) {
     return failure(FAILURES.forbidden("Admin privileges required"));

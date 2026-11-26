@@ -28,9 +28,7 @@ export function getStripe(): Stripe {
     maxNetworkRetries: 2,
     timeout: 10_000,
   });
-  if (process.env.NODE_ENV !== "production") {
-    globalThis.__stripe__ = stripe;
-  }
+  globalThis.__stripe__ = stripe;
   return stripe;
 }
 

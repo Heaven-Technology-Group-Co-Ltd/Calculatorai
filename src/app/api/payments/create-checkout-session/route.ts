@@ -21,30 +21,23 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { checkRateLimit } from "@/lib/rate-limiter";
 import {
+  CHECKOUT_PLAN_IDS,
+  getCheckoutPlan,
+} from "@/lib/plans";
+import {
   successResponse,
   badRequestResponse,
-  unauthorizedResponse,
   badGatewayResponse,
   serverErrorResponse,
 } from "@/lib/api-response";
 
 const CheckoutSchema = z.object({
-  planId: z.enum(["monthly", "yearly", "lifetime"], {
+  planId: z.enum(CHECKOUT_PLAN_IDS, {
     message: "Unknown plan",
   }),
   successUrl: z.string().url("Invalid success URL"),
   cancelUrl: z.string().url("Invalid cancel URL"),
 });
-
-// Single source of truth for pricing — the client never sets prices.
-const PLAN_CATALOG: Record<
-  "monthly" | "yearly" | "lifetime",
-  { product: string; amountCents: number }
-> = {
-  monthly: { product: "Monthly Pro", amountCents: 999 },
-  yearly: { product: "Yearly Premium", amountCents: 7999 },
-  lifetime: { product: "Lifetime Access", amountCents: 19900 },
-};
 
 // The expected redirect origin is configuration, never a request header: a
 // Host header is attacker-controlled, so matching against it accepts
@@ -101,21 +94,25 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions);
     const userId = (session?.user as { id?: string } | undefined)?.id;
 
+    const plan = getCheckoutPlan(planId);
+
     // ── Create Stripe Checkout Session ─────────────────────────────────
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "payment",
+      ...(userId ? { client_reference_id: userId } : {}),
       line_items: [
         {
           price_data: {
             currency: "usd",
-            product_data: { name: PLAN_CATALOG[planId].product },
-            unit_amount: PLAN_CATALOG[planId].amountCents,
+            product_data: { name: plan.product },
+            unit_amount: plan.amountCents,
           },
           quantity: 1,
         },
       ],
       metadata: {
-        product_name: PLAN_CATALOG[planId].product,
+        plan: plan.id,
+        product_name: plan.product,
         user_id: userId ?? "guest",
       },
       success_url: successUrl,

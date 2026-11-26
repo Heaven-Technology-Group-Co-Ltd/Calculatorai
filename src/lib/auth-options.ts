@@ -6,6 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { SupabaseCustomAdapter } from "./supabase-adapter";
 import { getSessionCookieName } from "./session-cookie";
+import { isSessionValid } from "./admin/session-store";
 
 let supabase: SupabaseClient | null = null;
 
@@ -119,14 +120,44 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.sub = user.id;
         token.id = user.id;
-        // On login, store a session version that can be invalidated
         token.sessionVersion = Date.now();
+        return token;
       }
+
+      if (typeof token.sub === "string" && token.sub.length > 0) {
+        try {
+          const iat = typeof token.iat === "number" && Number.isFinite(token.iat) ? token.iat : 0;
+          const [valid, userResult] = await Promise.all([
+            isSessionValid(token.sub, iat),
+            getSupabase()
+              .from("users")
+              .select("is_banned")
+              .eq("id", token.sub)
+              .single(),
+          ]);
+
+          if (!valid || userResult.data?.is_banned === true) {
+            return { ...token, revoked: true, sub: undefined, id: undefined };
+          }
+        } catch {
+          // Fail closed on revocation/ban check errors only when DB is configured;
+          // if DB is unreachable, revoke token to prevent banned access.
+          return { ...token, revoked: true, sub: undefined, id: undefined };
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
+      if (token.revoked || !token.sub) {
+        return { ...session, user: undefined, expires: new Date(0).toISOString() };
+      }
       if (session.user) {
-        (session.user as any).id = token.id;
+        (session.user as { id?: string; impersonatedBy?: unknown }).id =
+          typeof token.id === "string" ? token.id : token.sub;
+        if (typeof token.impersonatedBy === "string") {
+          (session.user as { impersonatedBy?: string }).impersonatedBy = token.impersonatedBy;
+        }
       }
       return session;
     },
