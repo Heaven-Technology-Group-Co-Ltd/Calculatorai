@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     let dbQuery = supabase
       .from("users")
-      .select("id, name, email, image, created_at, is_banned, banned_at, banned_reason, last_active_at, is_admin", { count: "exact" });
+      .select("id, name, email, image, created_at, is_banned, banned_at, banned_reason, last_active_at, is_admin, plan", { count: "exact" });
 
     if (query.search) {
       const term = sanitizeSearchTerm(query.search);

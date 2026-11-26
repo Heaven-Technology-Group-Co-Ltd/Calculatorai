@@ -23,13 +23,15 @@ async function getReportData() {
 
   const oneWeekAgo = new Date(Date.now() - 7 * 86_400_000);
   const twoWeeksAgo = new Date(Date.now() - 14 * 86_400_000);
-  const now = new Date();
+  const fiveMinutesAgo = new Date(Date.now() - 300_000).toISOString();
 
   const { count: newUsers } = await supabase.from("users").select("*", { count: "exact", head: true }).gte("created_at", oneWeekAgo.toISOString());
   const { count: totalUsers } = await supabase.from("users").select("*", { count: "exact", head: true });
-  const { count: onlineNow } = await supabase.from("sessions").select("*", { count: "exact", head: true }).gt("expires", now.toISOString());
+  const { data: activeViews } = await supabase.from("page_views").select("session_id").gte("created_at", fiveMinutesAgo).order("created_at", { ascending: false }).limit(10000);
+  const onlineNow = new Set((activeViews ?? []).filter((view) => view.session_id).map((view) => view.session_id)).size
+    + (activeViews ?? []).filter((view) => !view.session_id).length;
 
-  const { data: formulaData } = await supabase.from("formula_usage").select("formula_id").gte("created_at", oneWeekAgo.toISOString());
+  const { data: formulaData } = await supabase.from("formula_usage").select("formula_id").gte("created_at", oneWeekAgo.toISOString()).order("created_at", { ascending: false }).limit(10000);
   const fc: Record<string, number> = {};
   for (const r of formulaData ?? []) fc[r.formula_id] = (fc[r.formula_id] || 0) + 1;
   const topFormula = Object.entries(fc).sort((a, b) => b[1] - a[1])[0];
@@ -38,7 +40,7 @@ async function getReportData() {
   const { count: pvLastWeek } = await supabase.from("page_views").select("*", { count: "exact", head: true }).gte("created_at", twoWeeksAgo.toISOString()).lt("created_at", oneWeekAgo.toISOString());
   const wow = pvLastWeek && pvLastWeek > 0 ? Math.round(((pvThisWeek ?? 0) - pvLastWeek) / pvLastWeek * 100) : 0;
 
-  const { data: countryData } = await supabase.from("page_views").select("country").gte("created_at", oneWeekAgo.toISOString()).not("country", "is", null);
+  const { data: countryData } = await supabase.from("page_views").select("country").gte("created_at", oneWeekAgo.toISOString()).not("country", "is", null).order("created_at", { ascending: false }).limit(10000);
   const cc: Record<string, number> = {};
   for (const r of countryData ?? []) { if (r.country) cc[r.country] = (cc[r.country] || 0) + 1; }
   const topCountry = Object.entries(cc).sort((a, b) => b[1] - a[1])[0];

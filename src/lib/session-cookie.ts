@@ -8,3 +8,9 @@ export function getSessionCookieName(): string {
     ? "__Secure-next-auth.session-token"
     : "next-auth.session-token";
 }
+
+export function getAdminBackupCookieName(): string {
+  return process.env.NODE_ENV === "production"
+    ? "__Secure-calc.admin-backup"
+    : "calc.admin-backup";
+}

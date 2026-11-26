@@ -54,7 +54,7 @@ export async function GET() {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from("calculation_history")
-      .select("*")
+      .select("id, user_id, expression, result, timestamp")
       .eq("user_id", userId)
       .order("timestamp", { ascending: false })
       .limit(100);

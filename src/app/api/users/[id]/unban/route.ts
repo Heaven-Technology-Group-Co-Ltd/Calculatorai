@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { writeAuditLog } from "@/lib/admin/audit";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { restoreUserSessions } from "@/lib/admin/session-store";
+import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/unban
@@ -23,6 +24,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { id } = await params;
     const { data, error } = await supabase.from("users").update({ is_banned: false, banned_at: null, banned_reason: null }).eq("id", id).select().single();
     if (error) throw new Error(error.message);
+
+    await restoreUserSessions(id);
 
     void writeAuditLog({ adminUserId: admin.id, action: "unban_user", targetType: "user", targetId: id });
     return successResponse(data);

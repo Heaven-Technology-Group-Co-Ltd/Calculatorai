@@ -3,13 +3,13 @@ import {
   Database,
   Globe,
   Mail,
-  MessageSquare,
   Shield,
   type LucideIcon,
 } from "lucide-react";
 import type { CheckStatus, Range } from "./types";
 
-export const SERVICES = ["supabase", "stripe", "smtp", "discord", "nextjs"] as const;
+export const SERVICES = ["supabase", "stripe", "smtp", "nextjs"] as const;
+export type ServiceKey = (typeof SERVICES)[number];
 
 export const SERVICE_META: {
   id: string;
@@ -21,7 +21,6 @@ export const SERVICE_META: {
   { id: "supabase", label: "Supabase", icon: Database, color: "#E8B896", hint: "Postgres + Auth" },
   { id: "stripe", label: "Stripe", icon: Shield, color: "#D4A045", hint: "Payments API" },
   { id: "smtp", label: "SMTP", icon: Mail, color: "#7DD3FC", hint: "Email delivery" },
-  { id: "discord", label: "Discord", icon: MessageSquare, color: "#A78BFA", hint: "Bot gateway" },
   { id: "nextjs", label: "Next.js", icon: Globe, color: "#86EFAC", hint: "App server" },
 ];
 

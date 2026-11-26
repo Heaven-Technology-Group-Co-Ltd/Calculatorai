@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
+import { useSession } from "next-auth/react";
 import { Menu, Eye, EyeOff, Clock, Info, Calculator, Activity } from "lucide-react";
 import { departments } from "@/lib/math-data";
 import { uiTranslations } from "@/lib/translations";
@@ -21,6 +22,31 @@ import styles from "./AppShell.module.css";
 
 export function AppShell() {
   const { language: lang, setLanguage: setLang } = useLanguage();
+  const { data: session } = useSession();
+  const sessionUser = session?.user as
+    | { id?: string; email?: string | null; name?: string | null; impersonatedBy?: string }
+    | undefined;
+  const isImpersonating = Boolean(sessionUser?.impersonatedBy);
+  const [exitingImpersonation, setExitingImpersonation] = useState(false);
+
+  const handleExitImpersonation = useCallback(async () => {
+    if (!sessionUser?.id) return;
+    setExitingImpersonation(true);
+    try {
+      const res = await fetch(`/api/users/${sessionUser.id}/impersonate`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      });
+      if (res.ok) {
+        window.location.assign("/dashboard/users");
+        return;
+      }
+    } catch (error) {
+      console.error("[Impersonation] Exit failed:", error);
+    } finally {
+      setExitingImpersonation(false);
+    }
+  }, [sessionUser]);
 
   const [search, setSearch] = useState("");
   const [activeLevel, setActiveLevel] = useState<string>("all");
@@ -189,6 +215,25 @@ export function AppShell() {
 
       {/* Main Content Column */}
       <div className="mainContent">
+        {isImpersonating && (
+          <div className={styles.impersonationBanner} role="status">
+            <span className={styles.impersonationText}>
+              {lang === "th"
+                ? `กำลังใช้งานในฐานะ ${sessionUser?.email ?? sessionUser?.name ?? sessionUser?.id}`
+                : `Impersonating ${sessionUser?.email ?? sessionUser?.name ?? sessionUser?.id}`}
+            </span>
+            <button
+              type="button"
+              className={styles.impersonationExitBtn}
+              onClick={handleExitImpersonation}
+              disabled={exitingImpersonation}
+            >
+              {exitingImpersonation
+                ? (lang === "th" ? "กำลังออก..." : "Exiting...")
+                : "Exit Impersonation"}
+            </button>
+          </div>
+        )}
         {/* Top Bar (Isolated Mobile vs Desktop) */}
         <div className="topbar">
           {isMobile ? (

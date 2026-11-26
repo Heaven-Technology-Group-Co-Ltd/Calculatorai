@@ -33,14 +33,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     for (const r of formulas ?? []) fc[r.formula_id] = (fc[r.formula_id] || 0) + 1;
     const topFormula = Object.entries(fc).sort((a, b) => b[1] - a[1])[0];
 
-    const { data: sessions } = await supabase.from("sessions").select("expires, user_agent").eq("user_id", id).order("expires", { ascending: false }).limit(5);
+
 
     return successResponse({
       ...user,
       subscription: sub ?? null,
       totalCalculations: totalCalcs ?? 0,
       topFormula: topFormula ? { id: topFormula[0], count: topFormula[1] } : null,
-      recentSessions: sessions ?? [],
+      recentSessions: [],
     });
   } catch (err) {
     console.error("[User Detail] Error:", err);

@@ -67,6 +67,18 @@ function getUserId(
  *   Authenticated users: API-backed (Supabase calculation_history table)
  *   Anonymous users:     sessionStorage fallback
  */
+let fallbackIdCounter = 0;
+
+function createOptimisticId(): string {
+  const cryptoApi = globalThis.crypto;
+  if (typeof cryptoApi?.randomUUID === "function") return cryptoApi.randomUUID();
+  if (typeof cryptoApi?.getRandomValues === "function") {
+    return Array.from(cryptoApi.getRandomValues(new Uint8Array(16)), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+  fallbackIdCounter += 1;
+  return `${Date.now().toString(36)}-${fallbackIdCounter.toString(36)}`;
+}
+
 export function useHistory() {
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated";
@@ -137,13 +149,7 @@ export function useHistory() {
   // ── addToHistory ──────────────────────────────────────────────────────────
   const addToHistory = useCallback(
     (item: Omit<HistoryItem, "id" | "ts">) => {
-      // crypto.randomUUID is unavailable on non-secure (plain HTTP) origins
-      const optimisticId = typeof crypto.randomUUID === "function"
-        ? crypto.randomUUID()
-        : `${Date.now().toString(36)}-${Array.from(
-            crypto.getRandomValues(new Uint8Array(8)),
-            (b) => b.toString(16).padStart(2, "0"),
-          ).join("")}`;
+      const optimisticId = createOptimisticId();
       const newItem: HistoryItem = {
         ...item,
         id: optimisticId,

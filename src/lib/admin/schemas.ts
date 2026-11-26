@@ -9,6 +9,7 @@
  */
 
 import { z } from "zod/v4";
+import { ADMIN_ASSIGNABLE_PLANS } from "@/lib/plans";
 
 // ---------------------------------------------------------------------------
 // Base schema — common to ALL admin commands
@@ -135,7 +136,7 @@ export const AdminMessageSchema = z
 
 export const ChangePlanSchema = z
   .object({
-    plan: z.enum(["basic", "pro", "enterprise"]),
+    plan: z.enum(ADMIN_ASSIGNABLE_PLANS),
   })
   .strict();
 

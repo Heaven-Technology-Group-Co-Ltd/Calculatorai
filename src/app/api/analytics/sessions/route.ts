@@ -16,30 +16,43 @@ export async function GET(request: NextRequest) {
 
     await requireAdmin(request);
 
-    const now = new Date().toISOString();
-    const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
-    const { count: activeSessions } = await supabase.from("sessions").select("*", { count: "exact", head: true }).gt("expires", now);
-    const { count: totalPv7d } = await supabase.from("page_views").select("*", { count: "exact", head: true }).gte("created_at", sevenDaysAgo);
-
-    const { data: allSessions } = await supabase.from("page_views").select("session_id").gte("created_at", sevenDaysAgo);
-    const freq: Record<string, number> = {};
-    for (const r of allSessions ?? []) { if (r.session_id) freq[r.session_id] = (freq[r.session_id] || 0) + 1; }
-    const bounced = Object.values(freq).filter((c) => c === 1).length;
-    const totalSess = Object.keys(freq).length;
-    const bounceRate = totalSess > 0 ? Math.round((bounced / totalSess) * 100) : 0;
-
-    const { data: calcSessions } = await supabase.from("formula_usage").select("session_id").gte("created_at", sevenDaysAgo).not("session_id", "is", null);
-    const calcSessionSet = new Set((calcSessions ?? []).map((r) => r.session_id));
-    const conversionRate = totalSess > 0 ? Math.round((calcSessionSet.size / totalSess) * 100) : 0;
-
-    const totalCalculations = (calcSessions ?? []).length;
+    const nowMs = Date.now();
+    const sevenDaysAgo = new Date(nowMs - 7 * 86_400_000).toISOString();
+    const [viewsResponse, calculationsResponse] = await Promise.all([
+      supabase.from("page_views").select("session_id, created_at").gte("created_at", sevenDaysAgo).order("created_at", { ascending: false }).limit(10000),
+      supabase.from("formula_usage").select("session_id").gte("created_at", sevenDaysAgo).not("session_id", "is", null).order("created_at", { ascending: false }).limit(10000),
+    ]);
+    if (viewsResponse.error || calculationsResponse.error) throw new Error("Failed to load session analytics");
+    const sessions = new Map<string, { count: number; first: number; last: number }>();
+    let anonymous = 0;
+    let activeAnonymous = 0;
+    const activeIds = new Set<string>();
+    for (const view of viewsResponse.data ?? []) {
+      const timestamp = new Date(view.created_at).getTime();
+      if (timestamp >= nowMs - 300_000) {
+        if (view.session_id) activeIds.add(view.session_id); else activeAnonymous++;
+      }
+      if (!view.session_id) { anonymous++; continue; }
+      const previous = sessions.get(view.session_id);
+      sessions.set(view.session_id, { count: (previous?.count ?? 0) + 1, first: Math.min(previous?.first ?? timestamp, timestamp), last: Math.max(previous?.last ?? timestamp, timestamp) });
+    }
+    const totalSess = sessions.size + anonymous;
+    const bounced = [...sessions.values()].filter((session) => session.count === 1).length + anonymous;
+    const bounceRate = totalSess ? Math.round(bounced * 100 / totalSess) : 0;
+    const calcSessions = calculationsResponse.data ?? [];
+    const converted = new Set(calcSessions.map((row) => row.session_id).filter((id) => id && sessions.has(id))).size;
+    const conversionRate = totalSess ? Math.round(converted * 100 / totalSess) : 0;
+    const totalCalculations = calcSessions.length;
+    const activeSessions = activeIds.size + activeAnonymous;
+    const duration = [...sessions.values()].reduce((sum, session) => sum + session.last - session.first, 0);
+    const avgSessionDuration = totalSess ? Math.round(duration / totalSess / 1000) : 0;
 
     return successResponse({
       totalCalculations,
-      activeSessions: activeSessions ?? 0,
+      activeSessions,
       bounceRate,
       conversionRate,
-      avgSessionDuration: 0,
+      avgSessionDuration,
     });
   } catch (err) {
     console.error("[Analytics/Sessions] Error:", err);

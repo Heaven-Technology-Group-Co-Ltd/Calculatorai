@@ -12,6 +12,7 @@ import { getState } from "@/lib/admin/state";
 import { successResponse, serverErrorResponse } from "@/lib/api-response";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { getRuntimeHealth } from "@/lib/runtime-health";
+import { SERVICES, type ServiceKey as Service } from "@/app/status/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -22,9 +23,6 @@ interface ServiceCheck {
   latencyMs: number;
   message?: string;
 }
-
-const SERVICES = ["supabase", "stripe", "smtp", "discord", "nextjs"] as const;
-type Service = (typeof SERVICES)[number];
 
 const RANGE_MS = {
   "24h": 24 * 3_600_000,
@@ -140,48 +138,13 @@ function checkNextjs(): ServiceCheck {
     : { status: "error", latencyMs: Date.now() - start, message: "Runtime uptime unavailable" };
 }
 
-const BOT_HEARTBEAT_THRESHOLD_MS = 2 * 60 * 60 * 1000; // 2 hours
-
-// The bot is a separate long-running process (discord-bot/, Gateway), so the web
-// app holds no bot token and cannot probe Discord on its behalf. Liveness comes
-// only from the heartbeat the bot writes. Control strings below are this route's
-// own text, safe to expose.
-async function checkDiscord(db: SupabaseClient<any>): Promise<ServiceCheck> {
-  const start = Date.now();
-  try {
-    const hb = await withTimeout(
-      db.from("bot_heartbeats").select("last_seen").eq("service", "discord").maybeSingle(),
-      3_000,
-      "Heartbeat timeout",
-    );
-    if (hb.error) throw hb.error;
-    if (!hb.data) {
-      return { status: "error", latencyMs: Date.now() - start, message: "No bot heartbeat recorded" };
-    }
-    const seenMs = new Date(hb.data.last_seen as string).getTime();
-    if (Number.isNaN(seenMs)) {
-      return { status: "error", latencyMs: Date.now() - start, message: "Invalid bot heartbeat timestamp" };
-    }
-    const ageMs = Date.now() - seenMs;
-    if (ageMs > BOT_HEARTBEAT_THRESHOLD_MS) {
-      return {
-        status: "error",
-        latencyMs: Date.now() - start,
-        message: `Bot last seen ${Math.round(ageMs / 3_600_000)}h ago`,
-      };
-    }
-    return { status: "ok", latencyMs: Date.now() - start };
-  } catch (err) {
-    return fail(start, err, "Discord heartbeat check failed");
-  }
-}
-
 function summarize(
   rows: { service: string; status: string; latency_ms: number }[],
 ): RangeStats {
+  const activeRows = rows.filter((r) => (SERVICES as readonly string[]).includes(r.service));
   const services: Record<string, ServiceRangeStats> = {};
   for (const s of SERVICES) {
-    const rs = rows.filter((r) => r.service === s);
+    const rs = activeRows.filter((r) => r.service === s);
     const ok = rs.filter((r) => r.status === "ok").length;
     services[s] = {
       // health_checks rows are written only when the status page is polled;
@@ -194,14 +157,14 @@ function summarize(
       incidents: rs.length - ok,
     };
   }
-  const allOk = rows.filter((r) => r.status === "ok").length;
+  const allOk = activeRows.filter((r) => r.status === "ok").length;
   return {
-    uptimePct: rows.length ? round1((allOk / rows.length) * 100) : null,
-    avgLatencyMs: rows.length
-      ? Math.round(rows.reduce((sum, r) => sum + (r.latency_ms ?? 0), 0) / rows.length)
+    uptimePct: activeRows.length ? round1((allOk / activeRows.length) * 100) : null,
+    avgLatencyMs: activeRows.length
+      ? Math.round(activeRows.reduce((sum, r) => sum + (r.latency_ms ?? 0), 0) / activeRows.length)
       : 0,
-    checks: rows.length,
-    incidents: rows.length - allOk,
+    checks: activeRows.length,
+    incidents: activeRows.length - allOk,
     services,
   };
 }
@@ -270,17 +233,15 @@ function takeStatusSlot(ip: string, now: number): { allowed: boolean; retryAfter
 }
 
 async function collectChecks(db: SupabaseClient<any>): Promise<Record<Service, ServiceCheck>> {
-  const [supabaseCheck, stripeCheck, smtpCheck, discordCheck] = await Promise.all([
+  const [supabaseCheck, stripeCheck, smtpCheck] = await Promise.all([
     checkSupabase(db),
     checkStripe(),
     checkSmtp(),
-    checkDiscord(db),
   ]);
   return {
     supabase: supabaseCheck,
     stripe: stripeCheck,
     smtp: smtpCheck,
-    discord: discordCheck,
     nextjs: checkNextjs(),
   };
 }

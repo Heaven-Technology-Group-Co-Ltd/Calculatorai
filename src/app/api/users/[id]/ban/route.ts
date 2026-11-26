@@ -3,7 +3,8 @@ import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { BanUserSchema } from "@/lib/admin/schemas";
 import { writeAuditLog } from "@/lib/admin/audit";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { revokeAllUserSessions } from "@/lib/admin/session-store";
+import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/ban
@@ -28,6 +29,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     const { data, error } = await supabase.from("users").update({ is_banned: true, banned_at: new Date().toISOString(), banned_reason: parsed.data.reason ?? null }).eq("id", id).select().single();
     if (error) throw new Error(error.message);
+
+    await revokeAllUserSessions(id);
 
     void writeAuditLog({ adminUserId: admin.id, action: "ban_user", targetType: "user", targetId: id, metadata: { reason: parsed.data.reason } });
     return successResponse(data);

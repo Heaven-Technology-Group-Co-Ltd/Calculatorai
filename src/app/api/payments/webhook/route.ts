@@ -1,54 +1,57 @@
 /**
  * POST /api/payments/webhook
  *
- * Handles Stripe webhook events for one-time payment processing.
+ * Handles Stripe webhook events for payment processing and entitlement fulfillment.
  *
- * SECURITY (per payment-integration skill requirements):
+ * SECURITY:
  *  1. Signature verification — ALWAYS verify via Stripe SDK (HMAC).
  *  2. Raw body preservation — use request.text() NOT request.json() before verification.
- *  3. Idempotency — store event IDs in DB, skip duplicates.
- *  4. Quick response — return 200 within 200ms, process async.
- *  5. Server validation — re-fetch payment status from Stripe API, never trust payload alone.
+ *  3. Recoverable claim-first idempotency — insert into `stripe_events` first;
+ *     on unique violation (23505) return 200 duplicate; on downstream failure
+ *     delete the claim row and return 500 so Stripe retries cleanly.
+ *  4. Server validation — re-fetch payment status from Stripe API.
  */
 
-// Webhook route must be dynamic — Stripe POSTs should never be cached
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe, type StripeWebhookEvent } from "@/lib/stripe";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
+import type { TablesInsert, TablesUpdate } from "@/lib/database.types";
+import { computeSubscriptionPeriod, resolveCheckoutPlan } from "@/lib/plans";
 
 // ---------------------------------------------------------------------------
-// Idempotency: check if we already processed this event
+// Idempotency helpers (claim-first with failure rollback)
 // ---------------------------------------------------------------------------
 
-async function isEventProcessed(eventId: string): Promise<boolean> {
-  const { data, error } = await getSupabaseAdmin()
-    .from("stripe_events")
-    .select("id")
-    .eq("event_id", eventId)
-    .single();
-
-  if (error && error.code !== "PGRST116") {
-    // PGRST116 = no rows found (expected for new events)
-    console.error("[Webhook] DB check failed:", error.message);
-  }
-
-  return !!data;
-}
-
-async function markEventProcessed(
+async function claimEvent(
   eventId: string,
   eventType: string
-): Promise<void> {
+): Promise<"claimed" | "duplicate"> {
   const { error } = await getSupabaseAdmin().from("stripe_events").insert({
     event_id: eventId,
     event_type: eventType,
     processed_at: new Date().toISOString(),
   });
 
+  if (!error) return "claimed";
+
+  if (error.code === "23505") {
+    return "duplicate";
+  }
+
+  console.error("[Webhook] Failed to claim event:", error.message);
+  throw new Error(`Failed to claim stripe event: ${error.message}`);
+}
+
+async function releaseEventClaim(eventId: string): Promise<void> {
+  const { error } = await getSupabaseAdmin()
+    .from("stripe_events")
+    .delete()
+    .eq("event_id", eventId);
+
   if (error) {
-    console.error("[Webhook] Failed to mark event processed:", error.message);
+    console.error("[Webhook] Failed to release event claim:", error.message);
   }
 }
 
@@ -58,48 +61,179 @@ async function markEventProcessed(
 
 async function handleCheckoutSessionCompleted(
   event: StripeWebhookEvent
-): Promise<void> {
+): Promise<"fulfilled" | "unlinked" | "skipped"> {
   const session = event.data.object as {
     id: string;
-    payment_intent: string;
-    amount_total: number;
-    currency: string;
+    payment_intent: string | null;
+    amount_total: number | null;
+    currency: string | null;
     customer_email: string | null;
-    metadata: Record<string, string>;
+    customer_details?: { email?: string | null } | null;
+    client_reference_id?: string | null;
+    metadata?: Record<string, string> | null;
   };
 
-  // Server-side validation: re-fetch from Stripe to confirm
-  const paymentIntent = await getStripe().paymentIntents.retrieve(
-    session.payment_intent
-  );
+  const supabase = getSupabaseAdmin();
 
-  if (paymentIntent.status !== "succeeded") {
-    console.warn(
-      `[Webhook] PaymentIntent ${session.payment_intent} status is ${paymentIntent.status}, not succeeded. Skipping.`
-    );
-    return;
+  let rawUserId = session.metadata?.user_id || session.client_reference_id || null;
+  if (!rawUserId || rawUserId === "guest") {
+    const rawEmail = session.customer_details?.email ?? session.customer_email ?? null;
+    const normalizedEmail = rawEmail?.trim().toLowerCase() ?? null;
+    if (normalizedEmail) {
+      const { data: matchedUser, error: userLookupErr } = await supabase
+        .from("users")
+        .select("id")
+        .eq("email", normalizedEmail)
+        .maybeSingle();
+
+      if (userLookupErr) {
+        throw new Error(`Fallback user email lookup failed: ${userLookupErr.message}`);
+      }
+      if (matchedUser?.id) {
+        rawUserId = matchedUser.id;
+      }
+    }
+
+    if (!rawUserId || rawUserId === "guest") {
+      console.error("[Webhook] unlinked_checkout_payment", {
+        eventId: event.id,
+        sessionId: session.id,
+        email: normalizedEmail,
+      });
+      return "unlinked";
+    }
   }
 
-  // Record the payment in our database
-  const { error } = await getSupabaseAdmin().from("payments").insert({
-    stripe_session_id: session.id,
-    stripe_payment_intent_id: session.payment_intent,
-    amount_cents: session.amount_total,
-    currency: session.currency,
-    status: "succeeded",
-    customer_email: session.customer_email,
-    product_name: session.metadata?.product_name ?? "Unknown",
-    metadata: session.metadata ?? {},
-  });
+  const plan = resolveCheckoutPlan(session.metadata, session.amount_total);
+  if (!plan) {
+    throw new Error(`Checkout session ${session.id} has unrecognized plan`);
+  }
 
-  if (error) {
-    console.error("[Webhook] Failed to record payment:", error.message);
-    throw error; // Will be caught by the main handler
+  // Server-side validation: re-fetch PaymentIntent from Stripe when present
+  if (session.payment_intent) {
+    const paymentIntent = await getStripe().paymentIntents.retrieve(
+      session.payment_intent
+    );
+    if (paymentIntent.status !== "succeeded") {
+      console.warn(
+        `[Webhook] PaymentIntent ${session.payment_intent} status is ${paymentIntent.status}, not succeeded. Skipping.`
+      );
+      return "skipped";
+    }
+  }
+
+  // 1. Grant entitlement FIRST (users.plan + active subscriptions row)
+  const { error: userUpdateErr } = await supabase
+    .from("users")
+    .update({ plan: plan.dbPlan })
+    .eq("id", rawUserId);
+
+  if (userUpdateErr) {
+    throw new Error(`Failed to update user plan: ${userUpdateErr.message}`);
+  }
+
+  const period = computeSubscriptionPeriod(plan.id);
+  const { data: existingSub, error: subLookupErr } = await supabase
+    .from("subscriptions")
+    .select("id")
+    .eq("user_id", rawUserId)
+    .eq("status", "active")
+    .limit(1)
+    .maybeSingle();
+
+  if (subLookupErr) {
+    throw new Error(`Subscription lookup failed: ${subLookupErr.message}`);
+  }
+
+  if (existingSub) {
+    const { error: subUpdateErr } = await supabase
+      .from("subscriptions")
+      .update({
+        plan: plan.dbPlan,
+        amount_monthly: plan.amountMonthlyCents,
+        status: "active",
+        started_at: period.startedAt,
+        cancelled_at: null,
+        updated_at: period.startedAt,
+      })
+      .eq("id", existingSub.id);
+
+    if (subUpdateErr) {
+      throw new Error(`Failed to update subscription: ${subUpdateErr.message}`);
+    }
+  } else {
+    const { error: subInsertErr } = await supabase
+      .from("subscriptions")
+      .insert({
+        user_id: rawUserId,
+        plan: plan.dbPlan,
+        amount_monthly: plan.amountMonthlyCents,
+        status: "active",
+        started_at: period.startedAt,
+      });
+
+    if (subInsertErr) {
+      throw new Error(`Failed to insert subscription: ${subInsertErr.message}`);
+    }
   }
 
   console.info(
-    `[Webhook] Payment recorded: ${session.payment_intent} (${session.amount_total} ${session.currency})`
+    `[Webhook] Entitlement granted: user=${rawUserId} plan=${plan.dbPlan} session=${session.id}`
   );
+
+  // 2. Record payment ledger row (non-fatal if table is missing: 42P01)
+  const { data: existingPayment, error: paymentLookupErr } = await supabase
+    .from("payments")
+    .select("id")
+    .eq("stripe_session_id", session.id)
+    .maybeSingle();
+
+  if (paymentLookupErr) {
+    if (paymentLookupErr.code === "42P01") {
+      console.error("[Webhook] payments table missing (42P01) on lookup; entitlement preserved", {
+        sessionId: session.id,
+        userId: rawUserId,
+        error: paymentLookupErr.message,
+      });
+      return "fulfilled";
+    }
+    throw new Error(`Payment lookup failed: ${paymentLookupErr.message}`);
+  }
+
+  if (!existingPayment) {
+    const paymentPayload: TablesInsert<"payments"> = {
+      user_id: rawUserId,
+      stripe_session_id: session.id,
+      stripe_payment_intent_id: session.payment_intent,
+      amount_cents: session.amount_total ?? plan.amountCents,
+      currency: session.currency ?? "usd",
+      status: "succeeded",
+      customer_email: session.customer_email ?? session.customer_details?.email ?? null,
+      product_name: plan.product,
+      metadata: {
+        ...(session.metadata ?? {}),
+        plan: plan.id,
+      },
+    };
+
+    const { error: paymentInsertErr } = await supabase
+      .from("payments")
+      .insert(paymentPayload);
+
+    if (paymentInsertErr) {
+      if (paymentInsertErr.code === "42P01") {
+        console.error("[Webhook] payments table missing (42P01) on insert; entitlement preserved", {
+          sessionId: session.id,
+          userId: rawUserId,
+          error: paymentInsertErr.message,
+        });
+        return "fulfilled";
+      }
+      throw new Error(`Failed to record payment: ${paymentInsertErr.message}`);
+    }
+  }
+
+  return "fulfilled";
 }
 
 async function handlePaymentIntentSucceeded(
@@ -107,20 +241,17 @@ async function handlePaymentIntentSucceeded(
 ): Promise<void> {
   const paymentIntent = event.data.object as {
     id: string;
-    amount: number;
-    currency: string;
-    metadata: Record<string, string>;
   };
 
-  // Update payment status if it exists (backup to checkout.session.completed)
+  const updatePayload: TablesUpdate<"payments"> = { status: "succeeded" };
   const { error } = await getSupabaseAdmin()
     .from("payments")
-    .update({ status: "succeeded" })
+    .update(updatePayload)
     .eq("stripe_payment_intent_id", paymentIntent.id)
     .eq("status", "pending");
 
   if (error) {
-    console.error("[Webhook] Failed to update payment status:", error.message);
+    throw new Error(`Failed to update payment status: ${error.message}`);
   }
 }
 
@@ -132,24 +263,151 @@ async function handlePaymentIntentFailed(
     last_payment_error: { message: string } | null;
   };
 
+  const updatePayload: TablesUpdate<"payments"> = { status: "failed" };
   const { error } = await getSupabaseAdmin()
     .from("payments")
-    .update({
-      status: "failed",
-      failure_reason: paymentIntent.last_payment_error?.message ?? "Unknown",
-    })
+    .update(updatePayload)
     .eq("stripe_payment_intent_id", paymentIntent.id);
 
   if (error) {
-    console.error(
-      "[Webhook] Failed to record payment failure:",
-      error.message
-    );
+    throw new Error(`Failed to record payment failure: ${error.message}`);
   }
 
   console.warn(
     `[Webhook] Payment failed: ${paymentIntent.id} — ${paymentIntent.last_payment_error?.message ?? "Unknown"}`
   );
+}
+
+async function revokeUserEntitlement(userId: string): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  const nowIso = new Date().toISOString();
+
+  const { error: userErr } = await supabase
+    .from("users")
+    .update({ plan: "free" })
+    .eq("id", userId);
+
+  if (userErr) {
+    throw new Error(`Failed to reset user plan: ${userErr.message}`);
+  }
+
+  const { error: subErr } = await supabase
+    .from("subscriptions")
+    .update({ status: "cancelled", cancelled_at: nowIso, updated_at: nowIso })
+    .eq("user_id", userId)
+    .eq("status", "active");
+
+  if (subErr) {
+    throw new Error(`Failed to cancel subscription: ${subErr.message}`);
+  }
+}
+
+async function handleChargeRefunded(event: StripeWebhookEvent): Promise<void> {
+  const charge = event.data.object as {
+    payment_intent?: string | { id: string } | null;
+    refunded?: boolean;
+    amount?: number;
+    amount_refunded?: number;
+  };
+
+  const paymentIntentId = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id ?? null;
+  if (!paymentIntentId) return;
+
+  const isFullRefund =
+    charge.refunded === true ||
+    (typeof charge.amount === "number" &&
+      charge.amount > 0 &&
+      typeof charge.amount_refunded === "number" &&
+      charge.amount_refunded >= charge.amount);
+
+  const supabase = getSupabaseAdmin();
+  const { data: payment, error: lookupErr } = await supabase
+    .from("payments")
+    .select("id, user_id, created_at")
+    .eq("stripe_payment_intent_id", paymentIntentId)
+    .maybeSingle();
+
+  if (lookupErr) {
+    throw new Error(`Refund payment lookup failed: ${lookupErr.message}`);
+  }
+
+  if (!payment) return;
+
+  if (!isFullRefund) {
+    const partialUpdate: TablesUpdate<"payments"> = { status: "partially_refunded" };
+    const { error: partialErr } = await supabase
+      .from("payments")
+      .update(partialUpdate)
+      .eq("id", payment.id);
+
+    if (partialErr) {
+      throw new Error(`Failed to mark payment partially refunded: ${partialErr.message}`);
+    }
+    return;
+  }
+
+  const fullUpdate: TablesUpdate<"payments"> = { status: "refunded" };
+  const { error: updateErr } = await supabase
+    .from("payments")
+    .update(fullUpdate)
+    .eq("id", payment.id);
+
+  if (updateErr) {
+    throw new Error(`Failed to mark payment refunded: ${updateErr.message}`);
+  }
+
+  if (payment.user_id) {
+    const { data: otherPayments, error: otherPayErr } = await supabase
+      .from("payments")
+      .select("id")
+      .eq("user_id", payment.user_id)
+      .in("status", ["succeeded", "completed", "paid"])
+      .neq("id", payment.id)
+      .limit(1);
+
+    if (otherPayErr) {
+      throw new Error(`Other payments lookup failed: ${otherPayErr.message}`);
+    }
+
+    if (otherPayments && otherPayments.length > 0) {
+      return;
+    }
+
+    const { data: newerSubs, error: subCheckErr } = await supabase
+      .from("subscriptions")
+      .select("id, started_at, created_at")
+      .eq("user_id", payment.user_id)
+      .eq("status", "active");
+
+    if (subCheckErr) {
+      throw new Error(`Active subscription check failed: ${subCheckErr.message}`);
+    }
+
+    const refundedAtMs = payment.created_at ? new Date(payment.created_at).getTime() : 0;
+    const hasNewerActiveSub = (newerSubs ?? []).some((sub) => {
+      const subTs = new Date(sub.started_at ?? sub.created_at).getTime();
+      return Number.isFinite(subTs) && subTs > refundedAtMs + 60_000;
+    });
+
+    if (hasNewerActiveSub) {
+      return;
+    }
+
+    await revokeUserEntitlement(payment.user_id);
+  }
+}
+
+async function handleSubscriptionDeleted(
+  event: StripeWebhookEvent
+): Promise<void> {
+  const subscription = event.data.object as {
+    metadata?: Record<string, string> | null;
+  };
+
+  const userId = subscription.metadata?.user_id;
+  if (!userId || userId === "guest") return;
+
+  await revokeUserEntitlement(userId);
 }
 
 // ---------------------------------------------------------------------------
@@ -187,19 +445,31 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // ── 3. Idempotency check ────────────────────────────────────────────
-  const alreadyProcessed = await isEventProcessed(event.id);
-  if (alreadyProcessed) {
-    console.info(`[Webhook] Event ${event.id} already processed, skipping`);
-    return NextResponse.json({ success: true, received: true });
+  // ── 3. Claim-first idempotency ──────────────────────────────────────
+  let claimStatus: "claimed" | "duplicate";
+  try {
+    claimStatus = await claimEvent(event.id, event.type);
+  } catch {
+    return NextResponse.json(
+      { success: false, error: "Webhook idempotency check failed" },
+      { status: 500 }
+    );
   }
 
-  // ── 4. Route to handler ─────────────────────────────────────────────
+  if (claimStatus === "duplicate") {
+    console.info(`[Webhook] Duplicate event ${event.id}, skipping`);
+    return NextResponse.json({ success: true, received: true, duplicate: true });
+  }
+
+  // ── 4. Route to handler (release claim on failure so Stripe retries) ─
+  let unlinked = false;
   try {
     switch (event.type) {
-      case "checkout.session.completed":
-        await handleCheckoutSessionCompleted(event);
+      case "checkout.session.completed": {
+        const outcome = await handleCheckoutSessionCompleted(event);
+        unlinked = outcome === "unlinked";
         break;
+      }
 
       case "payment_intent.succeeded":
         await handlePaymentIntentSucceeded(event);
@@ -209,22 +479,30 @@ export async function POST(request: NextRequest) {
         await handlePaymentIntentFailed(event);
         break;
 
+      case "charge.refunded":
+        await handleChargeRefunded(event);
+        break;
+
+      case "customer.subscription.deleted":
+        await handleSubscriptionDeleted(event);
+        break;
+
       default:
         console.info(`[Webhook] Unhandled event type: ${event.type}`);
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`[Webhook] Handler error for ${event.type}:`, message);
-    // Event was not marked processed, so Stripe will retry.
+    await releaseEventClaim(event.id);
     return NextResponse.json(
       { success: false, error: "Webhook handler failed" },
       { status: 500 }
     );
   }
 
-  // ── 5. Mark as processed only after successful handling ─────────────
-  await markEventProcessed(event.id, event.type);
-
-  // ── 6. Return 200 quickly ───────────────────────────────────────────
+  // ── 5. Return 200 quickly ───────────────────────────────────────────
+  if (unlinked) {
+    return NextResponse.json({ success: true, received: true, unlinked: true });
+  }
   return NextResponse.json({ success: true, received: true });
 }
