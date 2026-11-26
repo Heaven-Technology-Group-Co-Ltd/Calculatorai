@@ -23,7 +23,9 @@ import { adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { verifyHmacSignature } from "@/lib/admin/hmac";
 import { AdminActionSchema } from "@/lib/admin/schemas";
 import { sendAdminLog } from "@/lib/admin/log-dispatcher";
-import { getState, setMaintenance, recordCommand } from "@/lib/admin/state";
+import { getClientIpFromHeaders } from "@/lib/client-ip";
+import { checkRateLimitStrict } from "@/lib/rate-limiter";
+import { persistMaintenance, readMaintenanceState, recordCommand } from "@/lib/admin/state";
 import {
   successResponse,
   badRequestResponse,
@@ -34,17 +36,22 @@ import {
 } from "@/lib/api-response";
 
 function isCallerAllowed(callerId: string): boolean {
-  const raw = process.env.DISCORD_ADMIN_IDS ?? process.env.ADMIN_DISCORD_IDS;
-  if (!raw || raw.trim().length === 0) {
-    return true;
-  }
+  const raw = [process.env.DISCORD_ADMIN_IDS, process.env.ADMIN_DISCORD_IDS].filter(Boolean).join(",");
   const allowlist = new Set(
     raw
       .split(",")
       .map((id) => id.trim())
-      .filter((id) => id.length > 0)
+      .filter((id) => /^\d{17,20}$/.test(id))
   );
   return allowlist.has(callerId);
+}
+
+let lastAuthLogAt = 0;
+async function logFailedAuth(action: string, context: Record<string, string>): Promise<void> {
+  const now = Date.now();
+  if (now - lastAuthLogAt < 60_000) return;
+  lastAuthLogAt = now;
+  await sendAdminLog(action, context, "WARN");
 }
 
 // ---------------------------------------------------------------------------
@@ -52,6 +59,13 @@ function isCallerAllowed(callerId: string): boolean {
 // ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    const quota = await checkRateLimitStrict(`admin-control:${getClientIpFromHeaders(request.headers)}`, 20, 60_000);
+    if (!quota.allowed) return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(quota.retryAfter) } });
+  } catch (error) {
+    console.error("[Admin Control] Rate limit failed:", error);
+    return serviceUnavailableResponse("Rate limit unavailable");
+  }
   // ── Step 1: Extract raw body + security headers ──────────────────────────
   const rawBody = await request.text(); // MUST be raw string for HMAC
 
@@ -67,21 +81,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   // ── Step 3: HMAC + caller allowlist verification ─────────────────────────
   if (!signature || !timestamp || !callerId) {
-    await sendAdminLog(
+    await logFailedAuth(
       "auth_missing_headers",
-      { callerId: callerId ?? "unknown", callerTag },
-      "WARN"
+      { callerId: callerId ?? "unknown", callerTag }
     );
     return unauthorizedResponse("Missing security headers");
   }
 
   if (!verifyHmacSignature(rawBody, signature, timestamp, callerId, callerTag)) {
-    await sendAdminLog("auth_invalid_signature", { callerId, callerTag }, "WARN");
+    await logFailedAuth("auth_invalid_signature", { callerId, callerTag });
     return forbiddenResponse("Invalid or expired signature");
   }
 
   if (!isCallerAllowed(callerId)) {
-    await sendAdminLog("auth_unauthorized_caller", { callerId, callerTag }, "WARN");
+    await logFailedAuth("auth_unauthorized_caller", { callerId, callerTag });
     return forbiddenResponse("Caller is not authorized");
   }
 
@@ -179,7 +192,7 @@ async function handleGetStats(
 
   // System state (always included)
   if (scope === "system" || scope === "all") {
-    const state = getState();
+    const state = await readMaintenanceState();
     result.system = {
       maintenanceMode: state.maintenanceMode,
       maintenanceMessage: state.maintenanceMessage,
@@ -223,7 +236,7 @@ async function handleToggleMaintenance(
   params: { action: "toggle_maintenance"; enabled: boolean; message?: string },
   callerTag: string
 ): Promise<Record<string, unknown>> {
-  const state = setMaintenance(params.enabled, params.message);
+  const state = await persistMaintenance(params.enabled, params.message);
   return {
     maintenanceMode: state.maintenanceMode,
     message: state.maintenanceMessage,

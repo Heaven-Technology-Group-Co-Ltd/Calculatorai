@@ -25,7 +25,7 @@ import {
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
 const PageViewSchema = z.object({
-  path: z.string().min(1, "Path is required").max(2048, "Path is too long"),
+  path: z.string().max(512, "Path is too long").regex(/^\/(?!\/)[^\x00-\x1f\x7f]*$/, "Invalid path"),
   sessionId: z.string().max(128, "Session id is too long").nullish(),
   referrer: z.string().max(2048).optional(),
 });
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { path, sessionId, referrer } = parsed.data;
-    const userAgent = request.headers.get("user-agent") ?? undefined;
+    const userAgent = request.headers.get("user-agent")?.slice(0, 512);
     const supabase = getSupabaseAdmin();
 
     const pageView: TablesInsert<"page_views"> = {

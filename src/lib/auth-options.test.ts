@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import bcrypt from "bcryptjs";
+import { checkRateLimitStrict } from "./rate-limiter";
 
 const mockSupabase = {
   from: vi.fn(),
@@ -7,6 +8,12 @@ const mockSupabase = {
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: vi.fn(() => mockSupabase),
+}));
+
+vi.mock("./admin/session-store", () => ({ isSessionValid: vi.fn(async () => true) }));
+
+vi.mock("./rate-limiter", () => ({
+  checkRateLimitStrict: vi.fn(async () => ({ allowed: true, remaining: 9, retryAfter: 0 })),
 }));
 
 vi.mock("bcryptjs", () => ({
@@ -194,4 +201,32 @@ describe("authOptions.authorize error segregation (F-11)", () => {
       email: "good@example.com",
     });
   });
+});
+
+
+describe("credential rate limiting", () => {
+  it("blocks the eleventh attempt with a timing comparison without blocking another IP", async () => {
+    const counts = new Map<string, number>();
+    vi.mocked(checkRateLimitStrict).mockImplementation(async (key) => {
+      const count = (counts.get(key) ?? 0) + 1; counts.set(key, count);
+      return { allowed: count <= 10, remaining: 0, retryAfter: 1 };
+    });
+    const query = vi.fn().mockResolvedValue({ data: null, error: null });
+    mockSupabase.from.mockReturnValue({ select: () => ({ eq: () => ({ single: query }) }) });
+    const credentials = { email: " User@Example.com ", password: "wrong" };
+    for (let index = 0; index < 11; index++) await credentialsProvider.options.authorize(credentials, { headers: { "x-forwarded-for": "1.2.3.4" } });
+    expect(query).toHaveBeenCalledTimes(10);
+    expect(bcrypt.compare).toHaveBeenCalledWith("wrong", "runtime_dummy_hash");
+    await credentialsProvider.options.authorize(credentials, { headers: { "x-forwarded-for": "5.6.7.8" } });
+    expect(query).toHaveBeenCalledTimes(11);
+    expect(checkRateLimitStrict).toHaveBeenCalledWith("login:ip-acct:1.2.3.4:user@example.com", 10, 900000);
+  });
+});
+
+
+it("revokes a JWT when its user has been deleted", async () => {
+  mockSupabase.from.mockReturnValue({ select: () => ({ eq: () => ({ single: async () => ({ data: null, error: { code: "PGRST116" } }) }) }) });
+  const callback = authOptions.callbacks?.jwt as unknown as (args: { token: { sub: string; iat: number } }) => Promise<{ revoked?: boolean; sub?: string }>;
+  const token = await callback({ token: { sub: "deleted", iat: 1 } });
+  expect(token.revoked).toBe(true); expect(token.sub).toBeUndefined();
 });

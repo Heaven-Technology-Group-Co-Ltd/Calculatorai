@@ -521,6 +521,10 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
+      consume_rate_limit: {
+        Args: { p_identifier: string; p_limit: number; p_window_ms: number };
+        Returns: { allowed: boolean; current_count: number; reset_at: string }[];
+      };
       is_admin: {
         Args: { uid: string };
         Returns: boolean;

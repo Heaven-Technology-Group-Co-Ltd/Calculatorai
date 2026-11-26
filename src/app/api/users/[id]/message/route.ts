@@ -29,7 +29,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { data, error } = await supabase.from("admin_messages").insert({ user_id: id, content: parsed.data.content, sent_by: admin.id }).select().single();
     if (error) throw new Error(error.message);
 
-    void writeAuditLog({ adminUserId: admin.id, action: "admin_message", targetType: "user", targetId: id });
+    await writeAuditLog({ adminUserId: admin.id, action: "admin_message", targetType: "user", targetId: id });
     return successResponse(data);
   } catch (err) {
     console.error("[Admin Message] Error:", err);

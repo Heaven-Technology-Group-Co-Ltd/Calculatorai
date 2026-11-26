@@ -9,7 +9,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { successResponse, serverErrorResponse } from "@/lib/api-response";
 import { UpdateSubscriptionSchema } from "@/lib/admin/schemas";
-import { writeAuditLog } from "@/lib/admin/audit";
+import { withAuditLog } from "@/lib/admin/audit";
 
 export async function PUT(
   request: NextRequest,
@@ -18,7 +18,7 @@ export async function PUT(
   try {
     const supabase = getSupabaseAdmin();
 
-    await requireAdmin(request);
+    const admin = await requireAdmin(request);
 
     const { id } = await params;
     const body = await request.json();
@@ -41,6 +41,13 @@ export async function PUT(
     }
     updateData.updated_at = new Date().toISOString();
 
+    const data = await withAuditLog({
+      adminUserId: admin.id,
+      action: "update_subscription",
+      targetType: "subscription",
+      targetId: id,
+      metadata: updateData,
+    }, async () => {
     const { data, error } = await supabase
       .from("subscriptions")
       .update(updateData)
@@ -50,14 +57,10 @@ export async function PUT(
 
     if (error) throw new Error(error.message);
 
-    void writeAuditLog({
-      adminUserId: "system",
-      action: "update_subscription",
-      targetType: "subscription",
-      targetId: id,
-      metadata: updateData,
-    });
 
+
+      return data;
+    });
     return successResponse(data);
   } catch (err) {
     console.error("[Finance/Subscriptions] Error:", err);

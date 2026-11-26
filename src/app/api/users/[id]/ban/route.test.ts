@@ -5,6 +5,8 @@ const mocks = vi.hoisted(() => ({
   requireAdmin: vi.fn(),
   revokeAllUserSessions: vi.fn(),
   writeAuditLog: vi.fn(),
+  guard: vi.fn(),
+  audit: vi.fn(),
   from: vi.fn(),
 }));
 
@@ -18,8 +20,9 @@ vi.mock("@/lib/admin/session-store", () => ({
 }));
 
 vi.mock("@/lib/admin/audit", () => ({
-  writeAuditLog: mocks.writeAuditLog,
+  withAuditLog: mocks.audit,
 }));
+vi.mock("@/lib/admin/user-guard", () => ({ guardAdminChange: mocks.guard }));
 
 vi.mock("@/lib/supabase-client", () => ({
   getSupabaseAdmin: () => ({ from: mocks.from }),
@@ -36,6 +39,8 @@ describe("POST /api/users/[id]/ban", () => {
       email: "admin@example.com",
     });
     mocks.revokeAllUserSessions.mockResolvedValue(undefined);
+    mocks.guard.mockResolvedValue(null);
+    mocks.audit.mockImplementation(async (_entry: unknown, mutate: () => Promise<unknown>) => mutate());
     mocks.from.mockReturnValue({
       update: () => ({
         eq: () => ({
@@ -64,4 +69,18 @@ describe("POST /api/users/[id]/ban", () => {
     expect(json.success).toBe(true);
     expect(mocks.revokeAllUserSessions).toHaveBeenCalledWith("user-9");
   });
+  it("rejects self-ban and the last active administrator", async () => {
+    const request = () => new NextRequest("https://app.example/api/users/user-9/ban", { method: "POST", body: JSON.stringify({ reason: "abuse" }) });
+    mocks.guard.mockResolvedValueOnce("Cannot ban or demote your own administrator account").mockResolvedValueOnce("Refusing to ban or demote the last active administrator");
+    expect((await POST(request(), { params: Promise.resolve({ id: "user-9" }) })).status).toBe(403);
+    expect((await POST(request(), { params: Promise.resolve({ id: "user-9" }) })).status).toBe(403);
+    expect(mocks.audit).not.toHaveBeenCalled();
+  });
+  it("does not mutate when audit creation fails", async () => {
+    mocks.audit.mockRejectedValue(new Error("audit failed"));
+    const request = new NextRequest("https://app.example/api/users/user-9/ban", { method: "POST", body: JSON.stringify({ reason: "abuse" }) });
+    expect((await POST(request, { params: Promise.resolve({ id: "user-9" }) })).status).toBe(500);
+    expect(mocks.from).not.toHaveBeenCalled();
+  });
+
 });

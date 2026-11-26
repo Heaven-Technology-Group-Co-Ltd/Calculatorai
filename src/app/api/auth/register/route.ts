@@ -1,3 +1,5 @@
+import { readMaintenanceState } from "@/lib/admin/state";
+import { NextResponse as MaintenanceResponse } from "next/server";
 /**
  * POST /api/auth/register
  *
@@ -33,7 +35,8 @@ const RegisterSchema = z.object({
   password: z
     .string()
     .min(AUTH.MIN_PASSWORD_LENGTH, `Password must be at least ${AUTH.MIN_PASSWORD_LENGTH} characters`)
-    .max(AUTH.MAX_PASSWORD_LENGTH, `Password must be at most ${AUTH.MAX_PASSWORD_LENGTH} characters`),
+    .max(AUTH.MAX_PASSWORD_LENGTH, `Password must be at most ${AUTH.MAX_PASSWORD_LENGTH} characters`)
+    .refine((password) => new TextEncoder().encode(password).length <= 72, "Password must not exceed 72 UTF-8 bytes"),
 });
 
 // ── SMTP transport (lazy singleton) ─────────────────────────────────────────
@@ -54,6 +57,9 @@ function getTransporter(): nodemailer.Transporter {
 }
 
 export async function POST(request: NextRequest) {
+  if ((await readMaintenanceState()).maintenanceMode) {
+    return MaintenanceResponse.json({ success: false, error: "System is currently under maintenance" }, { status: 503 });
+  }
   try {
     // ── Rate limiting (by IP) ─────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
@@ -91,6 +97,10 @@ export async function POST(request: NextRequest) {
       const expiresAt = new Date(
         Date.now() + AUTH.VERIFICATION_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000
       ).toISOString();
+
+      const { error: deleteError } = await supabase.from("verification_tokens").delete()
+        .eq("identifier", userEmail).eq("type", "email_verify");
+      if (deleteError) throw deleteError;
 
       await supabase.from("verification_tokens").upsert({
         identifier: userEmail,

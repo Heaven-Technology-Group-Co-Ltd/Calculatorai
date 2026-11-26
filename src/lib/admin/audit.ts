@@ -9,21 +9,32 @@ export interface AuditEntry {
 }
 
 export async function writeAuditLog(entry: AuditEntry): Promise<void> {
-  try {
-    // Resolved per call: a module-scope init reads SUPABASE_URL while Next
-    // collects page data at build time and fails the build without live env.
-    const { error } = await getSupabaseAdmin().from("admin_audit_log").insert({
-      admin_user_id: entry.adminUserId,
-      action: entry.action,
-      target_type: entry.targetType ?? null,
-      target_id: entry.targetId ?? null,
-      metadata: entry.metadata ?? null,
-    });
+  const { error } = await getSupabaseAdmin().from("admin_audit_log").insert({
+    admin_user_id: entry.adminUserId,
+    action: entry.action,
+    target_type: entry.targetType ?? null,
+    target_id: entry.targetId ?? null,
+    metadata: entry.metadata ?? null,
+  });
+  if (error) throw new Error(`Audit log write failed: ${error.message}`);
+}
 
-    if (error) {
-      console.error("[AuditLog] Failed to write:", error.message);
+export async function withAuditLog<T>(entry: AuditEntry, mutate: () => Promise<T>): Promise<T> {
+  const client = getSupabaseAdmin();
+  const { data: auditRow, error } = await client.from("admin_audit_log").insert({
+    admin_user_id: entry.adminUserId, action: entry.action, target_type: entry.targetType ?? null,
+    target_id: entry.targetId ?? null, metadata: entry.metadata ?? null,
+  }).select("id").single();
+  if (error || !auditRow) throw new Error(`Audit log write failed: ${error?.message ?? "missing id"}`);
+  try {
+    return await mutate();
+  } catch (mutationError) {
+    try {
+      const { error: deleteError } = await client.from("admin_audit_log").delete().eq("id", auditRow.id);
+      if (deleteError) console.error("[AuditLog] Compensation failed:", deleteError);
+    } catch (deleteError) {
+      console.error("[AuditLog] Compensation failed:", deleteError);
     }
-  } catch (err) {
-    console.error("[AuditLog] Unexpected error:", err);
+    throw mutationError;
   }
 }

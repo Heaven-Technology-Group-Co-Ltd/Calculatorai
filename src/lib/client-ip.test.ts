@@ -46,3 +46,21 @@ describe("getClientIpFromHeaders", () => {
     expect(getClientIpFromHeaders(h({ "x-nf-client-connection-ip": "   ", "x-forwarded-for": " , " }))).toBe("unknown");
   });
 });
+
+describe("trusted proxy configuration", () => {
+  it("uses only the configured Netlify header", () => {
+    process.env.TRUSTED_IP_HEADER = "x-nf-client-connection-ip";
+    expect(getClientIpFromHeaders(h({ "x-forwarded-for": "1.2.3.4" }))).toBe("unknown");
+    delete process.env.TRUSTED_IP_HEADER;
+  });
+  it("uses only the rightmost configured forwarded-for hop", () => {
+    process.env.TRUSTED_IP_HEADER = "x-forwarded-for";
+    expect(getClientIpFromHeaders(h({ "x-nf-client-connection-ip": "9.9.9.9", "x-forwarded-for": "1.2.3.4, 10.0.0.1" }))).toBe("10.0.0.1");
+    delete process.env.TRUSTED_IP_HEADER;
+  });
+  it("ignores all headers when trust is disabled", () => {
+    process.env.TRUSTED_IP_HEADER = "none";
+    expect(getClientIpFromHeaders(h({ "x-real-ip": "1.2.3.4" }))).toBe("unknown");
+    delete process.env.TRUSTED_IP_HEADER;
+  });
+});

@@ -24,9 +24,6 @@ export interface StatusData {
   maintenanceMode: boolean;
   maintenanceMessage: string | null;
   uptimeSeconds: number;
-  lastCommand: string | null;
-  lastCommandBy: string | null;
-  lastCommandAt: string | null;
   checks: Record<string, ServiceCheck>;
   stats: Record<Range, RangeStats>;
   totalLatencyMs: number;

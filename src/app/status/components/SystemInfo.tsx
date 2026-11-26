@@ -12,9 +12,6 @@ interface SystemInfoProps {
 export function SystemInfo({ status }: SystemInfoProps) {
   const rows = [
     { label: "Uptime", value: formatUptime(status.uptimeSeconds) },
-    { label: "Last command", value: status.lastCommand ?? "—" },
-    { label: "Command by", value: status.lastCommandBy ?? "—" },
-    { label: "Command at", value: formatTime(status.lastCommandAt) },
     { label: "Checked at", value: formatTime(status.timestamp) },
   ];
 

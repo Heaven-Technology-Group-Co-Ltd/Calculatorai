@@ -16,12 +16,13 @@ import { z } from "zod";
 import { randomBytes } from "crypto";
 import nodemailer from "nodemailer";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { checkRateLimit } from "@/lib/rate-limiter";
+import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import {
   badRequestResponse,
   successResponse,
   rateLimitedResponse,
   serverErrorResponse,
+  serviceUnavailableResponse,
 } from "@/lib/api-response";
 import { RATE_LIMIT } from "@/lib/api-constants";
 
@@ -49,7 +50,8 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimit(`forgot:${ip}`, 5, RATE_LIMIT.AUTH.windowMs);
+    const rateResult = await checkRateLimitStrict(`forgot:${ip}`, 5, RATE_LIMIT.AUTH.windowMs).catch(() => null);
+    if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
     if (!rateResult.allowed) {
       return rateLimitedResponse();
     }
@@ -61,7 +63,12 @@ export async function POST(request: NextRequest) {
       return badRequestResponse(parsed.error.issues[0].message);
     }
 
-    const { email } = parsed.data;
+    const email = parsed.data.email.trim().toLowerCase();
+    const accountGate = await checkRateLimitStrict(`forgot:acct:${email}`, 3, RATE_LIMIT.AUTH.windowMs).catch(() => null);
+    if (!accountGate) return serviceUnavailableResponse("Rate limit unavailable");
+    if (!accountGate.allowed) {
+      return successResponse({ message: "If the email exists, a reset link has been sent" });
+    }
     const supabase = getSupabaseAdmin();
 
     // ── Check user exists (silent fail → no enumeration) ───────────────
@@ -81,7 +88,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
     // Clean old tokens then insert new one
-    await supabase.from("verification_tokens").delete().eq("identifier", email.toLowerCase());
+    await supabase.from("verification_tokens").delete().eq("identifier", email).eq("type", "password_reset");
     await supabase.from("verification_tokens").insert({
       identifier: email.toLowerCase(),
       token,

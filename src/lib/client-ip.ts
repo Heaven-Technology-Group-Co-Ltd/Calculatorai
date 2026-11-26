@@ -20,15 +20,15 @@ function sanitizeIpCandidate(raw: string | null): string | null {
 
 // Prefer Netlify's authoritative single-IP connection header first; otherwise
 // take the rightmost XFF hop (appended by the nearest edge proxy), then x-real-ip.
-export function getClientIpFromHeaders(h: Headers): string {
-  const nfIp = sanitizeIpCandidate(h.get("x-nf-client-connection-ip"));
-  if (nfIp) return nfIp;
-
-  const xffIp = sanitizeIpCandidate(h.get("x-forwarded-for"));
-  if (xffIp) return xffIp;
-
-  const realIp = sanitizeIpCandidate(h.get("x-real-ip"));
-  if (realIp) return realIp;
-
-  return "unknown";
+export function getClientIpFromHeaders(headers: Headers): string {
+  const configured = process.env.TRUSTED_IP_HEADER;
+  const trusted = configured ?? (process.env.NETLIFY === "true" ? "x-nf-client-connection-ip" : process.env.NODE_ENV === "production" ? "none" : "development");
+  if (trusted === "none") return "unknown";
+  if (["x-nf-client-connection-ip", "x-forwarded-for", "x-real-ip"].includes(trusted)) {
+    return sanitizeIpCandidate(headers.get(trusted)) ?? "unknown";
+  }
+  if (trusted !== "development") return "unknown";
+  return sanitizeIpCandidate(headers.get("x-nf-client-connection-ip"))
+    ?? sanitizeIpCandidate(headers.get("x-forwarded-for"))
+    ?? sanitizeIpCandidate(headers.get("x-real-ip")) ?? "unknown";
 }

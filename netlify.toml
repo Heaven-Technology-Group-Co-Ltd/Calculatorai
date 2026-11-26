@@ -4,6 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "24"
+  TRUSTED_IP_HEADER = "x-nf-client-connection-ip"
   SECRETS_SCAN_OMIT_KEYS = "SMTP_USER,SMTP_HOST,SMTP_FROM,SMTP_PORT,NEXTAUTH_URL,SUPABASE_URL,GOOGLE_CLIENT_ID"
 
 [[plugins]]

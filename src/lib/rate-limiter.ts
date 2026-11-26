@@ -1,16 +1,3 @@
-/**
- * Supabase-backed rate limiter for API routes.
- *
- * Replaces the previous in-memory Map-based limiter so that rate limit
- * state is shared across all server instances (horizontal scaling).
- *
- * Uses a `rate_limits` table in Supabase with automatic cleanup of
- * expired entries.
- *
- * Fallback: if Supabase is unreachable, allows the request through
- * (fail-open) so that a DB outage doesn't block all traffic.
- */
-
 import { getSupabaseAdmin } from "./supabase-client";
 
 export interface RateLimitResult {
@@ -19,110 +6,70 @@ export interface RateLimitResult {
   retryAfter: number;
 }
 
-/**
- * Check whether a request should be rate-limited.
- *
- * @param key   - Unique identifier (usually "prefix:IP")
- * @param limit - Max requests allowed in the window
- * @param windowMs - Time window in milliseconds
- */
-export function checkRateLimit(
-  key: string,
-  limit: number,
-  windowMs: number
-): Promise<RateLimitResult> {
-  return checkRateLimitWithPolicy(key, limit, windowMs, true);
+export function checkRateLimit(key: string, limit: number, windowMs: number): Promise<RateLimitResult> {
+  return checkWithPolicy(key, limit, windowMs, true);
 }
 
-export function checkRateLimitStrict(
-  key: string,
-  limit: number,
-  windowMs: number
-): Promise<RateLimitResult> {
-  return checkRateLimitWithPolicy(key, limit, windowMs, false);
+export function checkRateLimitStrict(key: string, limit: number, windowMs: number): Promise<RateLimitResult> {
+  return checkWithPolicy(key, limit, windowMs, false);
 }
 
-async function checkRateLimitWithPolicy(
-  key: string,
-  limit: number,
-  windowMs: number,
-  failOpen: boolean
-): Promise<RateLimitResult> {
-  const now = new Date();
+function summarize(allowed: boolean, count: number, resetAt: string, limit: number): RateLimitResult {
+  return {
+    allowed,
+    remaining: Math.max(0, limit - count),
+    retryAfter: allowed ? 0 : Math.max(1, Math.ceil((Date.parse(resetAt) - Date.now()) / 1000)),
+  };
+}
 
+async function checkWithPolicy(key: string, limit: number, windowMs: number, failOpen: boolean): Promise<RateLimitResult> {
   try {
-    return await updateRateLimit(key, limit, windowMs, now);
-  } catch (err) {
-    if (!failOpen) throw err;
-    // Fail-open: if Supabase is unreachable, allow the request
-    console.warn("Rate limiter DB error (fail-open):", err);
+    const { data: entries, error } = await getSupabaseAdmin().rpc("consume_rate_limit", {
+      p_identifier: key, p_limit: limit, p_window_ms: windowMs,
+    });
+    if (error && (error.code === "PGRST202" || error.code === "42883")) return await fallback(key, limit, windowMs);
+    if (error) throw error;
+    const entry = entries?.[0];
+    if (!entry) throw new Error("Rate limit RPC returned no row");
+    return summarize(entry.allowed, entry.current_count, entry.reset_at, limit);
+  } catch (error) {
+    if (!failOpen) throw error;
+    console.warn("Rate limiter DB error (fail-open):", error);
     return { allowed: true, remaining: limit, retryAfter: 0 };
   }
 }
 
-async function updateRateLimit(
-  key: string,
-  limit: number,
-  windowMs: number,
-  now: Date
-): Promise<RateLimitResult> {
-  const resetAt = new Date(now.getTime() + windowMs);
-
-  // Upsert approach: try to read existing entry
-  const { data: existing, error: readErr } = await getSupabaseAdmin()
-    .from("rate_limits")
-    .select("count, reset_at")
-    .eq("identifier", key)
-    .single();
-
-  if (readErr && readErr.code !== "PGRST116") {
-    throw readErr;
+async function fallback(key: string, limit: number, windowMs: number): Promise<RateLimitResult> {
+  const client = getSupabaseAdmin();
+  const nextReset = new Date(Date.now() + windowMs).toISOString();
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const { data: existing, error: readError } = await client.from("rate_limits")
+      .select("identifier, count, reset_at").eq("identifier", key)
+      .order("reset_at", { ascending: false }).limit(1).maybeSingle();
+    if (readError) throw readError;
+    if (!existing) {
+      const { error } = await client.from("rate_limits").insert({ identifier: key, count: 1, reset_at: nextReset });
+      if (error?.code === "23505") continue;
+      if (error) throw error;
+      return summarize(true, 1, nextReset, limit);
+    }
+    const expired = Date.parse(existing.reset_at) <= Date.now();
+    if (!expired && existing.count >= limit) return summarize(false, existing.count, existing.reset_at, limit);
+    const count = expired ? 1 : existing.count + 1;
+    const resetAt = expired ? nextReset : existing.reset_at;
+    const { data: updated, error } = await client.from("rate_limits")
+      .update({ count, reset_at: resetAt }).eq("identifier", key)
+      .eq("count", existing.count).eq("reset_at", existing.reset_at).select("identifier");
+    if (error) throw error;
+    if (updated?.length) return summarize(true, count, resetAt, limit);
   }
-
-  // Entry doesn't exist or has expired — create fresh
-  if (!existing || new Date(existing.reset_at) < now) {
-    const { error: upsertErr } = await getSupabaseAdmin()
-      .from("rate_limits")
-      .upsert({
-        identifier: key,
-        count: 1,
-        reset_at: resetAt.toISOString(),
-      });
-
-    if (upsertErr) throw upsertErr;
-    return { allowed: true, remaining: limit - 1, retryAfter: 0 };
-  }
-
-  // Entry exists and is active — check limit
-  if (existing.count >= limit) {
-    const retryAfterMs = new Date(existing.reset_at).getTime() - now.getTime();
-    return {
-      allowed: false,
-      remaining: 0,
-      retryAfter: Math.ceil(retryAfterMs / 1000),
-    };
-  }
-
-  // Increment count
-  const { error: updateErr } = await getSupabaseAdmin()
-    .from("rate_limits")
-    .update({
-      count: existing.count + 1,
-    })
-    .eq("identifier", key);
-
-  if (updateErr) throw updateErr;
-  return { allowed: true, remaining: limit - existing.count - 1, retryAfter: 0 };
+  return { allowed: false, remaining: 0, retryAfter: Math.max(1, Math.ceil(windowMs / 1000)) };
 }
 
-/**
- * Clean up expired rate limit entries.
- * Call this periodically (e.g., from a cron job or on a schedule).
- */
 export async function cleanupRateLimits(): Promise<void> {
   const { error } = await getSupabaseAdmin().rpc("cleanup_expired_rate_limits");
   if (error) {
-    // Fallback: direct delete if RPC not available
-    await getSupabaseAdmin().from("rate_limits").delete().lt("reset_at", new Date().toISOString());
+    const { error: deleteError } = await getSupabaseAdmin().from("rate_limits").delete().lt("reset_at", new Date().toISOString());
+    if (deleteError) throw deleteError;
   }
 }

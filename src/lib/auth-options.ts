@@ -7,6 +7,17 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { SupabaseCustomAdapter } from "./supabase-adapter";
 import { getSessionCookieName } from "./session-cookie";
 import { isSessionValid } from "./admin/session-store";
+import { checkRateLimitStrict } from "./rate-limiter";
+import { getClientIpFromHeaders } from "./client-ip";
+import { RATE_LIMIT } from "./api-constants";
+
+function toHeaders(source?: Record<string, string | string[] | undefined>): Headers {
+  const headers = new Headers();
+  for (const [name, value] of Object.entries(source ?? {})) {
+    if (value !== undefined) headers.set(name, Array.isArray(value) ? value.join(", ") : value);
+  }
+  return headers;
+}
 
 let supabase: SupabaseClient | null = null;
 
@@ -46,13 +57,22 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null;
+
+        const email = credentials.email.trim().toLowerCase();
+        const ip = getClientIpFromHeaders(toHeaders(request?.headers));
+        const accountGate = await checkRateLimitStrict(`login:ip-acct:${ip}:${email}`, RATE_LIMIT.AUTH.limit, RATE_LIMIT.AUTH.windowMs);
+        const ipGate = ip === "unknown" ? null : await checkRateLimitStrict(`login:ip:${ip}`, 30, RATE_LIMIT.AUTH.windowMs);
+        if (!accountGate.allowed || (ipGate && !ipGate.allowed)) {
+          await bcrypt.compare(credentials.password, await getTimingEqualizerHash());
+          return null;
+        }
 
         const { data: user, error } = await getSupabase()
           .from("users")
           .select("id, name, email, password_hash, email_verified, is_banned")
-          .eq("email", credentials.email)
+          .eq("email", email)
           .single();
 
         if (error || !user || !user.password_hash) {
@@ -136,7 +156,7 @@ export const authOptions: NextAuthOptions = {
               .single(),
           ]);
 
-          if (!valid || userResult.data?.is_banned === true) {
+          if (!valid || userResult.error || !userResult.data || userResult.data.is_banned === true) {
             return { ...token, revoked: true, sub: undefined, id: undefined };
           }
         } catch {

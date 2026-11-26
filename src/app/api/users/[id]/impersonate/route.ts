@@ -75,7 +75,7 @@ export async function POST(
       maxAge: IMPERSONATION_TTL_SECONDS,
     });
 
-    void writeAuditLog({
+    await writeAuditLog({
       adminUserId: admin.id,
       action: "impersonate_user",
       targetType: "user",

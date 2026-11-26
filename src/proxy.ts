@@ -79,7 +79,8 @@ export default async function proxy(request: NextRequest) {
     ["POST", "PUT", "PATCH", "DELETE"].includes(request.method) &&
     (request.nextUrl.pathname.startsWith("/api/analytics/report") ||
       request.nextUrl.pathname.startsWith("/api/users") ||
-      request.nextUrl.pathname.startsWith("/api/settings"))
+      request.nextUrl.pathname.startsWith("/api/settings") ||
+      request.nextUrl.pathname.startsWith("/api/finance"))
   ) {
     const origin = request.headers.get("origin");
     const host = request.headers.get("host");

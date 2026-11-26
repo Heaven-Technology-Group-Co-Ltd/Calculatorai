@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { UpdateWebhookSchema } from "@/lib/admin/schemas";
-import { writeAuditLog } from "@/lib/admin/audit";
+import { withAuditLog } from "@/lib/admin/audit";
 import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
 
 /**
@@ -32,10 +32,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (parsed.data.status) updateData.status = parsed.data.status;
     if (parsed.data.event_type) updateData.event_type = parsed.data.event_type;
 
+    const data = await withAuditLog({ adminUserId: admin.id, action: "update_webhook", targetType: "webhook", targetId: id }, async () => {
     const { data, error } = await supabase.from("discord_webhooks").update(updateData).eq("id", id).select().single();
     if (error) throw new Error(error.message);
 
-    void writeAuditLog({ adminUserId: admin.id, action: "update_webhook", targetType: "webhook", targetId: id });
+      return data;
+    });
     return successResponse(data);
   } catch (err) {
     console.error("[Webhook Detail] Error:", err);
@@ -60,10 +62,11 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const { id } = await params;
+    await withAuditLog({ adminUserId: admin.id, action: "delete_webhook", targetType: "webhook", targetId: id }, async () => {
     const { error } = await supabase.from("discord_webhooks").delete().eq("id", id);
     if (error) throw new Error(error.message);
 
-    void writeAuditLog({ adminUserId: admin.id, action: "delete_webhook", targetType: "webhook", targetId: id });
+    });
     return successResponse({ deleted: true });
   } catch (err) {
     console.error("[Webhook Detail] Error:", err);

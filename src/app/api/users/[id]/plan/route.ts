@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { ChangePlanSchema } from "@/lib/admin/schemas";
-import { writeAuditLog } from "@/lib/admin/audit";
+import { withAuditLog } from "@/lib/admin/audit";
 import { getAdminPlanPriceCents } from "@/lib/plans";
 import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/api-response";
 
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const amountMonthly = getAdminPlanPriceCents(newPlan);
     const nowIso = new Date().toISOString();
 
+    await withAuditLog({ adminUserId: admin.id, action: "change_plan", targetType: "user", targetId: id, metadata: { plan: newPlan } }, async () => {
     const { error: userErr } = await supabase
       .from("users")
       .update({ plan: newPlan })
@@ -53,7 +54,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       if (subErr) throw new Error(subErr.message);
     }
 
-    void writeAuditLog({ adminUserId: admin.id, action: "change_plan", targetType: "user", targetId: id, metadata: { plan: newPlan } });
+
+    });
     return successResponse({ plan: newPlan });
   } catch (err) {
     console.error("[Change Plan] Error:", err);
