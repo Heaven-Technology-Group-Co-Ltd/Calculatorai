@@ -3,3 +3,41 @@
 .footerCreditSpan {
   opacity: 0.6;
 }
+
+.impersonationBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-gold);
+  color: var(--text);
+  font-size: var(--fs-2);
+}
+
+.impersonationText {
+  font-weight: 500;
+}
+
+.impersonationExitBtn {
+  background: var(--primary-subtle);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-sm);
+  color: var(--primary);
+  padding: 4px 12px;
+  font-size: var(--fs-1);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.impersonationExitBtn:hover:not(:disabled) {
+  border-color: var(--border-gold-hover);
+}
+
+.impersonationExitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

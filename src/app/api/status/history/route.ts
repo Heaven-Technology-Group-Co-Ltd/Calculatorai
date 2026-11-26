@@ -14,11 +14,10 @@ import {
   badRequestResponse,
   serverErrorResponse,
 } from "@/lib/api-response";
+import { SERVICES, type ServiceKey as Service } from "@/app/status/constants";
 
 export const dynamic = "force-dynamic";
 
-const SERVICES = ["supabase", "stripe", "smtp", "nextjs"] as const;
-type Service = (typeof SERVICES)[number];
 type Range = "24h" | "7d" | "30d";
 
 const RANGES: Record<Range, { windowMs: number; bucketMs: number; bucket: "hour" | "day" }> = {

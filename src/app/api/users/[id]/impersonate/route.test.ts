@@ -2,11 +2,25 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 const mocks = vi.hoisted(() => ({
-  requireAdmin: vi.fn(),
-  encode: vi.fn(),
   decode: vi.fn(),
-  writeAuditLog: vi.fn(),
+  encode: vi.fn(),
+  isSessionValid: vi.fn(),
   from: vi.fn(),
+  requireAdmin: vi.fn(),
+  writeAuditLog: vi.fn(),
+}));
+
+vi.mock("next-auth/jwt", () => ({
+  decode: mocks.decode,
+  encode: mocks.encode,
+}));
+
+vi.mock("@/lib/admin/session-store", () => ({
+  isSessionValid: mocks.isSessionValid,
+}));
+
+vi.mock("@/lib/supabase-client", () => ({
+  getSupabaseAdmin: () => ({ from: mocks.from }),
 }));
 
 vi.mock("@/lib/admin/auth-middleware", () => ({
@@ -14,60 +28,23 @@ vi.mock("@/lib/admin/auth-middleware", () => ({
   adminGateErrorResponse: () => null,
 }));
 
-vi.mock("next-auth/jwt", () => ({
-  encode: mocks.encode,
-  decode: mocks.decode,
-}));
-
 vi.mock("@/lib/admin/audit", () => ({
   writeAuditLog: mocks.writeAuditLog,
 }));
 
-vi.mock("@/lib/supabase-client", () => ({
-  getSupabaseAdmin: () => ({ from: mocks.from }),
+vi.mock("@/lib/session-cookie", () => ({
+  getAdminBackupCookieName: () => "next-auth.admin-backup",
+  getSessionCookieName: () => "next-auth.session-token",
 }));
 
-import { DELETE, POST } from "./route";
+import { DELETE } from "./route";
 
-describe("/api/users/[id]/impersonate", () => {
+describe("DELETE /api/users/[id]/impersonate", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.NEXTAUTH_SECRET = "impersonate-test-secret";
-    mocks.requireAdmin.mockResolvedValue({
-      id: "admin-1",
-      name: "Admin",
-      email: "admin@example.com",
-    });
-    mocks.encode.mockResolvedValue("impersonation-jwt-token");
-  });
-
-  it("POST stashes original admin token in backup cookie and sets impersonation session cookie", async () => {
-    mocks.from.mockReturnValue({
-      select: () => ({
-        eq: () => ({
-          single: vi.fn().mockResolvedValue({
-            data: { id: "user-2", name: "User Two", email: "user2@example.com" },
-            error: null,
-          }),
-        }),
-      }),
-    });
-
-    const req = new NextRequest("https://app.example/api/users/user-2/impersonate", {
-      method: "POST",
-      headers: {
-        cookie: "next-auth.session-token=original-admin-jwt",
-      },
-    });
-
-    const res = await POST(req, { params: Promise.resolve({ id: "user-2" }) });
-    expect(res.status).toBe(200);
-    expect(res.cookies.get("next-auth.session-token")?.value).toBe("impersonation-jwt-token");
-    expect(res.cookies.get("calc.admin-backup")?.value).toBe("original-admin-jwt");
-  });
-
-  it("DELETE restores original admin session from backup cookie and clears backup cookie", async () => {
-    mocks.decode.mockResolvedValue({ sub: "admin-1" });
+    process.env.NEXTAUTH_SECRET = "test-secret";
+    mocks.decode.mockResolvedValue({ sub: "admin-1", iat: 1000 });
+    mocks.isSessionValid.mockResolvedValue(true);
     mocks.from.mockReturnValue({
       select: () => ({
         eq: () => ({
@@ -78,17 +55,53 @@ describe("/api/users/[id]/impersonate", () => {
         }),
       }),
     });
+  });
 
-    const req = new NextRequest("https://app.example/api/users/user-2/impersonate", {
+  it("rejects a revoked backup admin session with 401 when isSessionValid returns false", async () => {
+    mocks.isSessionValid.mockResolvedValue(false);
+
+    const req = new NextRequest("https://app.example/api/users/user-9/impersonate", {
       method: "DELETE",
       headers: {
-        cookie: "calc.admin-backup=original-admin-jwt; next-auth.session-token=impersonation-jwt-token",
+        cookie: "next-auth.admin-backup=backup-jwt-token",
       },
     });
 
     const res = await DELETE(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(401);
+    expect(json.success).toBe(false);
+    expect(mocks.isSessionValid).toHaveBeenCalledWith("admin-1", 1000);
+    expect(mocks.from).not.toHaveBeenCalled();
+  });
+
+  it("fails closed with 503 when isSessionValid throws a database error", async () => {
+    mocks.isSessionValid.mockRejectedValue(new Error("db connection failed"));
+
+    const req = new NextRequest("https://app.example/api/users/user-9/impersonate", {
+      method: "DELETE",
+      headers: {
+        cookie: "next-auth.admin-backup=backup-jwt-token",
+      },
+    });
+
+    const res = await DELETE(req);
+    expect(res.status).toBe(503);
+  });
+
+  it("restores admin session with 200 when backup session is valid and not revoked", async () => {
+    const req = new NextRequest("https://app.example/api/users/user-9/impersonate", {
+      method: "DELETE",
+      headers: {
+        cookie: "next-auth.admin-backup=backup-jwt-token",
+      },
+    });
+
+    const res = await DELETE(req);
+
     expect(res.status).toBe(200);
-    expect(res.cookies.get("next-auth.session-token")?.value).toBe("original-admin-jwt");
-    expect(res.cookies.get("calc.admin-backup")?.value).toBe("");
+    expect(res.cookies.get("next-auth.session-token")?.value).toBe("backup-jwt-token");
+    expect(mocks.isSessionValid).toHaveBeenCalledWith("admin-1", 1000);
   });
 });

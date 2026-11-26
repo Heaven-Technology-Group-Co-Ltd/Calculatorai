@@ -12,6 +12,7 @@ import { getState } from "@/lib/admin/state";
 import { successResponse, serverErrorResponse } from "@/lib/api-response";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { getRuntimeHealth } from "@/lib/runtime-health";
+import { SERVICES, type ServiceKey as Service } from "@/app/status/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -22,9 +23,6 @@ interface ServiceCheck {
   latencyMs: number;
   message?: string;
 }
-
-const SERVICES = ["supabase", "stripe", "smtp", "nextjs"] as const;
-type Service = (typeof SERVICES)[number];
 
 const RANGE_MS = {
   "24h": 24 * 3_600_000,

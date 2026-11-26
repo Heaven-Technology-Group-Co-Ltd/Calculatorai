@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { isSessionValid } from "./session-store";
+import { isSessionValid, revokeAllUserSessions } from "./session-store";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 
 vi.mock("@/lib/supabase-client", () => ({
@@ -63,5 +63,27 @@ describe("isSessionValid", () => {
     vi.mocked(getSupabaseAdmin).mockReturnValue({ from } as unknown as ReturnType<typeof getSupabaseAdmin>);
 
     await expect(isSessionValid("user-1", 1000)).rejects.toThrow();
+  });
+});
+
+describe("revokeAllUserSessions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("upserts only user_id and revoked_at without updated_at", async () => {
+    const upsert = vi.fn().mockResolvedValue({ error: null });
+    const from = vi.fn().mockReturnValue({ upsert });
+    vi.mocked(getSupabaseAdmin).mockReturnValue({ from } as unknown as ReturnType<typeof getSupabaseAdmin>);
+
+    await revokeAllUserSessions("user-1");
+
+    expect(from).toHaveBeenCalledWith("user_session_revocations");
+    expect(upsert).toHaveBeenCalledTimes(1);
+    const payload = upsert.mock.calls[0][0] as Record<string, unknown>;
+    expect(Object.keys(payload).sort()).toEqual(["revoked_at", "user_id"]);
+    expect(payload).not.toHaveProperty("updated_at");
+    expect(payload.user_id).toBe("user-1");
+    expect(typeof payload.revoked_at).toBe("string");
   });
 });

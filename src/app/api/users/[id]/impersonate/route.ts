@@ -14,6 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { decode, encode } from "next-auth/jwt";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
+import { isSessionValid } from "@/lib/admin/session-store";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { getAdminBackupCookieName, getSessionCookieName } from "@/lib/session-cookie";
 import {
@@ -131,6 +132,22 @@ export async function DELETE(request: NextRequest) {
     const decoded = await decode({ token: backupToken, secret });
     if (!decoded?.sub || decoded.impersonatedBy) {
       return unauthorizedResponse("Invalid admin backup session");
+    }
+
+    const iat = typeof decoded.iat === "number" && Number.isFinite(decoded.iat) ? decoded.iat : 0;
+    let sessionValid: boolean;
+    try {
+      sessionValid = await isSessionValid(decoded.sub, iat);
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Service temporarily unavailable. Please try again shortly." },
+        { status: 503 }
+      );
+    }
+    if (!sessionValid) {
+      const revokedRes = unauthorizedResponse("Admin backup session has been revoked");
+      revokedRes.cookies.delete(backupCookieName);
+      return revokedRes;
     }
 
     const supabase = getSupabaseAdmin();

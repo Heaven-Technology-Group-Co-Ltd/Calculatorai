@@ -36,7 +36,7 @@ interface ApiResponse<T = unknown> {
 // Client
 // ---------------------------------------------------------------------------
 
-function getControlUrl(): string {
+export function getControlUrl(): string {
   const rawUrl = process.env.NEXTJS_API_URL?.trim();
   if (!rawUrl) {
     throw new Error("NEXTJS_API_URL is not configured");
@@ -52,8 +52,6 @@ function getControlUrl(): string {
   }
   return `${parsed.origin}/api/admin/control`;
 }
-
-const CONTROL_URL = getControlUrl();
 
 /**
  * Send a signed admin command to the Next.js API.
@@ -84,9 +82,10 @@ export async function sendAdminCommand<T = unknown>(
   );
 
   // 3. Send with axios
+  const controlUrl = getControlUrl();
   try {
     const response = await axios.post<ApiResponse<T>>(
-      CONTROL_URL,
+      controlUrl,
       parsed.data,
       {
         headers: {

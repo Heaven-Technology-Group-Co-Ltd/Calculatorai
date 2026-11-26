@@ -13,27 +13,21 @@
  */
 
 import { getSupabaseAdmin } from "../supabase-client";
-
-function getSupabase() {
-  return getSupabaseAdmin();
-}
-
-const supabase = {
-  from: (table: string) => getSupabase().from(table),
-};
+import type { TablesInsert } from "../database.types";
 
 /**
  * Invalidate all sessions for a user.
  * Any JWT issued before this timestamp will be rejected.
  */
 export async function revokeAllUserSessions(userId: string): Promise<void> {
-  const { error } = await supabase
+  const payload: TablesInsert<"user_session_revocations"> = {
+    user_id: userId,
+    revoked_at: new Date().toISOString(),
+  };
+
+  const { error } = await getSupabaseAdmin()
     .from("user_session_revocations")
-    .upsert({
-      user_id: userId,
-      revoked_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
+    .upsert(payload);
 
   if (error) {
     console.error("[SessionRevocation] Failed to revoke sessions:", error);
@@ -49,7 +43,7 @@ export async function isSessionValid(
   userId: string,
   tokenIat: number // JWT iat (issued-at) claim in seconds
 ): Promise<boolean> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdmin()
     .from("user_session_revocations")
     .select("revoked_at")
     .eq("user_id", userId)
@@ -73,7 +67,7 @@ export async function isSessionValid(
  * Clear the revocation record (restore access without requiring re-login).
  */
 export async function restoreUserSessions(userId: string): Promise<void> {
-  await supabase
+  await getSupabaseAdmin()
     .from("user_session_revocations")
     .delete()
     .eq("user_id", userId);

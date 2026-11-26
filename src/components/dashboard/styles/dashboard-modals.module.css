@@ -230,6 +230,12 @@
 .statusSuspended .statusDot { background: var(--warning); }
 .statusBanned .statusDot { background: var(--error); }
 
+.impersonateError {
+  color: var(--error);
+  font-size: var(--fs-2);
+  margin-top: 12px;
+}
+
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .modal { max-width: 100%; border-radius: 12px; }

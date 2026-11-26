@@ -9,6 +9,7 @@ import {
 import type { CheckStatus, Range } from "./types";
 
 export const SERVICES = ["supabase", "stripe", "smtp", "nextjs"] as const;
+export type ServiceKey = (typeof SERVICES)[number];
 
 export const SERVICE_META: {
   id: string;

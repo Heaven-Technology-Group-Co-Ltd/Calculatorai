@@ -2,6 +2,8 @@
 # Format: [YYYY-MM-DD HH:MM] <what changed> — <why> — <files touched>
 # Keep entries short. Log mid-task, not just at session end.
 
+[2026-11-26 15:35] WEB-BIZ-FIX3A-FIX2 surgical defect closure complete — closed D-1 (removed updated_at from user_session_revocations upsert + shim), D-2/Obs 5-7 (entitlement-first Stripe webhook, TablesInsert/TablesUpdate typing, 42P01 ledger isolation, guest email fallback + unlinked 200), D-4 (partial vs full refund + active plan protection), D-3 (isSessionValid on impersonate DELETE), D-5 (CSRF symmetry for POST/PUT/PATCH/DELETE + UserDetailModal/AppShell impersonation UI), Obs 5-4 (lazy getControlUrl), Obs 5-6 (single SERVICES authority); all 6 gates green — session-store.ts, session-store.test.ts, webhook/route.ts, webhook/route.test.ts, impersonate/route.ts, impersonate/route.test.ts, proxy.ts, UserDetailModal.tsx, dashboard-modals.module.css, AppShell.tsx, AppShell.module.css, admin-api.ts, status/constants.ts, api/status/route.ts, api/status/history/route.ts
+
 [2026-09-30 15:10] Status page redesign complete — 3 phases: frontend (CSS 1440px, charts 1-col, gap fix, label formats, tooltip split, dot/gap fixes), API (await insert, Stripe 60s cache), backend (SQL health_history function, history route rpc refactor) — StatusClient.module.css, utils.ts, StatusClient.tsx, Charts.tsx, api/status/route.ts, api/status/history/route.ts, supabase/migrations/007_health_history.sql
 
 [2026-09-27 16:45] Added CODEBASE.md navigation map after checking existing docs; kept rules and architecture detail in existing sources — CODEBASE.md, AGENTS.md, Log.txt

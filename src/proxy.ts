@@ -74,9 +74,9 @@ export default async function proxy(request: NextRequest) {
     );
   }
 
-  // ── 2. CSRF Protection for Admin POST requests ──────────────────────
+  // ── 2. CSRF Protection for Admin Mutating Requests ──────────────────
   if (
-    request.method === "POST" &&
+    ["POST", "PUT", "PATCH", "DELETE"].includes(request.method) &&
     (request.nextUrl.pathname.startsWith("/api/analytics/report") ||
       request.nextUrl.pathname.startsWith("/api/users") ||
       request.nextUrl.pathname.startsWith("/api/settings"))

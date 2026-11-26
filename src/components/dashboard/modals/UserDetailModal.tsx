@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { Skeleton } from "../ui/Skeleton";
@@ -36,6 +37,9 @@ interface UserDetailModalProps {
 
 export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
   const { t } = useDashboardT();
+  const { data: session } = useSession();
+  const [impersonating, setImpersonating] = useState(false);
+  const [impersonateError, setImpersonateError] = useState<string | null>(null);
   const { data, error, isLoading: loading, mutate } = useSWR<DetailedUser>(
     `/api/users/${user.id}`,
     fetcher,
@@ -59,6 +63,32 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
   }, []);
 
   const backdropClose = useBackdropClose(onClose);
+  const currentAdminId = (session?.user as { id?: string } | undefined)?.id;
+  const cannotImpersonate =
+    !detail ||
+    detail.is_banned === true ||
+    detail.status === "banned" ||
+    detail.id === currentAdminId;
+
+  const handleImpersonate = async () => {
+    if (!detail || cannotImpersonate) return;
+    setImpersonating(true);
+    setImpersonateError(null);
+    try {
+      const res = await fetch(`/api/users/${detail.id}/impersonate`, {
+        method: "POST",
+        credentials: "same-origin",
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error || "Failed to impersonate user");
+      }
+      window.location.assign("/");
+    } catch (err) {
+      setImpersonateError(err instanceof Error ? err.message : "Failed to impersonate user");
+      setImpersonating(false);
+    }
+  };
 
   const statusClass =
     user.status === "active"
@@ -151,6 +181,21 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
                 <span className={styles.detailValue}>{detail.calculations_count}</span>
               </div>
             )}
+            {impersonateError && (
+              <div role="alert" className={styles.impersonateError}>
+                {impersonateError}
+              </div>
+            )}
+            <div className={styles.actions}>
+              <button
+                type="button"
+                className={styles.btnPrimary}
+                disabled={impersonating || cannotImpersonate}
+                onClick={handleImpersonate}
+              >
+                {impersonating ? "Impersonating..." : "Impersonate"}
+              </button>
+            </div>
           </>
         )}
         {!loading && !error && !detail && (
