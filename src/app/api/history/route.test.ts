@@ -23,4 +23,10 @@ describe("history security", () => {
     mocks.maintenance.mockResolvedValue({ maintenanceMode: true });
     expect((await POST(request(valid))).status).toBe(503);
   });
+  it("returns 503 when the strict limiter is unavailable", async () => {
+    mocks.quota.mockRejectedValueOnce(new Error("offline"));
+    const response = await POST(request(valid));
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({ code: "SERVICE_UNAVAILABLE" });
+  });
 });

@@ -12,7 +12,7 @@ import { successResponse } from "@/lib/api-response";
  * Admin only.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ admin, supabase, audit }) => {
+  return withAdmin(request, async ({ admin, supabase, audit }) => {
     const { id } = await params;
     const body = await request.json();
     const parsed = BanUserSchema.safeParse(body);

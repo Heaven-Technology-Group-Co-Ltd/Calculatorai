@@ -1,4 +1,4 @@
-import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 import { FIELD_LIMITS, PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 import { readMaintenanceState } from "@/lib/admin/state";
 import { NextResponse as MaintenanceResponse } from "next/server";
@@ -22,12 +22,7 @@ import nodemailer from "nodemailer";
 import { randomBytes } from "crypto";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import {
-  badRequestResponse,
-  rateLimitedResponse,
-  serviceUnavailableResponse,
-  serverErrorResponse,
-} from "@/lib/api-response";
+import { badRequestResponse, serverErrorResponse,  } from "@/lib/api-response";
 import { AUTH } from "@/lib/api-constants";
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
@@ -36,9 +31,8 @@ const RegisterSchema = z.object({
   email: z.string().email("Invalid email format").max(FIELD_LIMITS.email),
   password: z
     .string()
-    .min(PASSWORD_POLICY.minChars, `Password must be at least ${AUTH.MIN_PASSWORD_LENGTH} characters`)
-    .max(AUTH.MAX_PASSWORD_LENGTH, `Password must be at most ${AUTH.MAX_PASSWORD_LENGTH} characters`)
-    .refine(isWithinPasswordByteLimit, "Password must not exceed 72 UTF-8 bytes"),
+    .min(PASSWORD_POLICY.minChars, `Password must be at least ${PASSWORD_POLICY.minChars} characters`)
+    .refine(isWithinPasswordByteLimit, `Password must not exceed ${PASSWORD_POLICY.maxBytes} UTF-8 bytes`),
 });
 
 // ── SMTP transport (lazy singleton) ─────────────────────────────────────────
@@ -65,11 +59,8 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting (by IP) ─────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.REGISTER_IP, ip).catch(() => null);
-    if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
-    if (!rateResult.allowed) {
-      return rateLimitedResponse("Too many registration attempts. Please try again later.", rateResult.retryAfter);
-    }
+    const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.REGISTER_IP, ip, { throttleMessage: "Too many registration attempts. Please try again later." });
+    if (!quota.ok) return quota.response;
 
     // ── Parse & validate body ─────────────────────────────────────────
     const body = await request.json();

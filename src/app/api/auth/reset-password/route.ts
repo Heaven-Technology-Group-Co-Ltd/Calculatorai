@@ -1,4 +1,4 @@
-import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 import { PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 /**
  * POST /api/auth/reset-password
@@ -17,13 +17,7 @@ import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import {
-  badRequestResponse,
-  successResponse,
-  rateLimitedResponse,
-  serverErrorResponse,
-  serviceUnavailableResponse,
-} from "@/lib/api-response";
+import { badRequestResponse, successResponse, serverErrorResponse,  } from "@/lib/api-response";
 import { AUTH } from "@/lib/api-constants";
 
 const ResetSchema = z.object({
@@ -31,20 +25,16 @@ const ResetSchema = z.object({
   email: z.string().email("Invalid email"),
   password: z
     .string()
-    .min(PASSWORD_POLICY.minChars, `Password must be at least ${AUTH.MIN_PASSWORD_LENGTH} characters`)
-    .max(AUTH.MAX_PASSWORD_LENGTH)
-    .refine(isWithinPasswordByteLimit, "Password must not exceed 72 UTF-8 bytes"),
+    .min(PASSWORD_POLICY.minChars, `Password must be at least ${PASSWORD_POLICY.minChars} characters`)
+    .refine(isWithinPasswordByteLimit, `Password must not exceed ${PASSWORD_POLICY.maxBytes} UTF-8 bytes`),
 });
 
 export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.RESET_PASSWORD_IP, ip).catch(() => null);
-    if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
-    if (!rateResult.allowed) {
-      return rateLimitedResponse(undefined, rateResult.retryAfter);
-    }
+    const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.RESET_PASSWORD_IP, ip);
+    if (!quota.ok) return quota.response;
 
     // ── Parse body ─────────────────────────────────────────────────────
     const body = await request.json();

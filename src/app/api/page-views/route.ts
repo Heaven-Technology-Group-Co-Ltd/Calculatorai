@@ -1,5 +1,5 @@
 import { FIELD_LIMITS } from "@/lib/validation/vocabulary";
-import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * POST /api/page-views
  *
@@ -20,7 +20,6 @@ import { getSupabaseAdmin } from "@/lib/supabase-client";
 import {
   badRequestResponse,
   successResponse,
-  rateLimitedResponse,
   serverErrorResponse,
 } from "@/lib/api-response";
 
@@ -72,10 +71,8 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting (by IP, 60/min) ──────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.PAGE_VIEW_IP, ip);
-    if (!rateResult.allowed) {
-      return rateLimitedResponse(undefined, rateResult.retryAfter);
-    }
+    const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.PAGE_VIEW_IP, ip);
+    if (!quota.ok) return quota.response;
 
     // ── Parse & validate body ─────────────────────────────────────────
     const body = await request.json();

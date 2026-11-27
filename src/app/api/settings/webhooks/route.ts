@@ -1,7 +1,7 @@
 import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { CreateWebhookSchema, UpdateWebhookSchema } from "@/lib/admin/schemas";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { CreateWebhookSchema } from "@/lib/admin/schemas";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * GET /api/settings/webhooks
@@ -9,7 +9,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data, error } = await supabase.from("discord_webhooks").select("*").order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
  * Admin only.
  */
 export async function POST(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const body = await request.json();
     const parsed = CreateWebhookSchema.safeParse(body);

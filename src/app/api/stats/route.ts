@@ -8,8 +8,8 @@ import { computePercentages } from "./percentages";
  * Admin-only endpoint. Returns aggregated statistics with no PII.
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { NextRequest } from "next/server";
+import { successResponse } from "@/lib/api-response";
 
 /** Parse User-Agent string into device type */
 function parseDeviceType(ua: string | null): "desktop" | "mobile" | "tablet" {
@@ -21,7 +21,7 @@ function parseDeviceType(ua: string | null): "desktop" | "mobile" | "tablet" {
 }
 
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const nowMs = Date.now();
     const yesterday = new Date(nowMs - 86_400_000).toISOString();

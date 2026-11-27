@@ -16,12 +16,8 @@ export const THIRTY_DAYS_MS = 30 * ONE_DAY_MS;
 
 // ── Rate limiting defaults ──────────────────────────────────────────────────
 export const RATE_LIMIT = {
-  /** Auth endpoints: register, login, verify */
-  AUTH: { limit: 10, windowMs: FIFTEEN_MINUTES_MS },
   /** Admin endpoints */
   ADMIN: { limit: 60, windowMs: ONE_MINUTE_MS },
-  /** History */
-  HISTORY: { limit: 200, windowMs: FIFTEEN_MINUTES_MS },
 } as const;
 
 // ── Pagination defaults ─────────────────────────────────────────────────────
@@ -34,7 +30,5 @@ export const PAGINATION = {
 export const AUTH = {
   BCRYPT_SALT_ROUNDS: 12,
   VERIFICATION_TOKEN_EXPIRY_HOURS: 24,
-  MAX_PASSWORD_LENGTH: 72,
-  MIN_PASSWORD_LENGTH: 8,
   SESSION_VERSION_INTERVAL_MS: 1000,
 } as const;

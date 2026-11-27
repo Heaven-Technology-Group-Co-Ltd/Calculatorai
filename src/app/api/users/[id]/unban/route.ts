@@ -1,8 +1,8 @@
 import { USER_SAFE_SELECT_COLUMNS } from "@/lib/admin/user-columns";
 import { withAdmin } from "@/lib/admin/with-admin";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { restoreUserSessions } from "@/lib/admin/session-store";
-import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/unban
@@ -10,7 +10,7 @@ import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/a
  * Admin only.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const { id } = await params;
     const data = await audit({ action: "unban_user", targetType: "user", targetId: id }, async () => {

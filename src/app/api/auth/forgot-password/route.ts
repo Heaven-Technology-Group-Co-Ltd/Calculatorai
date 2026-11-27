@@ -1,4 +1,4 @@
-import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * POST /api/auth/forgot-password
  *
@@ -17,13 +17,7 @@ import { z } from "zod";
 import { randomBytes } from "crypto";
 import nodemailer from "nodemailer";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import {
-  badRequestResponse,
-  successResponse,
-  rateLimitedResponse,
-  serverErrorResponse,
-  serviceUnavailableResponse,
-} from "@/lib/api-response";
+import { badRequestResponse, successResponse, serverErrorResponse } from "@/lib/api-response";
 
 const ForgotSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -49,11 +43,8 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.FORGOT_PASSWORD_IP, ip).catch(() => null);
-    if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
-    if (!rateResult.allowed) {
-      return rateLimitedResponse(undefined, rateResult.retryAfter);
-    }
+    const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.FORGOT_PASSWORD_IP, ip);
+    if (!quota.ok) return quota.response;
 
     // ── Parse body ─────────────────────────────────────────────────────
     const body = await request.json();
@@ -63,11 +54,10 @@ export async function POST(request: NextRequest) {
     }
 
     const email = parsed.data.email.trim().toLowerCase();
-    const accountGate = await consumePolicy(RATE_LIMIT_POLICIES.FORGOT_PASSWORD_ACCOUNT, email).catch(() => null);
-    if (!accountGate) return serviceUnavailableResponse("Rate limit unavailable");
-    if (!accountGate.allowed) {
-      return successResponse({ message: "If the email exists, a reset link has been sent" });
-    }
+    const accountGate = await enforceRateLimit(RATE_LIMIT_POLICIES.FORGOT_PASSWORD_ACCOUNT, email, {
+      throttleResponse: () => successResponse({ message: "If the email exists, a reset link has been sent" }),
+    });
+    if (!accountGate.ok) return accountGate.response;
     const supabase = getSupabaseAdmin();
 
     // ── Check user exists (silent fail → no enumeration) ───────────────

@@ -9,13 +9,13 @@ describe("burst limiter", () => {
     expect(take("a", 1500).allowed).toBe(true);
   });
 
-  it("evicts the least recently used client at the capacity bound", () => {
+  it("does not promote throttled clients ahead of legitimate clients", () => {
     const take = createBurstLimiter({ max: 1, windowMs: 10000, maxClients: 2 });
     take("a", 0);
     take("b", 1);
     expect(take("a", 2).allowed).toBe(false);
     take("c", 3);
-    expect(take("a", 4).allowed).toBe(false);
-    expect(take("b", 5).allowed).toBe(true);
+    expect(take("b", 4).allowed).toBe(false);
+    expect(take("a", 5).allowed).toBe(true);
   });
 });

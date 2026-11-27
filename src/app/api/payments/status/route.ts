@@ -1,4 +1,4 @@
-import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * GET /api/payments/status?session_id=cs_test_xxx
  *
@@ -22,7 +22,6 @@ import {
   badRequestResponse,
   forbiddenResponse,
   notFoundResponse,
-  rateLimitedResponse,
   serverErrorResponse,
 } from "@/lib/api-response";
 
@@ -44,10 +43,8 @@ export async function GET(request: NextRequest) {
 
     // Session IDs are bearer secrets; cap how fast they can be probed.
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.PAYMENT_STATUS_USER, ip);
-    if (!rateResult.allowed) {
-      return rateLimitedResponse(undefined, rateResult.retryAfter);
-    }
+    const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.PAYMENT_STATUS_USER, ip);
+    if (!quota.ok) return quota.response;
 
     const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ["payment_intent"],

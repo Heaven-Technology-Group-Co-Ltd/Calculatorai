@@ -6,11 +6,11 @@ import { withAdmin } from "@/lib/admin/with-admin";
  * active sessions, bounce rate, conversion rate, total calculations.
  * Requires admin authentication.
  */
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { successResponse } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const nowMs = Date.now();
     const sevenDaysAgo = new Date(nowMs - 7 * 86_400_000).toISOString();

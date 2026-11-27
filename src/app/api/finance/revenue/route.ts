@@ -6,11 +6,11 @@ import { withAdmin } from "@/lib/admin/with-admin";
  * and monthly revenue breakdown for the past 12 months.
  * Requires admin authentication.
  */
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { successResponse } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data: activeSubs } = await supabase
       .from("subscriptions")

@@ -7,11 +7,12 @@ import { isSessionValid } from "@/lib/admin/session-store";
 import { getSessionCookieName } from "@/lib/session-cookie";
 import type { AdminUser } from "@/lib/admin/auth-middleware";
 
-export type AdminGateFailure =
+export type AdminGateFailure = (
   | { kind: "unauthenticated"; status: 401; message: string }
   | { kind: "forbidden"; status: 403; message: string }
   | { kind: "rate_limited"; status: 429; message: string }
-  | { kind: "unavailable"; status: 503; message: string };
+  | { kind: "unavailable"; status: 503; message: string }
+) & { headers?: Record<string, string> };
 
 export type AdminGateResult =
   | { ok: true; user: AdminUser }

@@ -3,9 +3,9 @@ import { USER_SAFE_SELECT_COLUMNS } from "@/lib/admin/user-columns";
 import { assertAdminMutationAllowed } from "@/lib/admin/user-guard";
 import { z } from "zod";
 import { DB_PLAN_IDS } from "@/lib/plans";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { withAdmin } from "@/lib/admin/with-admin";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { successResponse, badRequestResponse } from "@/lib/api-response";
 
 const UserUpdateSchema = z.object({
   name: z.string().max(FIELD_LIMITS.name).nullable().optional(),
@@ -20,7 +20,7 @@ const UserUpdateSchema = z.object({
  * Admin only.
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
     const { id } = await params;
     const { data: user, error } = await supabase.from("users").select(USER_SAFE_SELECT_COLUMNS).eq("id", id).single();
     if (error) throw new Error(error.message);
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
  * Admin only.
  */
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ admin, supabase, audit }) => {
+  return withAdmin(request, async ({ admin, supabase, audit }) => {
     const { id } = await params;
     const body = await request.json();
     const parsed = UserUpdateSchema.safeParse(body);

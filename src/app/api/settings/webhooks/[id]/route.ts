@@ -1,7 +1,7 @@
 import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { UpdateWebhookSchema } from "@/lib/admin/schemas";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * PUT /api/settings/webhooks/[id]
@@ -9,7 +9,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const { id } = await params;
     const body = await request.json();
@@ -38,7 +38,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
  * Admin only.
  */
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const { id } = await params;
     await audit({ action: "delete_webhook", targetType: "webhook", targetId: id }, async () => {

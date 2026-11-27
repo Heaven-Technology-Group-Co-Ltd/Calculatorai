@@ -2,7 +2,7 @@ import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { ChangePlanSchema } from "@/lib/admin/schemas";
 import { getAdminPlanPriceCents } from "@/lib/plans";
-import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/plan
@@ -10,7 +10,7 @@ import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/a
  * Admin only.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const { id } = await params;
     const body = await request.json();

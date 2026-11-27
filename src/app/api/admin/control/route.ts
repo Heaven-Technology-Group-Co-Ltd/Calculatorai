@@ -1,4 +1,4 @@
-import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * Centralized Admin Control API Route
  *
@@ -31,7 +31,6 @@ import {
   badRequestResponse,
   unauthorizedResponse,
   forbiddenResponse,
-  serverErrorResponse,
   serviceUnavailableResponse,
 } from "@/lib/api-response";
 
@@ -59,13 +58,8 @@ async function logFailedAuth(action: string, context: Record<string, string>): P
 // ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    const quota = await consumePolicy(RATE_LIMIT_POLICIES.ADMIN_CONTROL_IP, getClientIpFromHeaders(request.headers));
-    if (!quota.allowed) return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(quota.retryAfter) } });
-  } catch (error) {
-    console.error("[Admin Control] Rate limit failed:", error);
-    return serviceUnavailableResponse("Rate limit unavailable");
-  }
+  const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.ADMIN_CONTROL_IP, getClientIpFromHeaders(request.headers), { throttleMessage: "Too many requests" });
+  if (!quota.ok) return quota.response;
   // ── Step 1: Extract raw body + security headers ──────────────────────────
   const rawBody = await request.text(); // MUST be raw string for HMAC
 

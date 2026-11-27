@@ -2,7 +2,7 @@ import { withAdmin } from "@/lib/admin/with-admin";
 import { USER_LIST_SELECT_COLUMNS } from "@/lib/admin/user-columns";
 import { NextRequest, NextResponse } from "next/server";
 import { UserListQuerySchema, sanitizeSearchTerm } from "@/lib/admin/schemas";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { serverErrorResponse } from "@/lib/api-response";
 
 /**
  * GET /api/users
@@ -10,7 +10,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const url = new URL(request.url);
     const parsed = UserListQuerySchema.safeParse({

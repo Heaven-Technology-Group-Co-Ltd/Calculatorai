@@ -29,7 +29,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withAdmin(request, {}, async ({ admin, supabase, audit }) => {
+  return withAdmin(request, async ({ admin, supabase, audit }) => {
     const { id: targetUserId } = await params;
     const { data: targetUser, error: userError } = await supabase
       .from("users")

@@ -6,11 +6,11 @@ import { withAdmin } from "@/lib/admin/with-admin";
  * top pages, geography breakdown, referral sources, total views.
  * Requires admin authentication.
  */
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { successResponse } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000).toISOString();
     const [viewsResponse, totalResponse] = await Promise.all([

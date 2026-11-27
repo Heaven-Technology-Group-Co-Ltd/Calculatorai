@@ -3,7 +3,7 @@ import { checkAdminGate } from "./admin-gate";
 import { withAuditLog, type AuditEntry } from "./audit";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { toErrorResponse } from "@/lib/api-response";
+import { ApiError, toErrorResponse } from "@/lib/api-response";
 import type { AdminUser } from "./auth-middleware";
 
 interface AdminContext {
@@ -14,20 +14,23 @@ interface AdminContext {
 
 export async function withAdmin(
   request: NextRequest,
-  options: { rateLimitKey?: string },
   handler: (context: AdminContext) => Promise<NextResponse>,
 ): Promise<NextResponse> {
   try {
     const gate = await checkAdminGate(request, {
-      rateLimitKey: options.rateLimitKey ?? `admin:${getClientIpFromHeaders(request.headers)}`,
+      rateLimitKey: `admin:${getClientIpFromHeaders(request.headers)}`,
     });
-    if (!gate.ok) return NextResponse.json({ success: false, error: gate.failure.message }, { status: gate.failure.status });
+    if (!gate.ok) {
+      const codes = { 401: "UNAUTHORIZED", 403: "FORBIDDEN", 429: "RATE_LIMITED", 503: "SERVICE_UNAVAILABLE" } as const;
+      const failure = gate.failure;
+      return toErrorResponse(new ApiError(failure.status, codes[failure.status], failure.message, failure.headers));
+    }
     return await handler({
       admin: gate.user,
       supabase: getSupabaseAdmin(),
       audit: (entry, effect) => withAuditLog({ ...entry, adminUserId: gate.user.id }, effect),
     });
   } catch (error) {
-    return toErrorResponse(error);
+    return toErrorResponse(error, { routeTag: `${request.method} ${request.nextUrl.pathname}` });
   }
 }

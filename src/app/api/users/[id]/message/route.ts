@@ -1,7 +1,7 @@
 import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { AdminMessageSchema } from "@/lib/admin/schemas";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/message
@@ -9,7 +9,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ supabase, admin, audit }) => {
+  return withAdmin(request, async ({ supabase, admin, audit }) => {
 
     const { id } = await params;
     const body = await request.json();

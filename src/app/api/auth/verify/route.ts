@@ -1,4 +1,4 @@
-import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * POST /api/auth/verify
  *
@@ -15,13 +15,7 @@ import { NextRequest } from "next/server";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import {
-  badRequestResponse,
-  successResponse,
-  rateLimitedResponse,
-  serverErrorResponse,
-  serviceUnavailableResponse,
-} from "@/lib/api-response";
+import { badRequestResponse, successResponse, serverErrorResponse,  } from "@/lib/api-response";
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
 const VerifySchema = z.object({
@@ -33,11 +27,8 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting (by IP) ─────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.VERIFY_IP, ip).catch(() => null);
-    if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
-    if (!rateResult.allowed) {
-      return rateLimitedResponse(undefined, rateResult.retryAfter);
-    }
+    const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.VERIFY_IP, ip);
+    if (!quota.ok) return quota.response;
 
     // ── Parse & validate body ─────────────────────────────────────────
     const body = await request.json();

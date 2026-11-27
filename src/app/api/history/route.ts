@@ -1,5 +1,5 @@
 import { FIELD_LIMITS } from "@/lib/validation/vocabulary";
-import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 import { readMaintenanceState } from "@/lib/admin/state";
 import { NextResponse as MaintenanceResponse } from "next/server";
 /**
@@ -12,18 +12,12 @@ import { NextResponse as MaintenanceResponse } from "next/server";
  * All endpoints require authentication.
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import {
-  successResponse,
-  createdResponse,
-  unauthorizedResponse,
-  badRequestResponse,
-  serverErrorResponse,
-} from "@/lib/api-response";
+import { successResponse, createdResponse, unauthorizedResponse, badRequestResponse, serverErrorResponse,  } from "@/lib/api-response";
 import { encodeHistoryPayload } from "@/lib/history-payload";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -89,10 +83,8 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    const quota = await consumePolicy(RATE_LIMIT_POLICIES.HISTORY_WRITE_USER, userId);
-    if (!quota.allowed) {
-      return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(quota.retryAfter) } });
-    }
+    const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.HISTORY_WRITE_USER, userId, { throttleMessage: "Too many requests" });
+    if (!quota.ok) return quota.response;
 
     const body = await request.json();
     const parsed = CreateHistorySchema.safeParse(body);

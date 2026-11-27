@@ -1,7 +1,7 @@
 import { withAdmin } from "@/lib/admin/with-admin";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { isAllowedWebhookUrl } from "@/lib/admin/schemas";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { successResponse, badRequestResponse, notFoundResponse } from "@/lib/api-response";
 
 /**
  * POST /api/settings/webhooks/[id]/test
@@ -9,7 +9,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const { id } = await params;
     const { data: webhook, error } = await supabase.from("discord_webhooks").select("url, name").eq("id", id).single();

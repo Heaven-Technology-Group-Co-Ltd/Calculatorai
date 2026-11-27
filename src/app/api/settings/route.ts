@@ -2,7 +2,7 @@ import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { UpdateSettingSchema } from "@/lib/admin/schemas";
 import { setMaintenance, readMaintenanceState } from "@/lib/admin/state";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * GET /api/settings
@@ -10,7 +10,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data, error } = await supabase.from("site_settings").select("*");
     if (error && error.code !== "42P01") throw new Error(error.message);
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
  * Admin only.
  */
 export async function POST(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase, admin, audit }) => {
+  return withAdmin(request, async ({ supabase, admin, audit }) => {
 
     const body = await request.json();
     const parsed = UpdateSettingSchema.safeParse({ key: body.key, value: body.value, message: body.message });

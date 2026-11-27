@@ -16,7 +16,7 @@ import { successResponse } from "@/lib/api-response";
 import { CreateRefundSchema } from "@/lib/admin/schemas";
 
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data, error } = await supabase
       .from("refunds")
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const body = await request.json();
     const parsed = CreateRefundSchema.safeParse(body);

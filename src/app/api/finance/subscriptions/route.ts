@@ -12,11 +12,11 @@ import { withAdmin } from "@/lib/admin/with-admin";
  * Requires admin authentication.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { successResponse, badRequestResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 import { CreateSubscriptionSchema } from "@/lib/admin/schemas";
 
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data, error } = await supabase
       .from("subscriptions")
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const body = await request.json();
     const parsed = CreateSubscriptionSchema.safeParse(body);

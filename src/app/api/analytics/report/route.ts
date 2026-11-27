@@ -14,7 +14,7 @@ import { isAllowedWebhookUrl } from "@/lib/admin/schemas";
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { withAdmin } from "@/lib/admin/with-admin";
-import { successResponse, serverErrorResponse, badRequestResponse } from "@/lib/api-response";
+import { successResponse, badRequestResponse } from "@/lib/api-response";
 import { TriggerReportSchema } from "@/lib/admin/schemas";
 
 /** Gather report data for the past 7 days. */
@@ -54,7 +54,7 @@ async function getReportData() {
 }
 
 export async function GET(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase }) => {
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data } = await supabase.from("admin_audit_log").select("created_at").eq("action", "weekly_report_sent").order("created_at", { ascending: false }).limit(1);
     return successResponse({ lastSent: data?.[0]?.created_at ?? null });
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return withAdmin(request, {}, async ({ supabase, audit }) => {
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const body = await request.json();
     const parsed = TriggerReportSchema.safeParse(body);

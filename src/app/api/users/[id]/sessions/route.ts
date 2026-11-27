@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { withAdmin } from "@/lib/admin/with-admin";
 import { revokeAllUserSessions, restoreUserSessions } from "@/lib/admin/session-store";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/sessions
@@ -13,7 +13,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withAdmin(request, {}, async ({ audit }) => {
+  return withAdmin(request, async ({ audit }) => {
 
     const { id } = await params;
 
@@ -37,7 +37,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withAdmin(request, {}, async ({ audit }) => {
+  return withAdmin(request, async ({ audit }) => {
 
     const { id } = await params;
 

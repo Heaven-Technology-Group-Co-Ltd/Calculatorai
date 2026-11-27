@@ -10,8 +10,6 @@ export function createBurstLimiter({ max, windowMs, maxClients }: BurstLimiterOp
   return (client: string, now = Date.now()): { allowed: boolean; retryAfter: number } => {
     const hits = (clients.get(client) ?? []).filter((hit) => now - hit < windowMs);
     if (hits.length >= max) {
-      clients.delete(client);
-      clients.set(client, hits);
       return { allowed: false, retryAfter: Math.max(1, Math.ceil((windowMs - now + hits[0]) / 1000)) };
     }
     hits.push(now);
