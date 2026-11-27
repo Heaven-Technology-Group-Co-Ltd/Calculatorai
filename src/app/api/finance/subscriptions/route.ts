@@ -15,7 +15,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { successResponse, serverErrorResponse, badRequestResponse } from "@/lib/api-response";
 import { CreateSubscriptionSchema } from "@/lib/admin/schemas";
-import { writeAuditLog } from "@/lib/admin/audit";
+import { withAuditLog } from "@/lib/admin/audit";
 
 export async function GET(request: NextRequest) {
   try {
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = getSupabaseAdmin();
 
-    await requireAdmin(request);
+    const admin = await requireAdmin(request);
 
     const body = await request.json();
     const parsed = CreateSubscriptionSchema.safeParse(body);
@@ -54,6 +54,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const data = await withAuditLog({
+      adminUserId: admin.id,
+      action: "create_subscription",
+      targetType: "subscription",
+      metadata: { plan: parsed.data.plan },
+    }, async () => {
     const { data, error } = await supabase
       .from("subscriptions")
       .insert({
@@ -67,14 +73,10 @@ export async function POST(request: NextRequest) {
 
     if (error) throw new Error(error.message);
 
-    void writeAuditLog({
-      adminUserId: "system",
-      action: "create_subscription",
-      targetType: "subscription",
-      targetId: String(data.id),
-      metadata: { plan: parsed.data.plan },
-    });
 
+
+      return data;
+    });
     return successResponse(data);
   } catch (err) {
     console.error("[Finance/Subscriptions] Error:", err);

@@ -1,3 +1,5 @@
+import { readMaintenanceState } from "@/lib/admin/state";
+import { NextResponse as MaintenanceResponse } from "next/server";
 /**
  * History API — Premium Math Calculator
  *
@@ -8,7 +10,7 @@
  * All endpoints require authentication.
  */
 
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
@@ -20,6 +22,8 @@ import {
   badRequestResponse,
   serverErrorResponse,
 } from "@/lib/api-response";
+import { checkRateLimitStrict } from "@/lib/rate-limiter";
+import { RATE_LIMIT } from "@/lib/api-constants";
 import { encodeHistoryPayload } from "@/lib/history-payload";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -33,11 +37,11 @@ function getUserId(session: unknown): string | null {
 // ── Zod schemas ──────────────────────────────────────────────────────────────
 
 const CreateHistorySchema = z.object({
-  calcId: z.string().min(1, "Calculation id is required"),
-  calcTitle: z.string().min(1, "Calculation title is required"),
-  inputs: z.record(z.string(), z.string()),
-  result: z.string(),
-  unit: z.string(),
+  calcId: z.string().min(1, "Calculation id is required").max(1024),
+  calcTitle: z.string().min(1, "Calculation title is required").max(1024),
+  inputs: z.record(z.string().max(64), z.string().max(1024)).refine((entries) => Object.keys(entries).length <= 32),
+  result: z.string().min(1).max(4096),
+  unit: z.string().max(1024),
 });
 
 // ── GET ─────────────────────────────────────────────────────────────────────
@@ -75,11 +79,19 @@ export async function GET() {
 // Creates a history entry for the authenticated user.
 
 export async function POST(request: NextRequest) {
+  if ((await readMaintenanceState()).maintenanceMode) {
+    return MaintenanceResponse.json({ success: false, error: "System is currently under maintenance" }, { status: 503 });
+  }
   try {
     const session = await getServerSession(authOptions);
     const userId = getUserId(session);
     if (!userId) {
       return unauthorizedResponse();
+    }
+
+    const quota = await checkRateLimitStrict(`history:${userId}`, RATE_LIMIT.HISTORY.limit, RATE_LIMIT.HISTORY.windowMs);
+    if (!quota.allowed) {
+      return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(quota.retryAfter) } });
     }
 
     const body = await request.json();

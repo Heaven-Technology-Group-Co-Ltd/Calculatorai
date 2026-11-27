@@ -15,12 +15,13 @@ import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { checkRateLimit } from "@/lib/rate-limiter";
+import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import {
   badRequestResponse,
   successResponse,
   rateLimitedResponse,
   serverErrorResponse,
+  serviceUnavailableResponse,
 } from "@/lib/api-response";
 import { RATE_LIMIT, AUTH } from "@/lib/api-constants";
 
@@ -30,14 +31,16 @@ const ResetSchema = z.object({
   password: z
     .string()
     .min(AUTH.MIN_PASSWORD_LENGTH, `Password must be at least ${AUTH.MIN_PASSWORD_LENGTH} characters`)
-    .max(AUTH.MAX_PASSWORD_LENGTH),
+    .max(AUTH.MAX_PASSWORD_LENGTH)
+    .refine((password) => new TextEncoder().encode(password).length <= 72, "Password must not exceed 72 UTF-8 bytes"),
 });
 
 export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimit(`reset:${ip}`, 5, RATE_LIMIT.AUTH.windowMs);
+    const rateResult = await checkRateLimitStrict(`reset:${ip}`, 5, RATE_LIMIT.AUTH.windowMs).catch(() => null);
+    if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
     if (!rateResult.allowed) {
       return rateLimitedResponse();
     }

@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { UpdateSettingSchema } from "@/lib/admin/schemas";
-import { writeAuditLog } from "@/lib/admin/audit";
-import { setMaintenance } from "@/lib/admin/state";
+import { withAuditLog } from "@/lib/admin/audit";
+import { setMaintenance, readMaintenanceState } from "@/lib/admin/state";
 import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
 
 /**
@@ -30,8 +30,7 @@ export async function GET(request: NextRequest) {
       settings[row.key] = row.value ?? "";
     }
 
-    const { getState } = await import("@/lib/admin/state");
-    const state = getState();
+    const state = await readMaintenanceState();
     settings["maintenance_mode"] = String(state.maintenanceMode);
     settings["maintenance_message"] = state.maintenanceMessage || "";
 
@@ -64,11 +63,7 @@ export async function POST(request: NextRequest) {
 
     const key = parsed.data.key;
 
-    if (key === "maintenance_mode") {
-      const enabled = parsed.data.value === "true";
-      setMaintenance(enabled, parsed.data.message || "System under maintenance");
-    }
-
+    const data = await withAuditLog({ adminUserId: admin.id, action: "update_setting", targetType: "setting", targetId: key, metadata: { value: parsed.data.value } }, async () => {
     const { data, error } = await supabase
       .from("site_settings")
       .upsert({ key, value: parsed.data.value, updated_at: new Date().toISOString(), updated_by: admin.id })
@@ -76,8 +71,11 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) throw new Error(error.message);
+    if (key === "maintenance_mode") setMaintenance(parsed.data.value === "true", parsed.data.message || "System under maintenance");
 
-    void writeAuditLog({ adminUserId: admin.id, action: "update_setting", targetType: "setting", targetId: key, metadata: { value: parsed.data.value } });
+
+      return data;
+    });
     return successResponse(data);
   } catch (err) {
     console.error("[Settings] Error:", err);

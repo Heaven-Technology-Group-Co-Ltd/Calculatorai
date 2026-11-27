@@ -99,6 +99,7 @@ describe("POST /api/payments/webhook", () => {
         amount_cents: 7999,
       })
     );
+    expect(paymentsInsert.mock.calls[0][0]).not.toHaveProperty("id");
     expect(usersUpdate).toHaveBeenCalledWith({ plan: "yearly" });
     expect(usersUpdateEq).toHaveBeenCalledWith("id", "user-123");
     expect(subsInsert).toHaveBeenCalledWith(
@@ -341,7 +342,7 @@ describe("POST /api/payments/webhook", () => {
           select: () => ({
             eq: () => ({
               maybeSingle: vi.fn().mockResolvedValue({
-                data: { id: "pay_1", user_id: "user-123", created_at: "2026-01-01T00:00:00.000Z" },
+                data: { id: 42, user_id: "user-123", created_at: "2026-01-01T00:00:00.000Z" },
                 error: null,
               }),
             }),
@@ -357,6 +358,7 @@ describe("POST /api/payments/webhook", () => {
     const res = await POST(makeWebhookRequest());
     expect(res.status).toBe(200);
     expect(paymentsUpdate).toHaveBeenCalledWith({ status: "partially_refunded" });
+    expect(paymentsUpdateEq).toHaveBeenCalledWith("id", 42);
     expect(usersUpdate).not.toHaveBeenCalled();
     expect(subsUpdate).not.toHaveBeenCalled();
   });

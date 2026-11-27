@@ -1,3 +1,5 @@
+import { getSupabaseAdmin } from "../supabase-client";
+
 /**
  * Runtime State Store
  *
@@ -44,4 +46,29 @@ export function recordCommand(action: string, by: string): void {
   state.lastCommand = action;
   state.lastCommandBy = by;
   state.lastCommandAt = new Date().toISOString();
+}
+
+let maintenanceCheckedAt = 0;
+
+export async function readMaintenanceState(): Promise<Readonly<SystemState>> {
+  if (Date.now() - maintenanceCheckedAt < 15_000) return getState();
+  try {
+    const { data: setting, error } = await getSupabaseAdmin().from("site_settings")
+      .select("value").eq("key", "maintenance_mode").maybeSingle();
+    if (error) throw error;
+    state.maintenanceMode = setting?.value === "true";
+    maintenanceCheckedAt = Date.now();
+  } catch (error) {
+    console.error("[Maintenance] Settings read failed:", error);
+  }
+  return getState();
+}
+
+export async function persistMaintenance(enabled: boolean, message?: string | null): Promise<Readonly<SystemState>> {
+  const { error } = await getSupabaseAdmin().from("site_settings").upsert({
+    key: "maintenance_mode", value: String(enabled), updated_at: new Date().toISOString(), updated_by: "system",
+  });
+  if (error) throw error;
+  maintenanceCheckedAt = Date.now();
+  return setMaintenance(enabled, message);
 }

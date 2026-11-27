@@ -6,7 +6,8 @@
  *   service — one of supabase|stripe|smtp|nextjs (omit = all)
  *   range   — 24h (hourly buckets) | 7d | 30d (daily buckets; default 24h)
  */
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getClientIpFromHeaders } from "@/lib/client-ip";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import {
@@ -42,12 +43,30 @@ interface HealthHistoryRow {
   avg_latency: number;
 }
 
+const recentRequests = new Map<string, number[]>();
+const historyCache = new Map<string, { at: number; response: unknown }>();
+
+function takeSlot(ip: string): number {
+  const now = Date.now();
+  const times = (recentRequests.get(ip) ?? []).filter((time) => now - time < 60_000);
+  if (times.length >= 30) return Math.max(1, Math.ceil((60_000 - now + times[0]) / 1000));
+  times.push(now);
+  if (!recentRequests.has(ip) && recentRequests.size >= 5000) {
+    const oldest = recentRequests.keys().next();
+    if (!oldest.done) recentRequests.delete(oldest.value);
+  }
+  recentRequests.set(ip, times);
+  return 0;
+}
+
 export async function GET(request: NextRequest) {
+  const retryAfter = takeSlot(getClientIpFromHeaders(request.headers));
+  if (retryAfter) return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(retryAfter) } });
   try {
     const params = request.nextUrl.searchParams;
 
     const rangeParam = params.get("range") ?? "24h";
-    if (!(rangeParam in RANGES)) {
+    if (!Object.hasOwn(RANGES, rangeParam)) {
       return badRequestResponse("Invalid range. Use 24h, 7d, or 30d.");
     }
     const range = rangeParam as Range;
@@ -57,6 +76,9 @@ export async function GET(request: NextRequest) {
       return badRequestResponse(`Invalid service. Use one of: ${SERVICES.join(", ")}.`);
     }
     const services = (serviceParam ? [serviceParam] : [...SERVICES]) as Service[];
+    const cacheKey = `${range}:${serviceParam ?? "all"}`;
+    const cached = historyCache.get(cacheKey);
+    if (cached && Date.now() - cached.at < 30_000) return successResponse(cached.response);
 
     const { windowMs, bucketMs, bucket } = RANGES[range];
     const rawWindowStart = Date.now() - windowMs;
@@ -121,13 +143,15 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    return successResponse({
+    const response = {
       service: serviceParam ?? "all",
       range,
       bucket,
       series,
       summary,
-    });
+    };
+    historyCache.set(cacheKey, { at: Date.now(), response });
+    return successResponse(response);
   } catch (err) {
     console.error("[Status/History] Error:", err);
     return serverErrorResponse();

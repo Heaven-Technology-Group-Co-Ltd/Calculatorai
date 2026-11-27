@@ -3,8 +3,10 @@ import { NextRequest } from "next/server";
 
 const mocks = vi.hoisted(() => {
   const create = vi.fn().mockResolvedValue({ id: "cs_test_1", url: "https://checkout.stripe.com/c/pay/1" });
-  return { create, getStripe: vi.fn(() => ({ checkout: { sessions: { create } } })) };
+  return { maintenance: vi.fn(), create, getStripe: vi.fn(() => ({ checkout: { sessions: { create } } })) };
 });
+
+vi.mock("@/lib/admin/state", () => ({ readMaintenanceState: mocks.maintenance }));
 
 vi.mock("@/lib/stripe", () => ({ getStripe: mocks.getStripe }));
 vi.mock("@/lib/rate-limiter", () => ({
@@ -26,11 +28,17 @@ function post(host: string, successUrl: string, cancelUrl: string): NextRequest 
 describe("POST /api/payments/create-checkout-session", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.maintenance.mockResolvedValue({ maintenanceMode: false });
     process.env.NEXT_PUBLIC_APP_URL = "https://app.example";
   });
 
   afterEach(() => {
     delete process.env.NEXT_PUBLIC_APP_URL;
+  });
+
+  it("rejects checkout during maintenance", async () => {
+    mocks.maintenance.mockResolvedValue({ maintenanceMode: true });
+    expect((await POST(post("app.example", "https://app.example/paid", "https://app.example/cancel"))).status).toBe(503);
   });
 
   it("rejects redirect URLs that only match an attacker-supplied Host header", async () => {

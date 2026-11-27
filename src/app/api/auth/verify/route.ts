@@ -14,12 +14,13 @@ import { NextRequest } from "next/server";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { checkRateLimit } from "@/lib/rate-limiter";
+import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import {
   badRequestResponse,
   successResponse,
   rateLimitedResponse,
   serverErrorResponse,
+  serviceUnavailableResponse,
 } from "@/lib/api-response";
 import { RATE_LIMIT } from "@/lib/api-constants";
 
@@ -33,11 +34,12 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting (by IP) ─────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimit(
+    const rateResult = await checkRateLimitStrict(
       `verify:${ip}`,
       RATE_LIMIT.AUTH.limit,
       RATE_LIMIT.AUTH.windowMs
-    );
+    ).catch(() => null);
+    if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
     if (!rateResult.allowed) {
       return rateLimitedResponse();
     }

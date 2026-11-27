@@ -1,3 +1,4 @@
+import { isAllowedWebhookUrl } from "@/lib/admin/schemas";
 /**
  * GET /api/analytics/report
  *
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
       const { data: wh } = await supabase.from("discord_webhooks").select("url").eq("status", "active").eq("event_type", "analytics").limit(1).single();
       webhookUrl = wh?.url ?? null;
     }
-    if (!webhookUrl) return badRequestResponse("No active analytics webhook configured");
+    if (!webhookUrl || !isAllowedWebhookUrl(webhookUrl)) return badRequestResponse("No valid analytics webhook configured");
 
     const d = await getReportData();
     const monday = new Date(); monday.setDate(monday.getDate() - monday.getDay() + 1);
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
     const res = await fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     if (!res.ok) throw new Error(`Discord responded ${res.status}`);
 
-    void writeAuditLog({ adminUserId: "system", action: "weekly_report_sent", metadata: { range } });
+    await writeAuditLog({ adminUserId: "system", action: "weekly_report_sent", metadata: { range } });
     return successResponse({ sent: true, range });
   } catch (err) {
     console.error("[Analytics/Report] Error:", err);

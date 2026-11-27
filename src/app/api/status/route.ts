@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 import net from "net";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { getState } from "@/lib/admin/state";
+import { readMaintenanceState } from "@/lib/admin/state";
 import { successResponse, serverErrorResponse } from "@/lib/api-response";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { getRuntimeHealth } from "@/lib/runtime-health";
@@ -246,6 +246,8 @@ async function collectChecks(db: SupabaseClient<any>): Promise<Record<Service, S
   };
 }
 
+let lastPruneAt = 0;
+
 export async function GET(request: Request) {
   const start = Date.now();
   const slot = takeStatusSlot(getClientIpFromHeaders(request.headers), start);
@@ -260,11 +262,16 @@ export async function GET(request: Request) {
     const supabase = getSupabaseAdmin();
     // ponytail: untyped until `health_checks` lands in database.types.ts regen; then drop cast.
     const db = supabase as unknown as SupabaseClient<any>;
-    const state = getState();
+    const state = await readMaintenanceState();
 
     let snapshot = probesCache && start - probesCache.at < STATUS_TTL ? probesCache : null;
 
     if (!snapshot) {
+      if (start - lastPruneAt >= 3_600_000) {
+        lastPruneAt = start;
+        const { error: pruneError } = await db.rpc("prune_old_health_checks");
+        if (pruneError && pruneError.code !== "PGRST202" && pruneError.code !== "42883") console.error("[Status] Prune failed:", pruneError);
+      }
       const checks = await collectChecks(db);
 
       const { error: persistErr } = await db.from("health_checks").insert(
@@ -297,9 +304,6 @@ export async function GET(request: Request) {
       maintenanceMode: state.maintenanceMode,
       maintenanceMessage: state.maintenanceMessage,
       uptimeSeconds,
-      lastCommand: state.lastCommand,
-      lastCommandBy: state.lastCommandBy,
-      lastCommandAt: state.lastCommandAt,
       checks: snapshot.checks,
       stats: snapshot.stats,
       totalLatencyMs: Date.now() - start,

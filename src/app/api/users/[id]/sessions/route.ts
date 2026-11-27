@@ -26,7 +26,7 @@ export async function POST(
 
     await revokeAllUserSessions(id);
 
-    void writeAuditLog({
+    await writeAuditLog({
       adminUserId: admin.id,
       action: "revoke_sessions",
       targetType: "user",
@@ -62,7 +62,7 @@ export async function DELETE(
 
     await restoreUserSessions(id);
 
-    void writeAuditLog({
+    await writeAuditLog({
       adminUserId: admin.id,
       action: "restore_sessions",
       targetType: "user",

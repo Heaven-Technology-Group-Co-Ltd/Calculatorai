@@ -8,9 +8,9 @@ const mocks = vi.hoisted(() => {
   return { from, retrieve, getState, connect };
 });
 
-vi.mock("@/lib/supabase-client", () => ({ getSupabaseAdmin: () => ({ from: mocks.from }) }));
+vi.mock("@/lib/supabase-client", () => ({ getSupabaseAdmin: () => ({ from: mocks.from, rpc: vi.fn().mockResolvedValue({ error: null }) }) }));
 vi.mock("@/lib/stripe", () => ({ getStripe: () => ({ balance: { retrieve: mocks.retrieve } }) }));
-vi.mock("@/lib/admin/state", () => ({ getState: mocks.getState }));
+vi.mock("@/lib/admin/state", () => ({ getState: mocks.getState, readMaintenanceState: mocks.getState }));
 vi.mock("node:net", () => ({ default: { connect: mocks.connect } }));
 
 let historyRows: { service: string; status: string; latency_ms: number; created_at: string }[] = [];

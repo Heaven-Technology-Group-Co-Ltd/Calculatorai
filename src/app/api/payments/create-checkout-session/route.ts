@@ -1,3 +1,5 @@
+import { readMaintenanceState } from "@/lib/admin/state";
+import { NextResponse as MaintenanceResponse } from "next/server";
 /**
  * POST /api/payments/create-checkout-session
  *
@@ -61,6 +63,9 @@ function onConfiguredOrigin(candidate: string, origin: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  if ((await readMaintenanceState()).maintenanceMode) {
+    return MaintenanceResponse.json({ success: false, error: "System is currently under maintenance" }, { status: 503 });
+  }
   try {
     const stripe = getStripe();
     // ── Rate limiting ──────────────────────────────────────────────────

@@ -39,7 +39,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     if (!res.ok) throw new Error(`Discord responded ${res.status}`);
 
-    void writeAuditLog({ adminUserId: admin.id, action: "test_webhook", targetType: "webhook", targetId: id });
+    await writeAuditLog({ adminUserId: admin.id, action: "test_webhook", targetType: "webhook", targetId: id });
     return successResponse({ tested: true });
   } catch (err) {
     console.error("[Webhook Test] Error:", err);
