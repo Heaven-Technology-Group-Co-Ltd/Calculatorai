@@ -194,6 +194,5 @@
   "dashboard.error.forbidden": "คุณไม่มีสิทธิ์ดำเนินการนี้",
   "dashboard.error.rateLimited": "ส่งคำขอมากเกินไป กรุณาลองอีกครั้งภายหลัง",
   "dashboard.error.invalidAction": "กรุณาตรวจสอบข้อมูลแล้วลองอีกครั้ง",
-  "dashboard.error.network": "เกิดข้อผิดพลาดเครือข่าย กรุณาลองอีกครั้ง",
-  "dashboard.common.close": "ปิด"
+  "dashboard.error.network": "เกิดข้อผิดพลาดเครือข่าย กรุณาลองอีกครั้ง"
 }

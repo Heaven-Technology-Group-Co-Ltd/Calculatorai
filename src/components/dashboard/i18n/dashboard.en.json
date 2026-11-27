@@ -194,6 +194,5 @@
   "dashboard.error.forbidden": "You do not have permission for this action.",
   "dashboard.error.rateLimited": "Too many requests. Please try again later.",
   "dashboard.error.invalidAction": "Please check the information and try again.",
-  "dashboard.error.network": "Network error. Please try again.",
-  "dashboard.common.close": "Close"
+  "dashboard.error.network": "Network error. Please try again."
 }

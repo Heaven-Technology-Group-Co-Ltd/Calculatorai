@@ -1,12 +1,13 @@
 import { readFileSync } from "node:fs";
 import { createHmac } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { ADMIN_CONTROL_ACTIONS, buildAdminCanonicalPayload } from "./admin-control";
 
 describe("admin control contract", () => {
   it("keeps the standalone bot contract identical", () => {
-    const webSource = readFileSync("src/contracts/admin-control.ts", "utf8").replace(/\r\n/g, "\n");
-    const botSource = readFileSync("discord-bot/src/contracts/admin-control.ts", "utf8").replace(/\r\n/g, "\n");
+    const webSource = readFileSync(fileURLToPath(new URL("./admin-control.ts", import.meta.url)), "utf8").replace(/\r\n/g, "\n");
+    const botSource = readFileSync(fileURLToPath(new URL("../../discord-bot/src/contracts/admin-control.ts", import.meta.url)), "utf8").replace(/\r\n/g, "\n");
     expect(botSource).toBe(webSource);
   });
   it("pins the canonical bytes and HMAC digest", () => {
