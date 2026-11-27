@@ -3,7 +3,7 @@
 import { Activity, UserPlus, Calculator, CreditCard, Settings } from "lucide-react";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
-import { EmptyState } from "../ui/EmptyState";
+import { EmptyState } from "@/components/EmptyState";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useDashboardT } from "../i18n/useDashboardT";
 import styles from "../styles/dashboard-blocks.module.css";
@@ -31,7 +31,7 @@ export function RecentActivityFeed() {
     return (
       <Panel padding="md">
         <h3 className={styles.sectionTitle}>{t("dashboard.activity.recent")}</h3>
-        <EmptyState icon={<Activity size={24} />} message={t("dashboard.activity.empty")} />
+        <EmptyState variant="dashboard" icon={<Activity size={24} />} message={t("dashboard.activity.empty")} />
       </Panel>
     );
   }

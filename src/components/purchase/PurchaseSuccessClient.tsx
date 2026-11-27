@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { CheckCircle, Loader2, XCircle, ArrowRight, Sparkles } from "lucide-react";
 import styles from "./PurchaseSuccess.module.css";
+import { apiGet, ClientApiError } from "@/lib/api-client";
 
 type StatusState = "loading" | "succeeded" | "unpaid" | "error";
 
@@ -24,50 +25,34 @@ export function PurchaseSuccessClient() {
   const [payment, setPayment] = useState<PaymentStatus | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const verifyPayment = useCallback(async function runVerify(attempt = 0) {
-    if (!sessionId) {
-      setState("error");
-      setErrorMsg("No session ID provided");
-      return;
-    }
-    try {
-      const res = await fetch(`/api/payments/status?session_id=${encodeURIComponent(sessionId)}`);
-      const data = await res.json();
-      if (!res.ok) {
+  useEffect(() => {
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const verify = async (attempt: number) => {
+      if (!sessionId) {
         setState("error");
-        setErrorMsg(data.error || "Failed to verify payment");
+        setErrorMsg("No session ID provided");
         return;
       }
-      const paymentData = data.data as PaymentStatus;
-      setPayment(paymentData);
-      const pStatus = paymentData.paymentStatus;
-      if (pStatus === "paid") {
-        setState("succeeded");
-      } else if (pStatus === "unpaid") {
-        if (attempt < 3) {
-          setTimeout(() => void runVerify(attempt + 1), 1500);
-        } else {
-          setState("unpaid");
-          setErrorMsg(`Payment status: ${pStatus}`);
-        }
-      } else {
+      try {
+        const paymentStatus = await apiGet<PaymentStatus>(`/api/payments/status?session_id=${encodeURIComponent(sessionId)}`);
+        if (cancelled) return;
+        setPayment(paymentStatus);
+        if (paymentStatus.paymentStatus === "paid") { setState("succeeded"); return; }
+        if (paymentStatus.paymentStatus !== "unpaid") { setState("error"); setErrorMsg("Error verifying payment"); return; }
+        if (attempt < 3) { timer = setTimeout(() => void verify(attempt + 1), 1500); return; }
+        setState("unpaid");
+        setErrorMsg(`Payment status: ${paymentStatus.paymentStatus}`);
+      } catch (failure) {
+        if (cancelled) return;
+        if (!(failure instanceof ClientApiError) && attempt < 3) { timer = setTimeout(() => void verify(attempt + 1), 1500); return; }
         setState("error");
-        setErrorMsg("Error verifying payment");
+        setErrorMsg(failure instanceof Error ? failure.message : "Something went wrong");
       }
-    } catch (err) {
-      if (attempt < 3) {
-        setTimeout(() => void runVerify(attempt + 1), 1500);
-      } else {
-        setState("error");
-        setErrorMsg(err instanceof Error ? err.message : "Something went wrong");
-      }
-    }
+    };
+    timer = setTimeout(() => void verify(0), 300);
+    return () => { cancelled = true; clearTimeout(timer); };
   }, [sessionId]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => void verifyPayment(0), 300);
-    return () => clearTimeout(timer);
-  }, [verifyPayment]);
 
   const paidAmount = ((payment?.amountTotal ?? 0) / 100).toFixed(2);
   const currencyCode = (payment?.currency ?? "usd").toUpperCase();

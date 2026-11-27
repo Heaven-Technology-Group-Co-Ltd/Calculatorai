@@ -189,5 +189,10 @@
   "dashboard.modal.plan.pro": "Pro — $12/mo",
   "dashboard.modal.plan.enterprise": "Enterprise — $30/mo",
   "dashboard.modal.plan.changing": "Changing…",
-  "dashboard.modal.plan.change": "Change Plan"
+  "dashboard.modal.plan.change": "Change Plan",
+  "dashboard.modal.message.remaining": "{count} characters remaining",
+  "dashboard.error.forbidden": "You do not have permission for this action.",
+  "dashboard.error.rateLimited": "Too many requests. Please try again later.",
+  "dashboard.error.invalidAction": "Please check the information and try again.",
+  "dashboard.error.network": "Network error. Please try again."
 }

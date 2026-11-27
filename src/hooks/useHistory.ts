@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { apiGet, apiPost, apiDelete } from "@/lib/api-client";
 import { decodeHistoryExpression } from "@/lib/history-payload";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -93,12 +94,9 @@ export function useHistory() {
     if (status === "loading") return;
 
     if (status === "authenticated" && userId) {
-      fetch("/api/history")
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`History fetch failed: ${r.status}`))))
-        .then((res) => {
-          if (res.success && Array.isArray(res.data)) {
-            setHistory(res.data.map(mapApiRow));
-          }
+      apiGet<Record<string, unknown>[]>("/api/history")
+        .then((rows) => {
+          if (Array.isArray(rows)) setHistory(rows.map(mapApiRow));
         })
         .catch(() => {
           /* silent — show empty */
@@ -161,27 +159,15 @@ export function useHistory() {
 
       // Persist to server if authenticated
       if (status === "authenticated" && userId) {
-        fetch("/api/history", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            calcId: item.calcId,
-            calcTitle: item.calcTitle,
-            inputs: item.inputs,
-            result: item.result,
-            unit: item.unit,
-          }),
+        apiPost<{ id?: string | number }>("/api/history", {
+          calcId: item.calcId, calcTitle: item.calcTitle, inputs: item.inputs,
+          result: item.result, unit: item.unit,
+        }).then((entry) => {
+          if (entry?.id && String(entry.id) !== optimisticId) {
+            setHistory((previous) => previous.map((entryRow) =>
+              entryRow.id === optimisticId ? { ...entryRow, id: String(entry.id) } : entryRow));
+          }
         })
-          .then((r) => r.json())
-          .then((res) => {
-            if (res.success && res.data?.id && String(res.data.id) !== optimisticId) {
-              setHistory((prev) =>
-                prev.map((h) =>
-                  h.id === optimisticId ? { ...h, id: String(res.data.id) } : h
-                )
-              );
-            }
-          })
           .catch(() => {
             /* silent — keep optimistic */
           });
@@ -202,9 +188,7 @@ export function useHistory() {
       });
 
       if (status === "authenticated") {
-        fetch(`/api/history/${encodeURIComponent(id)}`, {
-          method: "DELETE",
-        }).catch(() => {
+        apiDelete(`/api/history/${encodeURIComponent(id)}`).catch(() => {
           // Server delete failed — put the item back (list is newest-first)
           const item = removed.item;
           if (!item) return;
@@ -221,10 +205,7 @@ export function useHistory() {
     setHistory([]);
 
     if (status === "authenticated") {
-      fetch("/api/history", { method: "DELETE" })
-        .then((r) => {
-          if (!r.ok) throw new Error(`Failed to clear history: ${r.status}`);
-        })
+      apiDelete("/api/history")
         .catch((err) => {
           console.error("[useHistory] clearAll failed on server, rolling back:", err);
           setHistory(previous);

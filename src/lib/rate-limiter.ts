@@ -34,7 +34,7 @@ async function checkWithPolicy(key: string, limit: number, windowMs: number, fai
     return summarize(entry.allowed, entry.current_count, entry.reset_at, limit);
   } catch (error) {
     if (!failOpen) throw error;
-    console.warn("Rate limiter DB error (fail-open):", error);
+    console.warn("Rate limiter DB error (fail-open)");
     return { allowed: true, remaining: limit, retryAfter: 0 };
   }
 }

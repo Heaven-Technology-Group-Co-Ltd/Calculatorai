@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { User } from "lucide-react";
 import type { Lang } from "@/types/locale";
 import styles from "./Sidebar.module.css";
-import { useBackdropClose } from "@/lib/dialog-backdrop";
+import { useDialog } from "@/hooks/useDialog";
 
 export interface ProfileModalProps {
   show: boolean;
@@ -19,28 +19,8 @@ export interface ProfileModalProps {
 }
 
 export function ProfileModal({ show, onClose, onSignOut, user, lang }: ProfileModalProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (show) {
-      if (typeof dialog.showModal === "function" && !dialog.open) {
-        dialog.showModal();
-      }
-    } else {
-      if (typeof dialog.close === "function" && dialog.open) {
-        dialog.close();
-      }
-    }
-    return () => {
-      if (typeof dialog?.close === "function" && dialog.open) {
-        dialog.close();
-      }
-    };
-  }, [show]);
-
-  const backdropClose = useBackdropClose(onClose);
+  const { dialogRef, dialogProps } = useDialog({ open: show, onClose });
 
 return (
     <dialog
@@ -49,12 +29,7 @@ return (
       aria-modal="true"
       aria-labelledby="profile-modal-title"
       className={styles.modalCard}
-      onMouseDown={backdropClose.onMouseDown}
-      onClick={backdropClose.onClick}
-      onCancel={(e) => {
-        e.preventDefault();
-        onClose();
-      }}
+      {...dialogProps}
     >
       <div className={styles.profileModalHeader}>
         <div className={styles.largeAvatar}>

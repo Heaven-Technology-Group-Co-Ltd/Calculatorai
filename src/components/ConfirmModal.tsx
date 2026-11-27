@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { uiTranslations } from "@/lib/translations";
 import type { Lang } from "@/types/locale";
 import { AlertTriangle, X } from "lucide-react";
 import styles from "./ConfirmModal.module.css";
-import { useBackdropClose } from "@/lib/dialog-backdrop";
+import { useDialog } from "@/hooks/useDialog";
 
 interface ConfirmModalProps {
   show: boolean;
@@ -17,28 +17,8 @@ interface ConfirmModalProps {
 }
 
 export function ConfirmModal({ show, onClose, onConfirm, lang, title, message }: ConfirmModalProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (show) {
-      if (typeof dialog.showModal === "function" && !dialog.open) {
-        dialog.showModal();
-      }
-    } else {
-      if (typeof dialog.close === "function" && dialog.open) {
-        dialog.close();
-      }
-    }
-    return () => {
-      if (typeof dialog?.close === "function" && dialog.open) {
-        dialog.close();
-      }
-    };
-  }, [show]);
-
-  const backdropClose = useBackdropClose(onClose);
+  const { dialogRef, dialogProps } = useDialog({ open: show, onClose });
 
 return (
     <dialog
@@ -47,12 +27,7 @@ return (
       aria-modal="true"
       aria-labelledby="confirm-modal-title"
       className={`modal-container ${styles.container}`}
-      onMouseDown={backdropClose.onMouseDown}
-      onClick={backdropClose.onClick}
-      onCancel={(e) => {
-        e.preventDefault();
-        onClose();
-      }}
+      {...dialogProps}
     >
       <div className={`modal-header ${styles.headerNoBorder}`}>
         <div className="confirm-icon">

@@ -20,6 +20,16 @@ describe("rate limit policies", () => {
     expect(gate.response.headers.get("Retry-After")).toBe("12");
   });
 
+  it("does not log identifiers included in backend errors", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    mocks.strict.mockRejectedValueOnce({ code: "23505", message: "identifier user@example.com", details: "127.0.0.1" });
+    await enforceRateLimit(RATE_LIMIT_POLICIES.FORGOT_PASSWORD_ACCOUNT, "user@example.com");
+    expect(JSON.stringify(log.mock.calls)).not.toContain("user@example.com");
+    expect(JSON.stringify(log.mock.calls)).not.toContain("127.0.0.1");
+    expect(JSON.stringify(log.mock.calls)).toContain("23505");
+    log.mockRestore();
+  });
+
   it("fails closed with 503 when the recovery limiter fails", async () => {
     mocks.strict.mockRejectedValueOnce(new Error("offline"));
     const gate = await enforceRateLimit(RATE_LIMIT_POLICIES.VERIFY_IP, "127.0.0.1");

@@ -9,6 +9,7 @@
  */
 
 import { z } from "zod/v4";
+import { ADMIN_CONTROL_ACTIONS } from "@/contracts/admin-control";
 import { USER_STATUS_FILTERS, FIELD_LIMITS } from "@/lib/validation/vocabulary";
 import { ADMIN_ASSIGNABLE_PLANS } from "@/lib/plans";
 
@@ -24,7 +25,7 @@ export const AdminActionSchema = z.discriminatedUnion("action", [
   // ---- get_stats ----------------------------------------------------------
   z
     .object({
-      action: z.literal("get_stats"),
+      action: z.literal(ADMIN_CONTROL_ACTIONS[0]),
       // Optional: scope which stats to retrieve (default: all)
       scope: z
         .enum(["users", "system", "all"])
@@ -36,7 +37,7 @@ export const AdminActionSchema = z.discriminatedUnion("action", [
   // ---- toggle_maintenance -------------------------------------------------
   z
     .object({
-      action: z.literal("toggle_maintenance"),
+      action: z.literal(ADMIN_CONTROL_ACTIONS[1]),
       /** Desired state: true = maintenance mode ON */
       enabled: z.boolean(),
       /** Optional message to show users while in maintenance */
@@ -50,7 +51,7 @@ export const AdminActionSchema = z.discriminatedUnion("action", [
   // ---- broadcast ----------------------------------------------------------
   z
     .object({
-      action: z.literal("broadcast"),
+      action: z.literal(ADMIN_CONTROL_ACTIONS[2]),
       /** Message content to push to connected clients */
       content: z
         .string()

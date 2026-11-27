@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Check, X, Loader2, ArrowLeft, ArrowRight, ShieldAlert } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import styles from "./Verify.module.css";
+import { apiPost } from "@/lib/api-client";
 
 /* ─── animation presets ─── */
 const scaleIn = {
@@ -50,23 +51,12 @@ export function VerifyClient() {
 
     void (async () => {
       try {
-        const res = await fetch("/api/auth/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, email }),
-        });
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          setStatus("success");
-          setMessage("");
-        } else {
-          setStatus("error");
-          setMessage(data.error || t("verifyFailedDesc"));
-        }
-      } catch {
+        await apiPost("/api/auth/verify", { token, email });
+        setStatus("success");
+        setMessage("");
+      } catch (failure) {
         setStatus("error");
-        setMessage(t("verifyFailedDesc"));
+        setMessage(failure instanceof Error ? failure.message : t("verifyFailedDesc"));
       }
     })();
   }, [isValid, token, email]); // eslint-disable-line react-hooks/exhaustive-deps

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { createHmac } from "node:crypto";
 
 const mocks = vi.hoisted(() => ({
   sendAdminLog: vi.fn(),
@@ -25,8 +26,7 @@ async function loadModule() {
   vi.resetModules();
   process.env.ADMIN_API_SHARED_SECRET = SHARED_SECRET;
   const route = await import("./route");
-  const hmac = await import("@/lib/admin/hmac");
-  return { POST: route.POST, createHmacSignature: hmac.createHmacSignature };
+  return { POST: route.POST };
 }
 
 describe("POST /api/admin/control", () => {
@@ -45,7 +45,7 @@ describe("POST /api/admin/control", () => {
   });
 
   it("succeeds (200) for valid Bot HMAC request without any browser cookie", async () => {
-    const { POST, createHmacSignature } = await loadModule();
+    const { POST } = await loadModule();
     process.env.DISCORD_ADMIN_IDS = "123456789012345678";
 
     const payload = { action: "get_stats", scope: "system" };
@@ -53,10 +53,7 @@ describe("POST /api/admin/control", () => {
     const timestamp = String(Date.now());
     const callerId = "123456789012345678";
     const callerTag = "admin#0001";
-    const signature = createHmacSignature(
-      JSON.stringify({ ...payload, callerId, callerTag, timestamp }),
-      SHARED_SECRET
-    );
+    const signature = createHmac("sha256", SHARED_SECRET).update(`["${timestamp}","${callerId}","${callerTag}","{\\"action\\":\\"get_stats\\",\\"scope\\":\\"system\\"}"]`).digest("hex");
 
     const req = new NextRequest("https://app.example/api/admin/control", {
       method: "POST",
@@ -79,7 +76,7 @@ describe("POST /api/admin/control", () => {
   });
 
   it("returns 403 for invalid HMAC signature or unauthorized x-caller-id", async () => {
-    const { POST, createHmacSignature } = await loadModule();
+    const { POST } = await loadModule();
     process.env.DISCORD_ADMIN_IDS = "123456789012345678";
 
     const payload = { action: "get_stats", scope: "system" };
@@ -104,10 +101,7 @@ describe("POST /api/admin/control", () => {
     // Valid signature but caller not in allowlist
     const callerId = "987654321098765432";
     const callerTag = "intruder#9999";
-    const signature = createHmacSignature(
-      JSON.stringify({ ...payload, callerId, callerTag, timestamp }),
-      SHARED_SECRET
-    );
+    const signature = createHmac("sha256", SHARED_SECRET).update(`["${timestamp}","${callerId}","${callerTag}","{\\"action\\":\\"get_stats\\",\\"scope\\":\\"system\\"}"]`).digest("hex");
     const unauthCallerReq = new NextRequest("https://app.example/api/admin/control", {
       method: "POST",
       headers: {

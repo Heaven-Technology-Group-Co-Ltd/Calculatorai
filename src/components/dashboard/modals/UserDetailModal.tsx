@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
+import { apiPost } from "@/lib/api-client";
 import { fetcher } from "@/lib/fetcher";
 import { Skeleton } from "../ui/Skeleton";
 import { ErrorState } from "../ui/ErrorState";
 import type { DashboardUser } from "../hooks/useUsers";
 import styles from "../styles/dashboard-modals.module.css";
 import { useDashboardT } from "../i18n/useDashboardT";
-import { useBackdropClose } from "@/lib/dialog-backdrop";
+import { useDialog } from "@/hooks/useDialog";
 
 interface DetailedUser {
   id: string;
@@ -47,22 +48,8 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
   // /api/users/[id] answers either the bare record or a `{ data }` wrapper.
   const detail =
     ((data as unknown as { data?: DetailedUser })?.data ?? data ?? null) as DetailedUser | null;
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (typeof dialog.showModal === "function" && !dialog.open) {
-      dialog.showModal();
-    }
-    return () => {
-      if (typeof dialog.close === "function" && dialog.open) {
-        dialog.close();
-      }
-    };
-  }, []);
-
-  const backdropClose = useBackdropClose(onClose);
+  const { dialogRef, dialogProps } = useDialog({ open: true, onClose });
   const currentAdminId = (session?.user as { id?: string } | undefined)?.id;
   const cannotImpersonate =
     !detail ||
@@ -75,14 +62,7 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
     setImpersonating(true);
     setImpersonateError(null);
     try {
-      const res = await fetch(`/api/users/${detail.id}/impersonate`, {
-        method: "POST",
-        credentials: "same-origin",
-      });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(body.error || "Failed to impersonate user");
-      }
+      await apiPost(`/api/users/${detail.id}/impersonate`);
       window.location.assign("/");
     } catch (err) {
       setImpersonateError(err instanceof Error ? err.message : "Failed to impersonate user");
@@ -104,12 +84,7 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
       aria-modal="true"
       aria-labelledby="user-detail-title"
       className={styles.modal}
-      onMouseDown={backdropClose.onMouseDown}
-      onClick={backdropClose.onClick}
-      onCancel={(e) => {
-        e.preventDefault();
-        onClose();
-      }}
+      {...dialogProps}
     >
       <div className={styles.header}>
         <span id="user-detail-title" className={styles.title}>{t("dashboard.modal.userDetails.title")}</span>

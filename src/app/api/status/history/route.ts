@@ -16,25 +16,15 @@ import {
   badRequestResponse,
   serverErrorResponse,
 } from "@/lib/api-response";
-import { SERVICES, type ServiceKey as Service } from "@/app/status/constants";
+import { SERVICES, type ServiceKey as Service, type Range, type BucketStats } from "@/lib/status/status-model";
 
 export const dynamic = "force-dynamic";
-
-type Range = "24h" | "7d" | "30d";
 
 const RANGES: Record<Range, { windowMs: number; bucketMs: number; bucket: "hour" | "day" }> = {
   "24h": { windowMs: 24 * 3_600_000, bucketMs: 3_600_000, bucket: "hour" },
   "7d": { windowMs: 7 * 86_400_000, bucketMs: 86_400_000, bucket: "day" },
   "30d": { windowMs: 30 * 86_400_000, bucketMs: 86_400_000, bucket: "day" },
 };
-
-interface BucketStats {
-  checks: number;
-  // null = no samples, not 100% uptime (health_checks only written on poll)
-  uptimePct: number | null;
-  avgLatencyMs: number;
-  incidents: number;
-}
 
 interface HealthHistoryRow {
   bucket: string;

@@ -14,6 +14,8 @@ export interface DashboardUser {
   plan: string;
   created_at: string;
   last_seen_at: string | null;
+  is_banned?: boolean;
+  last_active_at?: string | null;
 }
 
 export interface UsersResponse {
@@ -43,7 +45,7 @@ export function useUsers(opts: UseUsersOptions = {}) {
 
   const params = new URLSearchParams();
   if (search) params.set("search", search);
-  if (status) params.set("status", status);
+  if (status) params.set("filter", status);
   params.set("page", String(page));
   params.set("per_page", String(perPage));
   params.set("k", String(refreshKey));

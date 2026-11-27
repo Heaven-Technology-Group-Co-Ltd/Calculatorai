@@ -3,7 +3,7 @@
 import { ExternalLink } from "lucide-react";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
-import { EmptyState } from "../ui/EmptyState";
+import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "../ui/ErrorState";
 import { useTraffic } from "../hooks/useTraffic";
 import { useDashboardT } from "../i18n/useDashboardT";
@@ -18,7 +18,7 @@ export function TopPagesTable() {
     return (
       <Panel padding="md">
         <h3 className={styles.sectionTitle}>{t("dashboard.table.topPages")}</h3>
-        <EmptyState icon={<ExternalLink size={24} />} message={t("dashboard.table.topPages.empty")} />
+        <EmptyState variant="dashboard" icon={<ExternalLink size={24} />} message={t("dashboard.table.topPages.empty")} />
       </Panel>
     );
   }

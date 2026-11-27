@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { EmptyState } from "@/components/EmptyState";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
 import { fetcher } from "@/lib/fetcher";
@@ -49,7 +50,7 @@ export function WebhookManager() {
           <Skeleton variant="text" height={48} />
         </div>
       ) : safeWebhooks.length === 0 ? (
-        <p className={styles.emptyText}>{t("dashboard.settings.webhooks.empty")}</p>
+        <EmptyState variant="inline" message={t("dashboard.settings.webhooks.empty")} />
       ) : (
         <div className={tableStyles.wrapper}>
           <table className={tableStyles.table}>

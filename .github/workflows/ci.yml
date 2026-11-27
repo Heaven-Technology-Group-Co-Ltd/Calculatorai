@@ -44,3 +44,6 @@ jobs:
 
       - name: Type-check discord-bot
         run: pnpm --dir discord-bot exec tsc --noEmit
+
+      - name: Test discord-bot signer
+        run: pnpm --dir discord-bot test

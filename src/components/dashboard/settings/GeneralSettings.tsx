@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { apiGet, apiPost, ClientApiError } from "@/lib/api-client";
 import { Panel } from "../ui/Panel";
 import styles from "../styles/dashboard-settings.module.css";
 import { useDashboardT } from "../i18n/useDashboardT";
@@ -13,23 +14,18 @@ export function GeneralSettings() {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [state, setState] = useState<SaveState>("idle");
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("loading");
 
   // Values live in site_settings; starting from empty state and saving would
   // overwrite the stored site name with a hardcoded default.
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/settings")
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to load settings: ${res.status}`);
-        return res.json();
-      })
-      .then((body) => {
+    apiGet<{ site_name?: string; description?: string }>("/api/settings")
+      .then((settings) => {
         if (cancelled) return;
-        if (body?.data) {
-          if (typeof body.data.site_name === "string") setName(body.data.site_name);
-          if (typeof body.data.description === "string") setDesc(body.data.description);
-        }
+        if (typeof settings?.site_name === "string") setName(settings.site_name);
+        if (typeof settings?.description === "string") setDesc(settings.description);
         setLoadState("loaded");
       })
       .catch((err) => {
@@ -43,21 +39,16 @@ export function GeneralSettings() {
     };
   }, []);
 
-  const put = (key: string, value: string) =>
-    fetch("/api/settings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key, value }),
-    }).then((res) => {
-      if (!res.ok) throw new Error(String(res.status));
-    });
+  const put = (key: string, value: string) => apiPost("/api/settings", { key, value });
 
   const handleSave = async () => {
     setState("saving");
+    setSaveError(null);
     try {
       await Promise.all([put("site_name", name), put("description", desc)]);
       setState("saved");
-    } catch {
+    } catch (failure) {
+      setSaveError(failure instanceof ClientApiError ? failure.message : null);
       setState("error");
     }
   };
@@ -95,7 +86,7 @@ export function GeneralSettings() {
         {t("dashboard.common.save")}
       </button>
       {state === "saved" && <span role="status" style={{ marginLeft: 12, color: "var(--primary)" }}>Saved</span>}
-      {state === "error" && <span role="alert" style={{ marginLeft: 12, color: "var(--error)" }}>Save failed</span>}
+      {state === "error" && <span role="alert" style={{ marginLeft: 12, color: "var(--error)" }}>{saveError ?? "Save failed"}</span>}
     </Panel>
   );
 }

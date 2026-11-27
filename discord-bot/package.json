@@ -2,11 +2,12 @@
   "name": "admin-discord-bot",
   "version": "1.0.0",
   "private": true,
-  "description": "Admin Monitoring & Control Discord Bot — sends signed commands to Next.js API",
+  "description": "Admin Monitoring & Control Discord Bot - sends signed commands to Next.js API",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc && tsc-alias",
+    "test": "pnpm run build && node --test test/hmac.test.mjs",
     "start": "node dist/index.js",
     "lint": "eslint src",
     "deploy-commands": "tsx src/deploy-commands.ts"

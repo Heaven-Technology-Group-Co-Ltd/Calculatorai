@@ -14,6 +14,7 @@
  */
 
 import { createHmac } from "crypto";
+import { buildAdminCanonicalPayload } from "../contracts/admin-control";
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -69,7 +70,7 @@ export function signRequest(
   // Include caller identity AND the timestamp in the signed data so the
   // server can verify headers haven't been tampered with mid-transit and a
   // captured signature cannot be replayed with a forged fresh timestamp.
-  const signedData = JSON.stringify({ ...payload, callerId, callerTag, timestamp });
+  const signedData = buildAdminCanonicalPayload(timestamp, callerId, JSON.stringify(payload), callerTag);
   const signature = createHmac("sha256", SHARED_SECRET).update(signedData).digest("hex");
 
   return { signature, timestamp, callerId, callerTag };

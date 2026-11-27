@@ -6,6 +6,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Lock, Eye, EyeOff, Loader2, CheckCircle, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { apiPost } from "@/lib/api-client";
+import { PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 import styles from "./ResetPassword.module.css";
 
 const fadeSlideUp = {
@@ -48,8 +50,12 @@ export default function ResetPasswordClient() {
       setError(t("loginErrorRequired"));
       return;
     }
-    if (password.length < 8) {
+    if (password.length < PASSWORD_POLICY.minChars) {
       setError(t("signUpPasswordError"));
+      return;
+    }
+    if (!isWithinPasswordByteLimit(password)) {
+      setError(`Password must be at most ${PASSWORD_POLICY.maxBytes} bytes`);
       return;
     }
     if (password !== confirmPassword) {
@@ -59,13 +65,7 @@ export default function ResetPasswordClient() {
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Reset failed");
+      await apiPost("/api/auth/reset-password", { token, email, password });
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
