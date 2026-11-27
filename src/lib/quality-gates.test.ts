@@ -306,7 +306,7 @@ describe("CI Guardrails & Quality Gates (G8-G11)", () => {
       return content.includes('role="dialog"') || content.includes("<dialog");
     });
 
-    expect(dialogFiles.length).toBeGreaterThan(0);
+    expect(dialogFiles.length).toBe(7);
     expect(readFileSync("src/hooks/useDialog.ts", "utf8")).toContain("dialog.showModal()");
 
     for (const file of dialogFiles) {

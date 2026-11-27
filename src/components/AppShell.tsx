@@ -17,7 +17,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { LevelFilter } from "@/components/LevelFilter";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import pkg from "../../package.json";
-import { apiDelete } from "@/lib/api-client";
+import { apiDelete, ClientApiError } from "@/lib/api-client";
 import { useHistory } from "@/hooks/useHistory";
 import styles from "./AppShell.module.css";
 
@@ -29,20 +29,22 @@ export function AppShell() {
     | undefined;
   const isImpersonating = Boolean(sessionUser?.impersonatedBy);
   const [exitingImpersonation, setExitingImpersonation] = useState(false);
+  const [impersonationError, setImpersonationError] = useState<string | null>(null);
 
   const handleExitImpersonation = useCallback(async () => {
     if (!sessionUser?.id) return;
     setExitingImpersonation(true);
+    setImpersonationError(null);
     try {
       await apiDelete(`/api/users/${sessionUser.id}/impersonate`);
       window.location.assign("/dashboard/users");
       return;
     } catch (error) {
-      console.error("[Impersonation] Exit failed:", error);
+      setImpersonationError(error instanceof ClientApiError ? error.message : (lang === "th" ? "ไม่สามารถเชื่อมต่อเครือข่ายได้" : "Network error. Please try again."));
     } finally {
       setExitingImpersonation(false);
     }
-  }, [sessionUser]);
+  }, [sessionUser, lang]);
 
   const [search, setSearch] = useState("");
   const [activeLevel, setActiveLevel] = useState<string>("all");
@@ -213,6 +215,7 @@ export function AppShell() {
       <div className="mainContent">
         {isImpersonating && (
           <div className={styles.impersonationBanner} role="status">
+            {impersonationError && <span role="alert">{impersonationError}</span>}
             <span className={styles.impersonationText}>
               {lang === "th"
                 ? `กำลังใช้งานในฐานะ ${sessionUser?.email ?? sessionUser?.name ?? sessionUser?.id}`

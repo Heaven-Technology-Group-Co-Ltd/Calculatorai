@@ -14,7 +14,7 @@
  */
 
 import { createHmac } from "crypto";
-import { buildAdminCanonicalPayload } from "../../../src/contracts/admin-control.js";
+import { buildAdminCanonicalPayload } from "../contracts/admin-control";
 
 // ---------------------------------------------------------------------------
 // Configuration

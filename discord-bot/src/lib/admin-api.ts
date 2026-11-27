@@ -12,7 +12,7 @@
 import axios, { AxiosError } from "axios";
 import { z } from "zod/v4";
 import { signRequest } from "./hmac";
-import { ADMIN_CONTROL_ACTIONS, type AdminControlAction, type AdminControlRequest, type AdminControlResponses } from "../../../src/contracts/admin-control.js";
+import { ADMIN_CONTROL_ACTIONS, type AdminControlAction, type AdminControlRequest, type AdminControlResponses } from "../contracts/admin-control";
 
 // ---------------------------------------------------------------------------
 // Zod schemas (must match Next.js server-side schemas exactly)

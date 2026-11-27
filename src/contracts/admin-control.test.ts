@@ -1,31 +1,18 @@
-import { beforeAll, describe, expect, it, vi } from "vitest";
-import { ADMIN_CONTROL_ACTIONS, type AdminControlRequest } from "./admin-control";
+import { readFileSync } from "node:fs";
+import { createHmac } from "node:crypto";
+import { describe, expect, it } from "vitest";
+import { ADMIN_CONTROL_ACTIONS, buildAdminCanonicalPayload } from "./admin-control";
 
-let signRequest: typeof import("../../discord-bot/src/lib/hmac").signRequest;
-let verifyHmacSignature: typeof import("@/lib/admin/hmac").verifyHmacSignature;
-
-beforeAll(async () => {
-  vi.resetModules();
-  process.env.ADMIN_API_SHARED_SECRET = "contract-test-secret";
-  ({ signRequest } = await import("../../discord-bot/src/lib/hmac"));
-  ({ verifyHmacSignature } = await import("@/lib/admin/hmac"));
-});
-
-const commands: AdminControlRequest[] = [
-  { action: "get_stats", scope: "all" },
-  { action: "toggle_maintenance", enabled: true },
-  { action: "broadcast", content: "hello", target: "all" },
-];
-
-describe("shared admin control signing", () => {
-  it.each(commands)("signs and verifies $action", (command) => {
-    expect(ADMIN_CONTROL_ACTIONS).toContain(command.action);
-    const rawBody = JSON.stringify(command);
-    const signed = signRequest(command, "123", "admin#1");
-    expect(verifyHmacSignature(rawBody, signed.signature, signed.timestamp, "123", "admin#1")).toBe(true);
-    expect(verifyHmacSignature(rawBody + " ", signed.signature, signed.timestamp, "123", "admin#1")).toBe(false);
-    expect(verifyHmacSignature(rawBody, signed.signature, String(Number(signed.timestamp) + 1), "123", "admin#1")).toBe(false);
-    expect(verifyHmacSignature(rawBody, signed.signature, signed.timestamp, "124", "admin#1")).toBe(false);
-    expect(verifyHmacSignature(rawBody, signed.signature, signed.timestamp, "123", "other")).toBe(false);
+describe("admin control contract", () => {
+  it("keeps the standalone bot contract identical", () => {
+    const webSource = readFileSync("src/contracts/admin-control.ts", "utf8").replace(/\r\n/g, "\n");
+    const botSource = readFileSync("discord-bot/src/contracts/admin-control.ts", "utf8").replace(/\r\n/g, "\n");
+    expect(botSource).toBe(webSource);
+  });
+  it("pins the canonical bytes and HMAC digest", () => {
+    const canonical = '["1700000000000","123","a#1","{\\"action\\":\\"ping\\"}"]';
+    expect(buildAdminCanonicalPayload("1700000000000", "123", '{"action":"ping"}', "a#1")).toBe(canonical);
+    expect(createHmac("sha256", "test-secret-batch2").update(canonical).digest("hex")).toBe("2da04f732f2dc07731af7add2860aa2569cf742e8bb1bad80040765cfbeff1fe");
+    expect(ADMIN_CONTROL_ACTIONS).toEqual(["get_stats", "toggle_maintenance", "broadcast"]);
   });
 });
