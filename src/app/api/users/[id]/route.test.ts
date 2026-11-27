@@ -1,18 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { ApiError } from "@/lib/api-response";
 const mocks = vi.hoisted(() => ({ from: vi.fn(), guard: vi.fn(), admin: vi.fn() }));
 vi.mock("@/lib/supabase-client", () => ({ getSupabaseAdmin: () => ({ from: mocks.from }) }));
-vi.mock("@/lib/admin/auth-middleware", () => ({ requireAdmin: mocks.admin, adminGateErrorResponse: () => null }));
-vi.mock("@/lib/admin/user-guard", () => ({ guardAdminChange: mocks.guard }));
+vi.mock("@/lib/admin/admin-gate", () => ({ checkAdminGate: mocks.admin }));
+vi.mock("@/lib/admin/user-guard", () => ({ assertAdminMutationAllowed: mocks.guard }));
 vi.mock("@/lib/admin/audit", () => ({ withAuditLog: async (_entry: unknown, mutate: () => Promise<unknown>) => mutate() }));
 import { GET, PUT } from "./route";
 const params = { params: Promise.resolve({ id: "target" }) };
 function put(body: unknown) { return new NextRequest("https://example.com/api/users/target", { method: "PUT", body: JSON.stringify(body) }); }
 describe("user detail security", () => {
-  beforeEach(() => { vi.clearAllMocks(); mocks.admin.mockResolvedValue({ id: "admin" }); mocks.guard.mockResolvedValue(null); });
+  beforeEach(() => { vi.clearAllMocks(); mocks.admin.mockResolvedValue({ ok: true, user: { id: "admin", is_admin: true } }); mocks.guard.mockResolvedValue(undefined); });
   it("rejects unknown fields", async () => { expect((await PUT(put({ password_hash: "secret" }), params)).status).toBe(400); });
   it("rejects self-ban and last-admin demotion through the shared guard", async () => {
-    mocks.guard.mockResolvedValueOnce("Cannot ban or demote your own administrator account").mockResolvedValueOnce("Refusing to ban or demote the last active administrator");
+    mocks.guard.mockRejectedValueOnce(ApiError.forbidden("Cannot ban or demote your own administrator account")).mockRejectedValueOnce(ApiError.forbidden("Refusing to ban or demote the last active administrator"));
     expect((await PUT(put({ is_banned: true }), params)).status).toBe(403);
     expect((await PUT(put({ is_admin: false }), params)).status).toBe(403);
   });

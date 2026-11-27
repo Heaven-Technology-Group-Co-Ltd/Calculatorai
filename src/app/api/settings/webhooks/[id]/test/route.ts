@@ -1,8 +1,6 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { isAllowedWebhookUrl } from "@/lib/admin/schemas";
-import { writeAuditLog } from "@/lib/admin/audit";
 import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
 
 /**
@@ -11,15 +9,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, {}, async ({ supabase, audit }) => {
 
     const { id } = await params;
     const { data: webhook, error } = await supabase.from("discord_webhooks").select("url, name").eq("id", id).single();
@@ -31,18 +21,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return badRequestResponse("Webhook URL is not an allowed target");
     }
 
-    const res = await fetch(webhook.url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: "Test Bot", content: `🔔 Test ping from dashboard for webhook: ${webhook.name}` }),
+    await audit({ action: "test_webhook", targetType: "webhook", targetId: id }, async () => {
+      const response = await fetch(webhook.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "Test Bot", content: `🔔 Test ping from dashboard for webhook: ${webhook.name}` }),
+      });
+      if (!response.ok) throw new Error(`Discord responded ${response.status}`);
     });
-
-    if (!res.ok) throw new Error(`Discord responded ${res.status}`);
-
-    await writeAuditLog({ adminUserId: admin.id, action: "test_webhook", targetType: "webhook", targetId: id });
     return successResponse({ tested: true });
-  } catch (err) {
-    console.error("[Webhook Test] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

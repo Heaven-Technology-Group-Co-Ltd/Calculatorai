@@ -1,3 +1,5 @@
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { FIELD_LIMITS, PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 import { readMaintenanceState } from "@/lib/admin/state";
 import { NextResponse as MaintenanceResponse } from "next/server";
 /**
@@ -20,23 +22,23 @@ import nodemailer from "nodemailer";
 import { randomBytes } from "crypto";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import {
   badRequestResponse,
   rateLimitedResponse,
+  serviceUnavailableResponse,
   serverErrorResponse,
 } from "@/lib/api-response";
-import { AUTH, RATE_LIMIT } from "@/lib/api-constants";
+import { AUTH } from "@/lib/api-constants";
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
 const RegisterSchema = z.object({
-  name: z.string().max(100).optional().default(""),
-  email: z.string().email("Invalid email format").max(255),
+  name: z.string().max(FIELD_LIMITS.name).optional().default(""),
+  email: z.string().email("Invalid email format").max(FIELD_LIMITS.email),
   password: z
     .string()
-    .min(AUTH.MIN_PASSWORD_LENGTH, `Password must be at least ${AUTH.MIN_PASSWORD_LENGTH} characters`)
+    .min(PASSWORD_POLICY.minChars, `Password must be at least ${AUTH.MIN_PASSWORD_LENGTH} characters`)
     .max(AUTH.MAX_PASSWORD_LENGTH, `Password must be at most ${AUTH.MAX_PASSWORD_LENGTH} characters`)
-    .refine((password) => new TextEncoder().encode(password).length <= 72, "Password must not exceed 72 UTF-8 bytes"),
+    .refine(isWithinPasswordByteLimit, "Password must not exceed 72 UTF-8 bytes"),
 });
 
 // ── SMTP transport (lazy singleton) ─────────────────────────────────────────
@@ -63,13 +65,10 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting (by IP) ─────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimitStrict(
-      `register:${ip}`,
-      RATE_LIMIT.AUTH.limit,
-      RATE_LIMIT.AUTH.windowMs
-    );
+    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.REGISTER_IP, ip).catch(() => null);
+    if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
     if (!rateResult.allowed) {
-      return rateLimitedResponse("Too many registration attempts. Please try again later.");
+      return rateLimitedResponse("Too many registration attempts. Please try again later.", rateResult.retryAfter);
     }
 
     // ── Parse & validate body ─────────────────────────────────────────

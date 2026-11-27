@@ -39,16 +39,3 @@ export function getSupabaseAdmin(): SupabaseClient {
   });
   return cachedClient;
 }
-
-/**
- * Creates a fresh Supabase admin client.
- * Use when you need to guarantee no cached state leaks across requests.
- */
-export function createSupabaseAdmin(): SupabaseClient {
-  return createClient(getSupabaseUrl(), getServiceRoleKey(), {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
-}

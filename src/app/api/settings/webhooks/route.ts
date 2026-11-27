@@ -1,8 +1,6 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { CreateWebhookSchema, UpdateWebhookSchema } from "@/lib/admin/schemas";
-import { withAuditLog } from "@/lib/admin/audit";
 import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
 
 /**
@@ -11,23 +9,12 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, {}, async ({ supabase }) => {
 
     const { data, error } = await supabase.from("discord_webhooks").select("*").order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return successResponse(data ?? []);
-  } catch (err) {
-    console.error("[Webhooks] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }
 
 /**
@@ -36,29 +23,18 @@ export async function GET(request: NextRequest) {
  * Admin only.
  */
 export async function POST(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, {}, async ({ supabase, audit }) => {
 
     const body = await request.json();
     const parsed = CreateWebhookSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ success: false, error: `Validation failed: ${parsed.error.issues.map((i) => i.message).join("; ")}` }, { status: 422 });
 
-    const data = await withAuditLog({ adminUserId: admin.id, action: "create_webhook", targetType: "webhook" }, async () => {
+    const data = await audit({ action: "create_webhook", targetType: "webhook" }, async () => {
     const { data, error } = await supabase.from("discord_webhooks").insert({ name: parsed.data.name, url: parsed.data.url, event_type: parsed.data.event_type, status: "active" }).select().single();
     if (error) throw new Error(error.message);
 
       return data;
     });
     return successResponse(data);
-  } catch (err) {
-    console.error("[Webhooks] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

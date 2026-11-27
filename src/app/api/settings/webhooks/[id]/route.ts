@@ -1,8 +1,6 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { UpdateWebhookSchema } from "@/lib/admin/schemas";
-import { withAuditLog } from "@/lib/admin/audit";
 import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
 
 /**
@@ -11,15 +9,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, {}, async ({ supabase, audit }) => {
 
     const { id } = await params;
     const body = await request.json();
@@ -32,17 +22,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (parsed.data.status) updateData.status = parsed.data.status;
     if (parsed.data.event_type) updateData.event_type = parsed.data.event_type;
 
-    const data = await withAuditLog({ adminUserId: admin.id, action: "update_webhook", targetType: "webhook", targetId: id }, async () => {
+    const data = await audit({ action: "update_webhook", targetType: "webhook", targetId: id }, async () => {
     const { data, error } = await supabase.from("discord_webhooks").update(updateData).eq("id", id).select().single();
     if (error) throw new Error(error.message);
 
       return data;
     });
     return successResponse(data);
-  } catch (err) {
-    console.error("[Webhook Detail] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }
 
 /**
@@ -51,25 +38,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
  * Admin only.
  */
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, {}, async ({ supabase, audit }) => {
 
     const { id } = await params;
-    await withAuditLog({ adminUserId: admin.id, action: "delete_webhook", targetType: "webhook", targetId: id }, async () => {
+    await audit({ action: "delete_webhook", targetType: "webhook", targetId: id }, async () => {
     const { error } = await supabase.from("discord_webhooks").delete().eq("id", id);
     if (error) throw new Error(error.message);
 
     });
     return successResponse({ deleted: true });
-  } catch (err) {
-    console.error("[Webhook Detail] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

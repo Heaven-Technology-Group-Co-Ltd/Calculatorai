@@ -1,3 +1,4 @@
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * Centralized Admin Control API Route
  *
@@ -19,12 +20,11 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { adminGateErrorResponse } from "@/lib/admin/auth-middleware";
+import { toErrorResponse } from "@/lib/api-response";
 import { verifyHmacSignature } from "@/lib/admin/hmac";
 import { AdminActionSchema } from "@/lib/admin/schemas";
 import { sendAdminLog } from "@/lib/admin/log-dispatcher";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
-import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import { persistMaintenance, readMaintenanceState, recordCommand } from "@/lib/admin/state";
 import {
   successResponse,
@@ -60,7 +60,7 @@ async function logFailedAuth(action: string, context: Record<string, string>): P
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const quota = await checkRateLimitStrict(`admin-control:${getClientIpFromHeaders(request.headers)}`, 20, 60_000);
+    const quota = await consumePolicy(RATE_LIMIT_POLICIES.ADMIN_CONTROL_IP, getClientIpFromHeaders(request.headers));
     if (!quota.allowed) return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(quota.retryAfter) } });
   } catch (error) {
     console.error("[Admin Control] Rate limit failed:", error);
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     console.error("[Admin Control] Error:", err);
     // Raw error goes to the admin Discord log only — never in the HTTP body.
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
+    return toErrorResponse(err);
   }
 }
 

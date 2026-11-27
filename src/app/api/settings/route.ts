@@ -1,8 +1,6 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { UpdateSettingSchema } from "@/lib/admin/schemas";
-import { withAuditLog } from "@/lib/admin/audit";
 import { setMaintenance, readMaintenanceState } from "@/lib/admin/state";
 import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
 
@@ -12,15 +10,7 @@ import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenRes
  * Admin only.
  */
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, {}, async ({ supabase }) => {
 
     const { data, error } = await supabase.from("site_settings").select("*");
     if (error && error.code !== "42P01") throw new Error(error.message);
@@ -35,10 +25,7 @@ export async function GET(request: NextRequest) {
     settings["maintenance_message"] = state.maintenanceMessage || "";
 
     return successResponse(settings);
-  } catch (err) {
-    console.error("[Settings] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }
 
 /**
@@ -47,15 +34,7 @@ export async function GET(request: NextRequest) {
  * Admin only.
  */
 export async function POST(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, {}, async ({ supabase, admin, audit }) => {
 
     const body = await request.json();
     const parsed = UpdateSettingSchema.safeParse({ key: body.key, value: body.value, message: body.message });
@@ -63,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     const key = parsed.data.key;
 
-    const data = await withAuditLog({ adminUserId: admin.id, action: "update_setting", targetType: "setting", targetId: key, metadata: { value: parsed.data.value } }, async () => {
+    const data = await audit({ action: "update_setting", targetType: "setting", targetId: key, metadata: { value: parsed.data.value } }, async () => {
     const { data, error } = await supabase
       .from("site_settings")
       .upsert({ key, value: parsed.data.value, updated_at: new Date().toISOString(), updated_by: admin.id })
@@ -77,8 +56,5 @@ export async function POST(request: NextRequest) {
       return data;
     });
     return successResponse(data);
-  } catch (err) {
-    console.error("[Settings] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

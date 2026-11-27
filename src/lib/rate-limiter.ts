@@ -65,11 +65,3 @@ async function fallback(key: string, limit: number, windowMs: number): Promise<R
   }
   return { allowed: false, remaining: 0, retryAfter: Math.max(1, Math.ceil(windowMs / 1000)) };
 }
-
-export async function cleanupRateLimits(): Promise<void> {
-  const { error } = await getSupabaseAdmin().rpc("cleanup_expired_rate_limits");
-  if (error) {
-    const { error: deleteError } = await getSupabaseAdmin().from("rate_limits").delete().lt("reset_at", new Date().toISOString());
-    if (deleteError) throw deleteError;
-  }
-}

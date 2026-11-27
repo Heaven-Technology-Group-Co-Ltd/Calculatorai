@@ -1,3 +1,5 @@
+import { FIELD_LIMITS } from "@/lib/validation/vocabulary";
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * POST /api/page-views
  *
@@ -15,7 +17,6 @@ import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { z } from "zod";
 import type { TablesInsert } from "@/lib/database.types";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { checkRateLimit } from "@/lib/rate-limiter";
 import {
   badRequestResponse,
   successResponse,
@@ -25,7 +26,7 @@ import {
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
 const PageViewSchema = z.object({
-  path: z.string().max(512, "Path is too long").regex(/^\/(?!\/)[^\x00-\x1f\x7f]*$/, "Invalid path"),
+  path: z.string().max(FIELD_LIMITS.pageViewPath, "Path is too long").regex(/^\/(?!\/)[^\x00-\x1f\x7f]*$/, "Invalid path"),
   sessionId: z.string().max(128, "Session id is too long").nullish(),
   referrer: z.string().max(2048).optional(),
 });
@@ -71,9 +72,9 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting (by IP, 60/min) ──────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimit(`pageview:${ip}`, 60, 60_000);
+    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.PAGE_VIEW_IP, ip);
     if (!rateResult.allowed) {
-      return rateLimitedResponse();
+      return rateLimitedResponse(undefined, rateResult.retryAfter);
     }
 
     // ── Parse & validate body ─────────────────────────────────────────
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { path, sessionId, referrer } = parsed.data;
-    const userAgent = request.headers.get("user-agent")?.slice(0, 512);
+    const userAgent = request.headers.get("user-agent")?.slice(0, FIELD_LIMITS.userAgent);
     const supabase = getSupabaseAdmin();
 
     const pageView: TablesInsert<"page_views"> = {

@@ -1,3 +1,4 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 /**
  * GET /api/analytics/sessions
  *
@@ -6,15 +7,10 @@
  * Requires admin authentication.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, serverErrorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    await requireAdmin(request);
+  return withAdmin(request, {}, async ({ supabase }) => {
 
     const nowMs = Date.now();
     const sevenDaysAgo = new Date(nowMs - 7 * 86_400_000).toISOString();
@@ -54,8 +50,5 @@ export async function GET(request: NextRequest) {
       conversionRate,
       avgSessionDuration,
     });
-  } catch (err) {
-    console.error("[Analytics/Sessions] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

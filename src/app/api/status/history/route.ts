@@ -8,6 +8,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
+import { createBurstLimiter } from "@/lib/burst-limiter";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import {
@@ -43,25 +44,12 @@ interface HealthHistoryRow {
   avg_latency: number;
 }
 
-const recentRequests = new Map<string, number[]>();
+const takeSlot = createBurstLimiter({ max: 30, windowMs: 60_000, maxClients: 5_000 });
 const historyCache = new Map<string, { at: number; response: unknown }>();
 
-function takeSlot(ip: string): number {
-  const now = Date.now();
-  const times = (recentRequests.get(ip) ?? []).filter((time) => now - time < 60_000);
-  if (times.length >= 30) return Math.max(1, Math.ceil((60_000 - now + times[0]) / 1000));
-  times.push(now);
-  if (!recentRequests.has(ip) && recentRequests.size >= 5000) {
-    const oldest = recentRequests.keys().next();
-    if (!oldest.done) recentRequests.delete(oldest.value);
-  }
-  recentRequests.set(ip, times);
-  return 0;
-}
-
 export async function GET(request: NextRequest) {
-  const retryAfter = takeSlot(getClientIpFromHeaders(request.headers));
-  if (retryAfter) return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(retryAfter) } });
+  const slot = takeSlot(getClientIpFromHeaders(request.headers));
+  if (!slot.allowed) return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(slot.retryAfter) } });
   try {
     const params = request.nextUrl.searchParams;
 

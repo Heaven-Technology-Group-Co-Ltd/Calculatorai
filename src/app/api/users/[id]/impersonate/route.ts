@@ -13,9 +13,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decode, encode } from "next-auth/jwt";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
+import { withAdmin } from "@/lib/admin/with-admin";
 import { isSessionValid } from "@/lib/admin/session-store";
-import { writeAuditLog } from "@/lib/admin/audit";
 import { getAdminBackupCookieName, getSessionCookieName } from "@/lib/session-cookie";
 import {
   successResponse,
@@ -30,17 +29,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (err) {
-      return adminGateErrorResponse(err) ?? unauthorizedResponse("Admin access required");
-    }
-
+  return withAdmin(request, {}, async ({ admin, supabase, audit }) => {
     const { id: targetUserId } = await params;
-    const supabase = getSupabaseAdmin();
-
     const { data: targetUser, error: userError } = await supabase
       .from("users")
       .select("id, name, email")
@@ -75,13 +65,12 @@ export async function POST(
       maxAge: IMPERSONATION_TTL_SECONDS,
     });
 
-    await writeAuditLog({
-      adminUserId: admin.id,
+    return audit({
       action: "impersonate_user",
       targetType: "user",
       targetId: targetUserId,
       metadata: { targetEmail: targetUser.email },
-    });
+    }, async () => {
 
     const isProd = process.env.NODE_ENV === "production";
     const response = NextResponse.json(
@@ -108,10 +97,8 @@ export async function POST(
     });
 
     return response;
-  } catch (err) {
-    console.error("[Impersonate] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse("Internal server error");
-  }
+    });
+  });
 }
 
 export async function DELETE(request: NextRequest) {

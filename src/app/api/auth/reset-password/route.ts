@@ -1,3 +1,5 @@
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
+import { PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 /**
  * POST /api/auth/reset-password
  *
@@ -15,7 +17,6 @@ import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import {
   badRequestResponse,
   successResponse,
@@ -23,26 +24,26 @@ import {
   serverErrorResponse,
   serviceUnavailableResponse,
 } from "@/lib/api-response";
-import { RATE_LIMIT, AUTH } from "@/lib/api-constants";
+import { AUTH } from "@/lib/api-constants";
 
 const ResetSchema = z.object({
   token: z.string().min(1, "Token is required"),
   email: z.string().email("Invalid email"),
   password: z
     .string()
-    .min(AUTH.MIN_PASSWORD_LENGTH, `Password must be at least ${AUTH.MIN_PASSWORD_LENGTH} characters`)
+    .min(PASSWORD_POLICY.minChars, `Password must be at least ${AUTH.MIN_PASSWORD_LENGTH} characters`)
     .max(AUTH.MAX_PASSWORD_LENGTH)
-    .refine((password) => new TextEncoder().encode(password).length <= 72, "Password must not exceed 72 UTF-8 bytes"),
+    .refine(isWithinPasswordByteLimit, "Password must not exceed 72 UTF-8 bytes"),
 });
 
 export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimitStrict(`reset:${ip}`, 5, RATE_LIMIT.AUTH.windowMs).catch(() => null);
+    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.RESET_PASSWORD_IP, ip).catch(() => null);
     if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
     if (!rateResult.allowed) {
-      return rateLimitedResponse();
+      return rateLimitedResponse(undefined, rateResult.retryAfter);
     }
 
     // ── Parse body ─────────────────────────────────────────────────────

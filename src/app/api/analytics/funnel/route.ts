@@ -1,3 +1,4 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 /**
  * GET /api/analytics/funnel
  *
@@ -6,15 +7,10 @@
  * Requires admin authentication.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, serverErrorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    await requireAdmin(request);
+  return withAdmin(request, {}, async ({ supabase }) => {
 
     const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000).toISOString();
     const { count: visits } = await supabase.from("page_views").select("*", { count: "exact", head: true }).gte("created_at", thirtyDaysAgo);
@@ -37,8 +33,5 @@ export async function GET(request: NextRequest) {
       { stage: "Calculated", count: calculated, percentage: v > 0 ? Math.round((calculated / v) * 100) : 0 },
       { stage: "Returned", count: returned, percentage: v > 0 ? Math.round((returned / v) * 100) : 0 },
     ]);
-  } catch (err) {
-    console.error("[Analytics/Funnel] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

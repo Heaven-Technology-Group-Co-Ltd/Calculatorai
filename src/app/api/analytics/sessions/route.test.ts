@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 const mocks = vi.hoisted(() => ({ from: vi.fn(), limit: vi.fn() }));
 vi.mock("@/lib/supabase-client", () => ({ getSupabaseAdmin: () => ({ from: mocks.from }) }));
-vi.mock("@/lib/admin/auth-middleware", () => ({ requireAdmin: vi.fn().mockResolvedValue({ id: "admin" }), adminGateErrorResponse: () => null }));
+vi.mock("@/lib/admin/admin-gate", () => ({ checkAdminGate: vi.fn().mockResolvedValue({ ok: true, user: { id: "admin", is_admin: true } }) }));
 import { GET } from "./route";
 
 describe("session analytics", () => {

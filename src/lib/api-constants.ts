@@ -20,8 +20,6 @@ export const RATE_LIMIT = {
   AUTH: { limit: 10, windowMs: FIFTEEN_MINUTES_MS },
   /** Admin endpoints */
   ADMIN: { limit: 60, windowMs: ONE_MINUTE_MS },
-  /** General API */
-  DEFAULT: { limit: 100, windowMs: FIFTEEN_MINUTES_MS },
   /** History */
   HISTORY: { limit: 200, windowMs: FIFTEEN_MINUTES_MS },
 } as const;

@@ -1,16 +1,9 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase-client";
 import type { Adapter, AdapterUser, AdapterAccount, AdapterSession, VerificationToken } from "next-auth/adapters";
 
-let supabase: SupabaseClient | null = null;
-
 function getSupabase(): SupabaseClient {
-  if (!supabase) {
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      throw new Error("SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are not set");
-    }
-    supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-  }
-  return supabase;
+  return getSupabaseAdmin();
 }
 
 /** Row shape returned from the users table */

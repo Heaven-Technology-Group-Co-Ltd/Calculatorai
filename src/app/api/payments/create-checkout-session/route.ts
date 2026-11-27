@@ -1,3 +1,4 @@
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 import { readMaintenanceState } from "@/lib/admin/state";
 import { NextResponse as MaintenanceResponse } from "next/server";
 /**
@@ -21,7 +22,6 @@ import { getStripe } from "@/lib/stripe";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
-import { checkRateLimit } from "@/lib/rate-limiter";
 import {
   CHECKOUT_PLAN_IDS,
   getCheckoutPlan,
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     const stripe = getStripe();
     // ── Rate limiting ──────────────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimit(`checkout:${ip}`, 20, 60_000);
+    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.CHECKOUT_USER, ip);
     if (!rateResult.allowed) {
       return badRequestResponse("Too many requests. Please try again later.");
     }

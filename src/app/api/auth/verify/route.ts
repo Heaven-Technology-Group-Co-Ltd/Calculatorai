@@ -1,3 +1,4 @@
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * POST /api/auth/verify
  *
@@ -14,7 +15,6 @@ import { NextRequest } from "next/server";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import {
   badRequestResponse,
   successResponse,
@@ -22,7 +22,6 @@ import {
   serverErrorResponse,
   serviceUnavailableResponse,
 } from "@/lib/api-response";
-import { RATE_LIMIT } from "@/lib/api-constants";
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
 const VerifySchema = z.object({
@@ -34,14 +33,10 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting (by IP) ─────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimitStrict(
-      `verify:${ip}`,
-      RATE_LIMIT.AUTH.limit,
-      RATE_LIMIT.AUTH.windowMs
-    ).catch(() => null);
+    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.VERIFY_IP, ip).catch(() => null);
     if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
     if (!rateResult.allowed) {
-      return rateLimitedResponse();
+      return rateLimitedResponse(undefined, rateResult.retryAfter);
     }
 
     // ── Parse & validate body ─────────────────────────────────────────

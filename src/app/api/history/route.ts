@@ -1,3 +1,5 @@
+import { FIELD_LIMITS } from "@/lib/validation/vocabulary";
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 import { readMaintenanceState } from "@/lib/admin/state";
 import { NextResponse as MaintenanceResponse } from "next/server";
 /**
@@ -22,8 +24,6 @@ import {
   badRequestResponse,
   serverErrorResponse,
 } from "@/lib/api-response";
-import { checkRateLimitStrict } from "@/lib/rate-limiter";
-import { RATE_LIMIT } from "@/lib/api-constants";
 import { encodeHistoryPayload } from "@/lib/history-payload";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -37,10 +37,10 @@ function getUserId(session: unknown): string | null {
 // ── Zod schemas ──────────────────────────────────────────────────────────────
 
 const CreateHistorySchema = z.object({
-  calcId: z.string().min(1, "Calculation id is required").max(1024),
-  calcTitle: z.string().min(1, "Calculation title is required").max(1024),
+  calcId: z.string().min(1, "Calculation id is required").max(FIELD_LIMITS.historyExpression),
+  calcTitle: z.string().min(1, "Calculation title is required").max(FIELD_LIMITS.historyExpression),
   inputs: z.record(z.string().max(64), z.string().max(1024)).refine((entries) => Object.keys(entries).length <= 32),
-  result: z.string().min(1).max(4096),
+  result: z.string().min(1).max(FIELD_LIMITS.historyResult),
   unit: z.string().max(1024),
 });
 
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    const quota = await checkRateLimitStrict(`history:${userId}`, RATE_LIMIT.HISTORY.limit, RATE_LIMIT.HISTORY.windowMs);
+    const quota = await consumePolicy(RATE_LIMIT_POLICIES.HISTORY_WRITE_USER, userId);
     if (!quota.allowed) {
       return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429, headers: { "Retry-After": String(quota.retryAfter) } });
     }

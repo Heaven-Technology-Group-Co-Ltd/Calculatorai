@@ -6,8 +6,6 @@ const mocks = vi.hoisted(() => ({
   encode: vi.fn(),
   isSessionValid: vi.fn(),
   from: vi.fn(),
-  requireAdmin: vi.fn(),
-  writeAuditLog: vi.fn(),
 }));
 
 vi.mock("next-auth/jwt", () => ({
@@ -21,15 +19,6 @@ vi.mock("@/lib/admin/session-store", () => ({
 
 vi.mock("@/lib/supabase-client", () => ({
   getSupabaseAdmin: () => ({ from: mocks.from }),
-}));
-
-vi.mock("@/lib/admin/auth-middleware", () => ({
-  requireAdmin: mocks.requireAdmin,
-  adminGateErrorResponse: () => null,
-}));
-
-vi.mock("@/lib/admin/audit", () => ({
-  writeAuditLog: mocks.writeAuditLog,
 }));
 
 vi.mock("@/lib/session-cookie", () => ({

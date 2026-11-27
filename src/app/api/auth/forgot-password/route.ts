@@ -1,3 +1,4 @@
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 /**
  * POST /api/auth/forgot-password
  *
@@ -16,7 +17,6 @@ import { z } from "zod";
 import { randomBytes } from "crypto";
 import nodemailer from "nodemailer";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { checkRateLimitStrict } from "@/lib/rate-limiter";
 import {
   badRequestResponse,
   successResponse,
@@ -24,7 +24,6 @@ import {
   serverErrorResponse,
   serviceUnavailableResponse,
 } from "@/lib/api-response";
-import { RATE_LIMIT } from "@/lib/api-constants";
 
 const ForgotSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -50,10 +49,10 @@ export async function POST(request: NextRequest) {
   try {
     // ── Rate limiting ──────────────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimitStrict(`forgot:${ip}`, 5, RATE_LIMIT.AUTH.windowMs).catch(() => null);
+    const rateResult = await consumePolicy(RATE_LIMIT_POLICIES.FORGOT_PASSWORD_IP, ip).catch(() => null);
     if (!rateResult) return serviceUnavailableResponse("Rate limit unavailable");
     if (!rateResult.allowed) {
-      return rateLimitedResponse();
+      return rateLimitedResponse(undefined, rateResult.retryAfter);
     }
 
     // ── Parse body ─────────────────────────────────────────────────────
@@ -64,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
 
     const email = parsed.data.email.trim().toLowerCase();
-    const accountGate = await checkRateLimitStrict(`forgot:acct:${email}`, 3, RATE_LIMIT.AUTH.windowMs).catch(() => null);
+    const accountGate = await consumePolicy(RATE_LIMIT_POLICIES.FORGOT_PASSWORD_ACCOUNT, email).catch(() => null);
     if (!accountGate) return serviceUnavailableResponse("Rate limit unavailable");
     if (!accountGate.allowed) {
       return successResponse({ message: "If the email exists, a reset link has been sent" });
