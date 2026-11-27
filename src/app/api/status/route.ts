@@ -13,34 +13,15 @@ import { successResponse, serverErrorResponse } from "@/lib/api-response";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { createBurstLimiter } from "@/lib/burst-limiter";
 import { getRuntimeHealth } from "@/lib/runtime-health";
-import { SERVICES, type ServiceKey as Service } from "@/app/status/constants";
+import { SERVICES, type ServiceKey as Service, type ServiceCheck, type ServiceRangeStats, type RangeStats } from "@/lib/status/status-model";
 
 export const dynamic = "force-dynamic";
-
-type CheckStatus = "ok" | "error" | "degraded";
-
-interface ServiceCheck {
-  status: CheckStatus;
-  latencyMs: number;
-  message?: string;
-}
 
 const RANGE_MS = {
   "24h": 24 * 3_600_000,
   "7d": 7 * 86_400_000,
   "30d": 30 * 86_400_000,
 } as const;
-
-interface ServiceRangeStats {
-  uptimePct: number | null;
-  avgLatencyMs: number;
-  checks: number;
-  incidents: number;
-}
-
-interface RangeStats extends ServiceRangeStats {
-  services: Record<string, ServiceRangeStats>;
-}
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
 

@@ -2,6 +2,7 @@ process.env.ADMIN_API_SHARED_SECRET = "test-secret-batch2";
 
 import { beforeAll, describe, expect, it } from "vitest";
 import { createHmac } from "crypto";
+import { buildAdminCanonicalPayload } from "@/contracts/admin-control";
 
 let mod: typeof import("./hmac");
 
@@ -16,23 +17,13 @@ function sign(signedData: string): string {
 describe("verifyHmacSignature", () => {
   it("accepts a freshly signed request", () => {
     const timestamp = String(Date.now());
-    const signedData = JSON.stringify({
-      action: "ping",
-      callerId: "123",
-      callerTag: "a#1",
-      timestamp,
-    });
+    const signedData = buildAdminCanonicalPayload(timestamp, "123", '{"action":"ping"}', "a#1");
     expect(mod.verifyHmacSignature('{"action":"ping"}', sign(signedData), timestamp, "123", "a#1")).toBe(true);
   });
 
   it("rejects replay after the freshness window", () => {
     const timestamp = String(Date.now() - 6 * 60 * 1000);
-    const signedData = JSON.stringify({
-      action: "ping",
-      callerId: "123",
-      callerTag: "a#1",
-      timestamp,
-    });
+    const signedData = buildAdminCanonicalPayload(timestamp, "123", '{"action":"ping"}', "a#1");
     expect(mod.verifyHmacSignature('{"action":"ping"}', sign(signedData), timestamp, "123", "a#1")).toBe(false);
   });
 
@@ -47,12 +38,7 @@ describe("verifyHmacSignature", () => {
 
   it("rejects garbage signature", () => {
     const timestamp = String(Date.now());
-    const signedData = JSON.stringify({
-      action: "ping",
-      callerId: "123",
-      callerTag: "a#1",
-      timestamp,
-    });
+    const signedData = buildAdminCanonicalPayload(timestamp, "123", '{"action":"ping"}', "a#1");
     expect(mod.verifyHmacSignature('{"action":"ping"}', "00", timestamp, "123", "a#1")).toBe(false);
   });
 });

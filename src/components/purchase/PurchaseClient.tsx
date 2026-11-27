@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { formulas } from "@/lib/formulas/registry";
+import { apiPost } from "@/lib/api-client";
 import styles from "./Purchase.module.css";
 
 const plans = [
@@ -90,25 +91,12 @@ export function PurchaseClient() {
 
       const origin = window.location.origin;
 
-      const res = await fetch("/api/payments/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          planId: planId,
-          successUrl: `${origin}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${origin}/purchase?canceled=true`,
-        }),
+      const checkout = await apiPost<{ url?: string }>("/api/payments/create-checkout-session", {
+        planId, successUrl: `${origin}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${origin}/purchase?canceled=true`,
       });
-      const data = await res.json();
-
-      if (!data.success) {
-        throw new Error(data.error || data.message || "Failed to create checkout session");
-      }
-      if (!data.data?.url) {
-        throw new Error("No checkout URL returned");
-      }
-
-      window.location.href = data.data.url;
+      if (!checkout.url) throw new Error("No checkout URL returned");
+      window.location.href = checkout.url;
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong";
       setError(message);

@@ -8,8 +8,8 @@ import {
 } from "lucide-react";
 import type { CheckStatus, Range } from "./types";
 
-export const SERVICES = ["supabase", "stripe", "smtp", "nextjs"] as const;
-export type ServiceKey = (typeof SERVICES)[number];
+export { SERVICES } from "@/lib/status/status-model";
+export type { ServiceKey } from "@/lib/status/status-model";
 
 export const SERVICE_META: {
   id: string;

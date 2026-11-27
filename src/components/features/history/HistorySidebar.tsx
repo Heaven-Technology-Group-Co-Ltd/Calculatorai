@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useCallback } from "react";
 import { Clock, Trash2, X, Ghost } from "lucide-react";
 import { uiTranslations } from "@/lib/translations";
 import {
@@ -8,6 +8,7 @@ import {
   HistoryItemData,
 } from "./HistorySidebar.data";
 import styles from "./HistorySidebar.module.css";
+import { useDialog } from "@/hooks/useDialog";
 
 function HistoryItem({
   item,
@@ -61,35 +62,7 @@ function HistorySidebarInner({
   onClearAll,
   isMobile,
 }: HistorySidebarProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (show) {
-      if (typeof dialog.showModal === "function" && !dialog.open) {
-        dialog.showModal();
-      }
-    } else {
-      if (typeof dialog.close === "function" && dialog.open) {
-        dialog.close();
-      }
-    }
-  }, [show, isMobile]);
-
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    const rect = dialog.getBoundingClientRect();
-    const isOutside =
-      e.clientX < rect.left ||
-      e.clientX > rect.right ||
-      e.clientY < rect.top ||
-      e.clientY > rect.bottom;
-    if (isOutside) {
-      onClose();
-    }
-  };
+  const { dialogRef, dialogProps } = useDialog({ open: show, onClose, mountKey: isMobile });
 
   const historyLabel = uiTranslations.history[lang];
   const clearLabel = uiTranslations.clearAll[lang] || "Clear All";
@@ -103,11 +76,7 @@ function HistorySidebarInner({
         aria-modal="true"
         aria-label={historyLabel}
         className={styles.bottomSheet}
-        onClick={handleBackdropClick}
-        onCancel={(e) => {
-          e.preventDefault();
-          onClose();
-        }}
+        {...dialogProps}
       >
         <div className={styles.sheetHandle} />
         <div className={styles.sheetHeader}>
@@ -169,11 +138,7 @@ function HistorySidebarInner({
       aria-modal="true"
       aria-label={historyLabel}
       className={styles.drawer}
-      onClick={handleBackdropClick}
-      onCancel={(e) => {
-        e.preventDefault();
-        onClose();
-      }}
+      {...dialogProps}
     >
       <div className={styles.drawerInner}>
         <div className={styles.headerRow}>

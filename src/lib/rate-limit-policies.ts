@@ -42,9 +42,16 @@ export async function enforceRateLimit(
     const headers = status === 429 ? { "Retry-After": String(quota.retryAfter) } : undefined;
     return { ok: false as const, response: NextResponse.json({ success: false, error }, { status, headers }) };
   } catch (error) {
-    console.error("[rate-limit] Backend unavailable:", error);
+    const code = safeRateLimitErrorCode(error);
+    console.error(`[rate-limit] Backend unavailable (${policy.prefix})`, { code });
     return { ok: false as const, response: NextResponse.json(
       { success: false, error: "Rate limit unavailable", code: "SERVICE_UNAVAILABLE" }, { status: 503 },
     ) };
   }
+}
+
+export function safeRateLimitErrorCode(error: unknown): string {
+  if (typeof error !== "object" || error === null || !("code" in error)) return "UNKNOWN";
+  const code = error.code;
+  return typeof code === "string" && /^[A-Z0-9_]{1,32}$/.test(code) ? code : "UNKNOWN";
 }

@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { DollarSign } from "lucide-react";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
-import { EmptyState } from "../ui/EmptyState";
+import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "../ui/ErrorState";
 import { useRevenue } from "../hooks/useRevenue";
 import { useDashboardT } from "../i18n/useDashboardT";
@@ -19,7 +19,7 @@ export function RevenueChart() {
     return (
       <Panel padding="md">
         <h3 className={styles.sectionTitle}>{t("dashboard.chart.monthlyRevenue")}</h3>
-        <EmptyState icon={<DollarSign size={24} />} message={t("dashboard.chart.monthlyRevenue.empty")} />
+        <EmptyState variant="dashboard" icon={<DollarSign size={24} />} message={t("dashboard.chart.monthlyRevenue.empty")} />
       </Panel>
     );
   }

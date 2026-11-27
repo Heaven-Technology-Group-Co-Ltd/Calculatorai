@@ -8,9 +8,9 @@ import { AlertTriangle, CheckCircle, Clock, RefreshCw, Wrench } from "lucide-rea
 import useSWR from "swr";
 import { LiveRegion } from "@/components/LiveRegion";
 import { fetcher } from "@/lib/fetcher";
-import { RANGES, SERVICES, SERVICE_META } from "./constants";
-import type { BucketStats, HistoryData, Incident, Range, StatusData } from "./types";
-import { formatBucketLabel } from "./utils";
+import { RANGES, SERVICE_META } from "./constants";
+import type { HistoryData, Range, StatusData } from "./types";
+import { deriveStatusModel } from "@/lib/status/status-model";
 import { Charts } from "./components/Charts";
 import { IncidentTimeline } from "./components/IncidentTimeline";
 import { KPIBar } from "./components/KPIBar";
@@ -61,82 +61,9 @@ export function StatusClient() {
 
   const overall = status?.stats[range];
 
-  const chartPoints = useMemo(() => {
-    return (history?.series ?? []).map((pt) => {
-      const vals = SERVICES.map((s) => pt.services[s]).filter(
-        (v): v is BucketStats & { uptimePct: number } =>
-          v !== null && v !== undefined && v.uptimePct !== null,
-      );
-      const uptime = vals.length
-        ? Math.round((vals.reduce((a, v) => a + v.uptimePct, 0) / vals.length) * 10) / 10
-        : null;
-      const label = formatBucketLabel(pt.start, range);
-      const row: Record<string, string | number | null> = { key: pt.start, label, uptime };
-      for (const s of SERVICES) row[s] = pt.services[s]?.avgLatencyMs ?? null;
-      return row;
-    });
-  }, [history, range]);
-
-  const fullLabels = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const pt of history?.series ?? []) {
-      const d = new Date(pt.start);
-      map.set(
-        formatBucketLabel(pt.start, range),
-        range === "24h"
-          ? d.toLocaleString()
-          : d.toLocaleDateString(undefined, { weekday: "short", year: "numeric", month: "short", day: "numeric" }),
-      );
-    }
-    return map;
-  }, [history, range]);
-
-  const hasUptime = chartPoints.some((p) => p.uptime !== null);
-  const hasLatency = chartPoints.some((p) => SERVICES.some((s) => p[s] !== null));
-
-  const uptimeDomain: [number, number] = useMemo(() => {
-    const vals = chartPoints
-      .map((p) => p.uptime)
-      .filter((v): v is number => typeof v === "number");
-    if (!vals.length) return [90, 100];
-    return [Math.max(0, Math.floor(Math.min(...vals) - 5)), 100];
-  }, [chartPoints]);
-
-  const incidents: Incident[] = useMemo(() => {
-    const list: Incident[] = [];
-    if (status) {
-      for (const s of SERVICES) {
-        const c = status.checks[s];
-        if (c && c.status !== "ok") {
-          list.push({
-            id: `live-${s}`,
-            time: status.timestamp,
-            service: s,
-            message: c.message ?? (c.status === "error" ? "Check failing" : "Running degraded"),
-            kind: c.status === "error" ? "error" : "degraded",
-          });
-        }
-      }
-    }
-    (history?.series ?? []).forEach((pt) => {
-      for (const s of SERVICES) {
-        const st = pt.services[s];
-        // incidents > 0 implies checks > 0, so uptimePct is never null here; guard is for the type
-        if (st && st.incidents > 0 && st.uptimePct !== null) {
-          list.push({
-            id: `${pt.start}-${s}`,
-            time: pt.start,
-            service: s,
-            message: `${st.incidents} failed check${st.incidents > 1 ? "s" : ""} · ${st.uptimePct}% uptime · avg ${st.avgLatencyMs}ms`,
-            kind: st.uptimePct < 50 ? "error" : "degraded",
-          });
-        }
-      }
-    });
-    return list
-      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-      .slice(0, 20);
-  }, [status, history]);
+  const { chartPoints, fullLabels, incidents, failing, healthyCount, banner: bannerState, hasUptime, hasLatency, uptimeDomain } = useMemo(
+    () => deriveStatusModel(status, history, range), [status, history, range],
+  );
 
   // ── Loading state ──
   if (loading && !status) {
@@ -168,16 +95,13 @@ export function StatusClient() {
     );
   }
 
-  // ── Derived banner state ──
-  const failing = SERVICES.filter((s) => status?.checks[s] && status.checks[s].status !== "ok");
-  const hasError = failing.some((s) => status?.checks[s]?.status === "error");
-  const banner = status?.maintenanceMode
-    ? { color: "#eab308", title: "Maintenance Mode", icon: Wrench }
-    : failing.length === 0
-      ? { color: "#22c55e", title: "All Systems Operational", icon: CheckCircle }
-      : hasError
-        ? { color: "#ef4444", title: "Partial Outage", icon: AlertTriangle }
-        : { color: "#eab308", title: "Degraded Performance", icon: AlertTriangle };
+  const banners = {
+    maintenance: { color: "#eab308", title: "Maintenance Mode", icon: Wrench },
+    operational: { color: "#22c55e", title: "All Systems Operational", icon: CheckCircle },
+    outage: { color: "#ef4444", title: "Partial Outage", icon: AlertTriangle },
+    degraded: { color: "#eab308", title: "Degraded Performance", icon: AlertTriangle },
+  };
+  const banner = banners[bannerState];
   const BannerIcon = banner.icon;
 
   return (
@@ -287,7 +211,7 @@ export function StatusClient() {
           </h2>
           <p className={styles.bannerSubtitle}>
             {failing.length === 0
-              ? `5 services healthy · checked in ${status?.totalLatencyMs ?? 0}ms`
+              ? `${healthyCount} services healthy · checked in ${status?.totalLatencyMs ?? 0}ms`
               : `${failing.length} service${failing.length > 1 ? "s" : ""} affected: ${failing.join(", ")}`}
           </p>
         </div>

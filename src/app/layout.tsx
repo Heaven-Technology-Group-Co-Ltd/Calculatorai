@@ -4,7 +4,6 @@ import { MotionConfig } from "framer-motion";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import { SessionProvider } from "@/lib/SessionProvider";
-import { PageViewTracker } from "@/components/PageViewTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,7 +40,6 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <SessionProvider>
-          <PageViewTracker />
           <LanguageProvider>
             <MotionConfig reducedMotion="user">
               {children}

@@ -25,8 +25,8 @@ export function usePageView(path?: string) {
             sessionIdRef.current = globalThis.crypto.randomUUID();
             sessionStorage.setItem("analytics-session-id", sessionIdRef.current);
           }
-        } catch (error) {
-          console.warn("[PageViews] Session storage unavailable", error);
+        } catch {
+          sessionIdRef.current = null;
         }
       }
       const payload = JSON.stringify({

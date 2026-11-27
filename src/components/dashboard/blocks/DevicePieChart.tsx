@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Monitor } from "lucide-react";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
-import { EmptyState } from "../ui/EmptyState";
+import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "../ui/ErrorState";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useDashboardT } from "../i18n/useDashboardT";
@@ -18,7 +18,7 @@ export function DevicePieChart() {
 
   if (error) return <ErrorState message={t("dashboard.error.loadFailed")} onRetry={mutate} />;
   if (!isLoading && (!data?.deviceData || data.deviceData.length === 0)) {
-    return <EmptyState icon={<Monitor size={28} />} message={t("dashboard.chart.devices.empty")} />;
+    return <EmptyState variant="dashboard" icon={<Monitor size={28} />} message={t("dashboard.chart.devices.empty")} />;
   }
 
   const chartData = (data?.deviceData ?? []).map((d) => ({

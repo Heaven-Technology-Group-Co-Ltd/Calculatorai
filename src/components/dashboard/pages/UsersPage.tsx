@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { USER_STATUS_FILTERS, USER_STATUS_FILTER_LABELS } from "@/lib/validation/vocabulary";
 import { useUsers, type DashboardUser } from "../hooks/useUsers";
+import { EmptyState } from "@/components/EmptyState";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
 import { ErrorState } from "../ui/ErrorState";
 import { StatusBadge } from "../ui/StatusBadge";
 import { UserDetailModal } from "../modals/UserDetailModal";
-import { MessageModal } from "../modals/MessageModal";
-import { BanConfirmModal } from "../modals/BanConfirmModal";
-import { PlanChangeModal } from "../modals/PlanChangeModal";
+import { UserActionDialog } from "../modals/UserActionDialog";
 import { useDashboardT } from "../i18n/useDashboardT";
 import styles from "../styles/dashboard-tables.module.css";
 import blockStyles from "../styles/dashboard-blocks.module.css";
@@ -20,7 +20,7 @@ export function UsersPage() {
   const { t } = useDashboardT();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<DashboardUser | null>(null);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const debouncedSearch = useDebouncedValue(search, 300);
@@ -32,7 +32,7 @@ export function UsersPage() {
     perPage: 25,
   });
 
-  const users = data?.data ?? [];
+  const users = (data?.data ?? []).map((user) => ({ ...user, status: user.is_banned === undefined ? user.status : user.is_banned ? "banned" as const : "active" as const, last_seen_at: user.last_active_at ?? user.last_seen_at }));
   const total = data?.total ?? 0;
   const pageSize = data?.per_page ?? 25;
   const totalPages = Math.ceil(total / pageSize);
@@ -63,10 +63,9 @@ export function UsersPage() {
             setPage(1);
           }}
         >
-          <option value="">All status</option>
-          <option value="active">Active</option>
-          <option value="suspended">Suspended</option>
-          <option value="banned">Banned</option>
+          {USER_STATUS_FILTERS.map((filter) => (
+            <option key={filter} value={filter}>{USER_STATUS_FILTER_LABELS[filter]}</option>
+          ))}
         </select>
       </div>
 
@@ -145,9 +144,7 @@ export function UsersPage() {
                 ))}
               {!isLoading && !error && users.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: "center", padding: 32, color: "#7A7570" }}>
-                    {t("dashboard.users.empty")}
-                  </td>
+                  <td colSpan={5}><EmptyState variant="inline" message={t("dashboard.users.empty")} /></td>
                 </tr>
               )}
             </tbody>
@@ -186,26 +183,8 @@ export function UsersPage() {
           onClose={() => { setSelectedUser(null); setActiveModal(null); }}
         />
       )}
-      {selectedUser && activeModal === "message" && (
-        <MessageModal
-          user={selectedUser}
-          onClose={() => { setSelectedUser(null); setActiveModal(null); }}
-          onSuccess={() => mutate()}
-        />
-      )}
-      {selectedUser && activeModal === "ban" && (
-        <BanConfirmModal
-          user={selectedUser}
-          onClose={() => { setSelectedUser(null); setActiveModal(null); }}
-          onSuccess={() => mutate()}
-        />
-      )}
-      {selectedUser && activeModal === "plan" && (
-        <PlanChangeModal
-          user={selectedUser}
-          onClose={() => { setSelectedUser(null); setActiveModal(null); }}
-          onSuccess={() => mutate()}
-        />
+      {selectedUser && (activeModal === "message" || activeModal === "ban" || activeModal === "plan") && (
+        <UserActionDialog user={selectedUser} action={activeModal} onClose={() => { setSelectedUser(null); setActiveModal(null); }} onSuccess={() => { void mutate(); }} />
       )}
     </div>
   );

@@ -77,11 +77,6 @@ export function notFoundResponse(error = "Resource not found") {
   return NextResponse.json({ success: false, error }, { status: 404 });
 }
 
-export function rateLimitedResponse(error = "Too many requests. Please try again later.", retryAfter?: number) {
-  const headers = retryAfter === undefined ? undefined : { "Retry-After": String(retryAfter) };
-  return NextResponse.json({ success: false, error }, { status: 429, headers });
-}
-
 export function serverErrorResponse(error = "Internal server error") {
   return NextResponse.json({ success: false, error }, { status: 500 });
 }

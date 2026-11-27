@@ -2,7 +2,7 @@
 
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
-import { EmptyState } from "../ui/EmptyState";
+import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "../ui/ErrorState";
 import { useAnalytics, type FunnelStage } from "../hooks/useAnalytics";
 import { useDashboardT } from "../i18n/useDashboardT";
@@ -17,7 +17,7 @@ export function ConversionFunnel() {
     return (
       <Panel padding="md">
         <h3 className={styles.sectionTitle}>{t("dashboard.funnel.conversion")}</h3>
-        <EmptyState message={t("dashboard.funnel.empty")} />
+        <EmptyState variant="dashboard" message={t("dashboard.funnel.empty")} />
       </Panel>
     );
   }

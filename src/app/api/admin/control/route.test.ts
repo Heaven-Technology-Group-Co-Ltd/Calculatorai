@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { buildAdminCanonicalPayload } from "@/contracts/admin-control";
 
 const mocks = vi.hoisted(() => ({
   sendAdminLog: vi.fn(),
@@ -54,7 +55,7 @@ describe("POST /api/admin/control", () => {
     const callerId = "123456789012345678";
     const callerTag = "admin#0001";
     const signature = createHmacSignature(
-      JSON.stringify({ ...payload, callerId, callerTag, timestamp }),
+      buildAdminCanonicalPayload(timestamp, callerId, rawBody, callerTag),
       SHARED_SECRET
     );
 
@@ -105,7 +106,7 @@ describe("POST /api/admin/control", () => {
     const callerId = "987654321098765432";
     const callerTag = "intruder#9999";
     const signature = createHmacSignature(
-      JSON.stringify({ ...payload, callerId, callerTag, timestamp }),
+      buildAdminCanonicalPayload(timestamp, callerId, rawBody, callerTag),
       SHARED_SECRET
     );
     const unauthCallerReq = new NextRequest("https://app.example/api/admin/control", {

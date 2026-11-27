@@ -33,17 +33,20 @@ describe("Design System Quality Gates", () => {
 
   it("G10 (Dialog Semantics): all dialog surfaces use native <dialog> with showModal and 0 div dialogs", () => {
     const dialogFiles = walk("src/components", (f) => {
-      if (!f.endsWith(".tsx")) return false;
+      if (!f.endsWith(".tsx") || f.endsWith(".test.tsx")) return false;
       const content = readFileSync(f, "utf8");
       return content.includes('role="dialog"') || content.includes("<dialog");
     });
-    expect(dialogFiles.length).toBe(9);
+    expect(dialogFiles.length).toBeGreaterThan(0);
+    expect(readFileSync("src/hooks/useDialog.ts", "utf8")).toContain("dialog.showModal()");
 
     for (const file of dialogFiles) {
       const content = readFileSync(file, "utf8");
       expect(content, `${file} must use <dialog>`).toContain("<dialog");
       expect(content, `${file} must not use div role="dialog"`).not.toMatch(/<div[^>]*role=["']dialog["']/);
-      expect(content, `${file} must invoke showModal()`).toContain("showModal");
+      expect(content, `${file} must use the native dialog lifecycle`).toContain("useDialog(");
+      expect(content, `${file} must attach the lifecycle ref`).toContain("ref={dialogRef}");
+      expect(content, `${file} must attach dialog event handlers`).toContain("{...dialogProps}");
     }
   });
 

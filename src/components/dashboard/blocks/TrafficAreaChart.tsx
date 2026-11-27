@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Activity } from "lucide-react";
 import { Panel } from "../ui/Panel";
 import { Skeleton } from "../ui/Skeleton";
-import { EmptyState } from "../ui/EmptyState";
+import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "../ui/ErrorState";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useDashboardT } from "../i18n/useDashboardT";
@@ -16,7 +16,7 @@ export function TrafficAreaChart() {
 
   if (error) return <ErrorState message={t("dashboard.error.loadFailed")} onRetry={mutate} />;
   if (!isLoading && (!data?.visitorChart || data.visitorChart.length === 0)) {
-    return <EmptyState icon={<Activity size={28} />} message={t("dashboard.chart.traffic.empty")} />;
+    return <EmptyState variant="dashboard" icon={<Activity size={28} />} message={t("dashboard.chart.traffic.empty")} />;
   }
 
   const chartData = (data?.visitorChart ?? []).map((pt) => {

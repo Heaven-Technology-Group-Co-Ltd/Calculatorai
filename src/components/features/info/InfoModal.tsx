@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   BookOpen,
   X,
@@ -18,7 +18,7 @@ import {
 } from "./InfoModal.data";
 import styles from "./InfoModal.module.css";
 import { useSyncExternalStore } from "react";
-import { useBackdropClose } from "@/lib/dialog-backdrop";
+import { useDialog } from "@/hooks/useDialog";
 
 const MOBILE_QUERY = "(max-width: 767px)";
 
@@ -46,33 +46,13 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
   );
   const [tabChoice, setTabChoice] = useState<GuideDeviceCategory | null>(null);
   const deviceTab = tabChoice ?? (isNarrow ? "mobile" : "pc");
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
   const handleClose = () => {
     setTabChoice(null);
     onClose();
   };
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (show) {
-      if (typeof dialog.showModal === "function" && !dialog.open) {
-        dialog.showModal();
-      }
-    } else {
-      if (typeof dialog.close === "function" && dialog.open) {
-        dialog.close();
-      }
-    }
-    return () => {
-      if (typeof dialog?.close === "function" && dialog.open) {
-        dialog.close();
-      }
-    };
-  }, [show]);
-
-  const backdropClose = useBackdropClose(handleClose);
+  const { dialogRef, dialogProps } = useDialog({ open: show, onClose: handleClose });
 
 
   const filteredSteps = GUIDE_STEPS.filter((step) => {
@@ -104,12 +84,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
       aria-modal="true"
       aria-labelledby="info-modal-title"
       className="modal-container m-info-container"
-      onMouseDown={backdropClose.onMouseDown}
-      onClick={backdropClose.onClick}
-      onCancel={(e) => {
-        e.preventDefault();
-        handleClose();
-      }}
+      {...dialogProps}
     >
       <div className="modal-header">
         <div className="modal-header-icon">

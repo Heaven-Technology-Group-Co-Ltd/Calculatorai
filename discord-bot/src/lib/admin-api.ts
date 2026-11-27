@@ -12,15 +12,16 @@
 import axios, { AxiosError } from "axios";
 import { z } from "zod/v4";
 import { signRequest } from "./hmac";
+import { ADMIN_CONTROL_ACTIONS, type AdminControlAction, type AdminControlRequest, type AdminControlResponses } from "../../../src/contracts/admin-control.js";
 
 // ---------------------------------------------------------------------------
 // Zod schemas (must match Next.js server-side schemas exactly)
 // ---------------------------------------------------------------------------
 
 const AdminPayload = z.discriminatedUnion("action", [
-  z.object({ action: z.literal("get_stats"), scope: z.enum(["users", "system", "all"]).default("all") }).strict(),
-  z.object({ action: z.literal("toggle_maintenance"), enabled: z.boolean(), message: z.string().max(500).optional() }).strict(),
-  z.object({ action: z.literal("broadcast"), content: z.string().min(1).max(2000), target: z.enum(["all", "web", "discord"]).default("all") }).strict(),
+  z.object({ action: z.literal(ADMIN_CONTROL_ACTIONS[0]), scope: z.enum(["users", "system", "all"]).default("all") }).strict(),
+  z.object({ action: z.literal(ADMIN_CONTROL_ACTIONS[1]), enabled: z.boolean(), message: z.string().max(500).optional() }).strict(),
+  z.object({ action: z.literal(ADMIN_CONTROL_ACTIONS[2]), content: z.string().min(1).max(2000), target: z.enum(["all", "web", "discord"]).default("all") }).strict(),
 ]);
 
 type AdminPayload = z.infer<typeof AdminPayload>;
@@ -62,11 +63,11 @@ export function getControlUrl(): string {
  * @returns The response data from the server
  * @throws Error if the request or validation fails
  */
-export async function sendAdminCommand<T = unknown>(
-  payload: AdminPayload,
+export async function sendAdminCommand<A extends AdminControlAction>(
+  payload: Extract<AdminControlRequest, { action: A }>,
   callerId: string,
   callerTag: string
-): Promise<T> {
+): Promise<AdminControlResponses[A]> {
   // 1. Client-side Zod validation before sending
   const parsed = AdminPayload.safeParse(payload);
   if (!parsed.success) {
@@ -84,7 +85,7 @@ export async function sendAdminCommand<T = unknown>(
   // 3. Send with axios
   const controlUrl = getControlUrl();
   try {
-    const response = await axios.post<ApiResponse<T>>(
+    const response = await axios.post<ApiResponse<AdminControlResponses[A]>>(
       controlUrl,
       parsed.data,
       {
@@ -103,7 +104,7 @@ export async function sendAdminCommand<T = unknown>(
       throw new Error(response.data.error ?? "Unknown API error");
     }
 
-    return response.data.data as T;
+    return response.data.data as AdminControlResponses[A];
   } catch (err) {
     if (err instanceof AxiosError) {
       const serverMsg = (err.response?.data as ApiResponse | undefined)?.error;

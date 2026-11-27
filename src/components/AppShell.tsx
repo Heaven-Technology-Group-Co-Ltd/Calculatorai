@@ -17,6 +17,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { LevelFilter } from "@/components/LevelFilter";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import pkg from "../../package.json";
+import { apiDelete } from "@/lib/api-client";
 import { useHistory } from "@/hooks/useHistory";
 import styles from "./AppShell.module.css";
 
@@ -33,14 +34,9 @@ export function AppShell() {
     if (!sessionUser?.id) return;
     setExitingImpersonation(true);
     try {
-      const res = await fetch(`/api/users/${sessionUser.id}/impersonate`, {
-        method: "DELETE",
-        credentials: "same-origin",
-      });
-      if (res.ok) {
-        window.location.assign("/dashboard/users");
-        return;
-      }
+      await apiDelete(`/api/users/${sessionUser.id}/impersonate`);
+      window.location.assign("/dashboard/users");
+      return;
     } catch (error) {
       console.error("[Impersonation] Exit failed:", error);
     } finally {

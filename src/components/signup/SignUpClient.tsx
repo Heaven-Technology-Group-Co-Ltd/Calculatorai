@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus, Mail, Lock, User, CheckCircle, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { uiTranslations } from "@/lib/translations";
 import { useLanguage } from "@/lib/LanguageContext";
+import { apiPost } from "@/lib/api-client";
+import { PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 import styles from "./SignUp.module.css";
 
 /* ─── animation presets ─── */
@@ -55,8 +57,12 @@ export function SignUpClient() {
       setMessage({ type: "error", text: lang === "th" ? "กรุณากรอกข้อมูลให้ครบทุกช่อง" : "Please fill in all fields" });
       return;
     }
-    if (password.length < 8) {
+    if (password.length < PASSWORD_POLICY.minChars) {
       setMessage({ type: "error", text: lang === "th" ? "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร" : "Password must be at least 8 characters" });
+      return;
+    }
+    if (!isWithinPasswordByteLimit(password)) {
+      setMessage({ type: "error", text: lang === "th" ? `รหัสผ่านต้องมีขนาดไม่เกิน ${PASSWORD_POLICY.maxBytes} ไบต์` : `Password must be at most ${PASSWORD_POLICY.maxBytes} bytes` });
       return;
     }
     if (password !== confirmPassword) {
@@ -66,13 +72,7 @@ export function SignUpClient() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Registration failed");
+      await apiPost("/api/auth/register", { name, email, password });
 
       setMessage({ type: "success", text: "" });
     } catch (err) {
@@ -224,7 +224,7 @@ export function SignUpClient() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"
-                minLength={8}
+                minLength={PASSWORD_POLICY.minChars}
                 disabled={loading}
                 style={{ paddingRight: 36 }}
               />
@@ -257,7 +257,7 @@ export function SignUpClient() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               autoComplete="new-password"
-              minLength={8}
+              minLength={PASSWORD_POLICY.minChars}
               disabled={loading}
             />
           </motion.div>

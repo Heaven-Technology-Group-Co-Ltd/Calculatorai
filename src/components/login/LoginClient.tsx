@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, LogIn, Loader2, AlertCircle, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { apiPost } from "@/lib/api-client";
 import styles from "./Login.module.css";
 
 /* ─── animation presets ─── */
@@ -88,11 +89,7 @@ export function LoginClient() {
     if (!email.trim()) return;
     setResendLoading(true);
     try {
-      await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password: crypto.randomUUID(), name: "" }),
-      });
+      await apiPost("/api/auth/register", { email: email.trim(), password: crypto.randomUUID(), name: "" });
       setResendSent(true);
     } catch {
       setResendSent(true);
@@ -112,16 +109,8 @@ export function LoginClient() {
     setForgotLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: forgotEmail }),
-      });
-      if (res.ok) {
-        setForgotSent(true);
-      } else {
-        setError(lang === "th" ? "ไม่สามารถส่งลิงก์รีเซ็ตรหัสผ่านได้ กรุณาลองใหม่อีกครั้ง" : "Failed to send reset link. Please check your connection and try again.");
-      }
+      await apiPost("/api/auth/forgot-password", { email: forgotEmail });
+      setForgotSent(true);
     } catch {
       setError(lang === "th" ? "เกิดข้อผิดพลาดในการเชื่อมต่อเครือข่าย" : "Network error. Unable to reach server.");
     } finally {

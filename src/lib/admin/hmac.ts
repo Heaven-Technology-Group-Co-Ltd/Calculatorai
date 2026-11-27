@@ -13,6 +13,7 @@
  */
 
 import { createHmac, timingSafeEqual } from "crypto";
+import { buildAdminCanonicalPayload } from "@/contracts/admin-control";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -105,18 +106,12 @@ export function verifyHmacSignature(
   //    This must match the bot-side signRequest() exactly. Binding the
   //    timestamp into the signature means a captured request cannot be
   //    replayed with a forged fresh timestamp header.
-  let parsedBody: Record<string, unknown>;
+  let signedData: string;
   try {
-    parsedBody = JSON.parse(rawBody) as Record<string, unknown>;
+    signedData = buildAdminCanonicalPayload(timestamp, callerId ?? "", rawBody, callerTag ?? "");
   } catch {
     return false;
   }
-  const signedData = JSON.stringify({
-    ...parsedBody,
-    callerId: callerId ?? "",
-    callerTag: callerTag ?? "",
-    timestamp,
-  });
 
   // 4. Recompute HMAC and compare in constant time
   const expectedSig = createHmacSignature(signedData);
