@@ -9,6 +9,7 @@
  */
 
 import { z } from "zod/v4";
+import { USER_STATUS_FILTERS, FIELD_LIMITS } from "@/lib/validation/vocabulary";
 import { ADMIN_ASSIGNABLE_PLANS } from "@/lib/plans";
 
 // ---------------------------------------------------------------------------
@@ -107,7 +108,7 @@ export const CreateRefundSchema = z
   .object({
     invoice_id: z.number().int().positive("Invoice ID required"),
     amount_cents: z.number().int().positive("Amount must be positive"),
-    reason: z.string().max(500).optional(),
+    reason: z.string().max(FIELD_LIMITS.banReason).optional(),
   })
   .strict();
 
@@ -117,20 +118,20 @@ export const CreateRefundSchema = z
 
 export const UserListQuerySchema = z.object({
   search: z.string().max(100).optional().default(""),
-  filter: z.enum(["all", "active", "paid", "banned"]).optional().default("all"),
+  filter: z.enum(USER_STATUS_FILTERS).optional().default("all"),
   page: z.coerce.number().int().positive().optional().default(1),
   per_page: z.coerce.number().int().min(1).max(100).optional().default(20),
 });
 
 export const BanUserSchema = z
   .object({
-    reason: z.string().max(500).optional(),
+    reason: z.string().max(FIELD_LIMITS.banReason).optional(),
   })
   .strict();
 
 export const AdminMessageSchema = z
   .object({
-    content: z.string().min(1, "Message cannot be empty").max(2000),
+    content: z.string().min(1, "Message cannot be empty").max(FIELD_LIMITS.adminMessage),
   })
   .strict();
 

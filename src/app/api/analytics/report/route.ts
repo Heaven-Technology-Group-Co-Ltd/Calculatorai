@@ -13,10 +13,9 @@ import { isAllowedWebhookUrl } from "@/lib/admin/schemas";
  */
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, serverErrorResponse, badRequestResponse } from "@/lib/api-response";
+import { withAdmin } from "@/lib/admin/with-admin";
+import { successResponse, badRequestResponse } from "@/lib/api-response";
 import { TriggerReportSchema } from "@/lib/admin/schemas";
-import { writeAuditLog } from "@/lib/admin/audit";
 
 /** Gather report data for the past 7 days. */
 async function getReportData() {
@@ -55,24 +54,15 @@ async function getReportData() {
 }
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    await requireAdmin(request);
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data } = await supabase.from("admin_audit_log").select("created_at").eq("action", "weekly_report_sent").order("created_at", { ascending: false }).limit(1);
     return successResponse({ lastSent: data?.[0]?.created_at ?? null });
-  } catch (err) {
-    console.error("[Analytics/Report] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    await requireAdmin(request);
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const body = await request.json();
     const parsed = TriggerReportSchema.safeParse(body);
@@ -115,13 +105,10 @@ export async function POST(request: NextRequest) {
       }],
     };
 
-    const res = await fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    if (!res.ok) throw new Error(`Discord responded ${res.status}`);
-
-    await writeAuditLog({ adminUserId: "system", action: "weekly_report_sent", metadata: { range } });
+    await audit({ action: "weekly_report_sent", metadata: { range } }, async () => {
+      const response = await fetch(webhookUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if (!response.ok) throw new Error(`Discord responded ${response.status}`);
+    });
     return successResponse({ sent: true, range });
-  } catch (err) {
-    console.error("[Analytics/Report] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

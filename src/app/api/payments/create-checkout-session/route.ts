@@ -1,3 +1,4 @@
+import { enforceRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 import { readMaintenanceState } from "@/lib/admin/state";
 import { NextResponse as MaintenanceResponse } from "next/server";
 /**
@@ -18,20 +19,11 @@ import { NextRequest } from "next/server";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { z } from "zod";
 import { getStripe } from "@/lib/stripe";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
-import { checkRateLimit } from "@/lib/rate-limiter";
-import {
-  CHECKOUT_PLAN_IDS,
-  getCheckoutPlan,
-} from "@/lib/plans";
-import {
-  successResponse,
-  badRequestResponse,
-  badGatewayResponse,
-  serverErrorResponse,
-} from "@/lib/api-response";
+import { CHECKOUT_PLAN_IDS, getCheckoutPlan,  } from "@/lib/plans";
+import { successResponse, badRequestResponse, badGatewayResponse, serverErrorResponse,  } from "@/lib/api-response";
 
 const CheckoutSchema = z.object({
   planId: z.enum(CHECKOUT_PLAN_IDS, {
@@ -70,10 +62,8 @@ export async function POST(request: NextRequest) {
     const stripe = getStripe();
     // ── Rate limiting ──────────────────────────────────────────────────
     const ip = getClientIpFromHeaders(request.headers);
-    const rateResult = await checkRateLimit(`checkout:${ip}`, 20, 60_000);
-    if (!rateResult.allowed) {
-      return badRequestResponse("Too many requests. Please try again later.");
-    }
+    const quota = await enforceRateLimit(RATE_LIMIT_POLICIES.CHECKOUT_USER, ip, { throttleStatus: 400 });
+    if (!quota.ok) return quota.response;
 
     // ── Parse & validate body ──────────────────────────────────────────
     const body = await request.json();

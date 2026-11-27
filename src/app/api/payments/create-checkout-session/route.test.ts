@@ -3,14 +3,14 @@ import { NextRequest } from "next/server";
 
 const mocks = vi.hoisted(() => {
   const create = vi.fn().mockResolvedValue({ id: "cs_test_1", url: "https://checkout.stripe.com/c/pay/1" });
-  return { maintenance: vi.fn(), create, getStripe: vi.fn(() => ({ checkout: { sessions: { create } } })) };
+  return { maintenance: vi.fn(), quota: vi.fn(), create, getStripe: vi.fn(() => ({ checkout: { sessions: { create } } })) };
 });
 
 vi.mock("@/lib/admin/state", () => ({ readMaintenanceState: mocks.maintenance }));
 
 vi.mock("@/lib/stripe", () => ({ getStripe: mocks.getStripe }));
 vi.mock("@/lib/rate-limiter", () => ({
-  checkRateLimit: vi.fn().mockResolvedValue({ allowed: true, remaining: 19, retryAfter: 0 }),
+  checkRateLimit: mocks.quota,
 }));
 vi.mock("next-auth", () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
 vi.mock("@/lib/auth-options", () => ({ authOptions: {} }));
@@ -29,6 +29,7 @@ describe("POST /api/payments/create-checkout-session", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.maintenance.mockResolvedValue({ maintenanceMode: false });
+    mocks.quota.mockResolvedValue({ allowed: true, remaining: 19, retryAfter: 0 });
     process.env.NEXT_PUBLIC_APP_URL = "https://app.example";
   });
 
@@ -39,6 +40,13 @@ describe("POST /api/payments/create-checkout-session", () => {
   it("rejects checkout during maintenance", async () => {
     mocks.maintenance.mockResolvedValue({ maintenanceMode: true });
     expect((await POST(post("app.example", "https://app.example/paid", "https://app.example/cancel"))).status).toBe(503);
+  });
+
+  it("retains HTTP 400 for throttled checkout before creating a Stripe session", async () => {
+    mocks.quota.mockResolvedValueOnce({ allowed: false, retryAfter: 10 });
+    const response = await POST(post("app.example", "https://app.example/paid", "https://app.example/cancel"));
+    expect(response.status).toBe(400);
+    expect(mocks.create).not.toHaveBeenCalled();
   });
 
   it("rejects redirect URLs that only match an attacker-supplied Host header", async () => {

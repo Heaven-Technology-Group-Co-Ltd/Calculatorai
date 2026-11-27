@@ -1,10 +1,8 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
 import { ChangePlanSchema } from "@/lib/admin/schemas";
-import { withAuditLog } from "@/lib/admin/audit";
 import { getAdminPlanPriceCents } from "@/lib/plans";
-import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/plan
@@ -12,15 +10,7 @@ import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/a
  * Admin only.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const { id } = await params;
     const body = await request.json();
@@ -31,7 +21,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const amountMonthly = getAdminPlanPriceCents(newPlan);
     const nowIso = new Date().toISOString();
 
-    await withAuditLog({ adminUserId: admin.id, action: "change_plan", targetType: "user", targetId: id, metadata: { plan: newPlan } }, async () => {
+    await audit({ action: "change_plan", targetType: "user", targetId: id, metadata: { plan: newPlan } }, async () => {
     const { error: userErr } = await supabase
       .from("users")
       .update({ plan: newPlan })
@@ -57,8 +47,5 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     });
     return successResponse({ plan: newPlan });
-  } catch (err) {
-    console.error("[Change Plan] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

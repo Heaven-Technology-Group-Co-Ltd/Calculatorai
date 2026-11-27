@@ -1,3 +1,4 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 /**
  * GET /api/analytics/traffic
  *
@@ -5,16 +6,11 @@
  * top pages, geography breakdown, referral sources, total views.
  * Requires admin authentication.
  */
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, serverErrorResponse } from "@/lib/api-response";
+import { NextRequest } from "next/server";
+import { successResponse } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    await requireAdmin(request);
+  return withAdmin(request, async ({ supabase }) => {
 
     const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000).toISOString();
     const [viewsResponse, totalResponse] = await Promise.all([
@@ -42,8 +38,5 @@ export async function GET(request: NextRequest) {
       referrals: Object.entries(referrerCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([source, views]) => ({ source, views })),
       totalViews,
     });
-  } catch (err) {
-    console.error("[Analytics/Traffic] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

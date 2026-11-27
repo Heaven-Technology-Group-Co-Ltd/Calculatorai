@@ -89,4 +89,11 @@ describe("GET /api/payments/status", () => {
     expect(res.status).toBe(429);
     expect(mocks.retrieve).not.toHaveBeenCalled();
   });
+  it("returns 503 before contacting Stripe when the strict limiter fails", async () => {
+    mocks.checkRateLimitStrict.mockRejectedValueOnce(new Error("offline"));
+    const response = await GET(get());
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({ code: "SERVICE_UNAVAILABLE" });
+    expect(mocks.retrieve).not.toHaveBeenCalled();
+  });
 });

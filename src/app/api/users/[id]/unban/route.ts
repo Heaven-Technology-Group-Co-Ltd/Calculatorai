@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { withAuditLog } from "@/lib/admin/audit";
+import { USER_SAFE_SELECT_COLUMNS } from "@/lib/admin/user-columns";
+import { withAdmin } from "@/lib/admin/with-admin";
+import { NextRequest } from "next/server";
 import { restoreUserSessions } from "@/lib/admin/session-store";
-import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 
 /**
  * POST /api/users/[id]/unban
@@ -11,19 +10,11 @@ import { successResponse, forbiddenResponse, serverErrorResponse } from "@/lib/a
  * Admin only.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const { id } = await params;
-    const data = await withAuditLog({ adminUserId: admin.id, action: "unban_user", targetType: "user", targetId: id }, async () => {
-    const { data, error } = await supabase.from("users").update({ is_banned: false, banned_at: null, banned_reason: null }).eq("id", id).select().single();
+    const data = await audit({ action: "unban_user", targetType: "user", targetId: id }, async () => {
+    const { data, error } = await supabase.from("users").update({ is_banned: false, banned_at: null, banned_reason: null }).eq("id", id).select(USER_SAFE_SELECT_COLUMNS).single();
     if (error) throw new Error(error.message);
 
     await restoreUserSessions(id);
@@ -32,8 +23,5 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return data;
     });
     return successResponse(data);
-  } catch (err) {
-    console.error("[Unban User] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

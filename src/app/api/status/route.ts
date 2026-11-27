@@ -11,6 +11,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-client";
 import { readMaintenanceState } from "@/lib/admin/state";
 import { successResponse, serverErrorResponse } from "@/lib/api-response";
 import { getClientIpFromHeaders } from "@/lib/client-ip";
+import { createBurstLimiter } from "@/lib/burst-limiter";
 import { getRuntimeHealth } from "@/lib/runtime-health";
 import { SERVICES, type ServiceKey as Service } from "@/app/status/constants";
 
@@ -210,27 +211,7 @@ const STATUS_TTL = 30_000;
 // Per-IP burst guard. In-process on purpose: src/lib/rate-limiter.ts is
 // Supabase-backed and fail-open, so it cannot short-circuit before the probes
 // it exists to protect, and it would add the round trip it is meant to save.
-const RATE_LIMIT_MAX = 30;
-const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX_CLIENTS = 5_000;
-const recentHits = new Map<string, number[]>();
-
-function takeStatusSlot(ip: string, now: number): { allowed: boolean; retryAfter: number } {
-  const hits = (recentHits.get(ip) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  if (hits.length >= RATE_LIMIT_MAX) {
-    recentHits.set(ip, hits);
-    const retryAfterMs = RATE_LIMIT_WINDOW_MS - (now - hits[0]);
-    return { allowed: false, retryAfter: Math.max(1, Math.ceil(retryAfterMs / 1000)) };
-  }
-  hits.push(now);
-  if (!recentHits.has(ip) && recentHits.size >= RATE_LIMIT_MAX_CLIENTS) {
-    // Bound the map: drop the oldest tracked client before inserting a new one.
-    const oldest = recentHits.keys().next();
-    if (!oldest.done) recentHits.delete(oldest.value);
-  }
-  recentHits.set(ip, hits);
-  return { allowed: true, retryAfter: 0 };
-}
+const takeStatusSlot = createBurstLimiter({ max: 30, windowMs: 60_000, maxClients: 5_000 });
 
 async function collectChecks(db: SupabaseClient<any>): Promise<Record<Service, ServiceCheck>> {
   const [supabaseCheck, stripeCheck, smtpCheck] = await Promise.all([

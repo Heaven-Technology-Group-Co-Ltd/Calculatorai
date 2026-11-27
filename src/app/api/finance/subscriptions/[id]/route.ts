@@ -1,3 +1,4 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 /**
  * PUT /api/finance/subscriptions/[id]
  *
@@ -5,20 +6,14 @@
  * Requires admin authentication.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, serverErrorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 import { UpdateSubscriptionSchema } from "@/lib/admin/schemas";
-import { withAuditLog } from "@/lib/admin/audit";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    const admin = await requireAdmin(request);
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const { id } = await params;
     const body = await request.json();
@@ -41,8 +36,7 @@ export async function PUT(
     }
     updateData.updated_at = new Date().toISOString();
 
-    const data = await withAuditLog({
-      adminUserId: admin.id,
+    const data = await audit({
       action: "update_subscription",
       targetType: "subscription",
       targetId: id,
@@ -62,8 +56,5 @@ export async function PUT(
       return data;
     });
     return successResponse(data);
-  } catch (err) {
-    console.error("[Finance/Subscriptions] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

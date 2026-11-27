@@ -1,3 +1,4 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 /**
  * GET /api/finance/invoices
  *
@@ -11,17 +12,11 @@
  * Requires admin authentication.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, serverErrorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 import { CreateInvoiceSchema } from "@/lib/admin/schemas";
-import { withAuditLog } from "@/lib/admin/audit";
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    await requireAdmin(request);
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data, error } = await supabase
       .from("invoices")
@@ -32,17 +27,11 @@ export async function GET(request: NextRequest) {
     if (error) throw new Error(error.message);
 
     return successResponse(data ?? []);
-  } catch (err) {
-    console.error("[Finance/Invoices] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    const admin = await requireAdmin(request);
+  return withAdmin(request, async ({ supabase, audit }) => {
 
     const body = await request.json();
     const parsed = CreateInvoiceSchema.safeParse(body);
@@ -54,8 +43,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = await withAuditLog({
-      adminUserId: admin.id,
+    const data = await audit({
       action: "create_invoice",
       targetType: "invoice",
       metadata: { amount_cents: parsed.data.amount_cents },
@@ -78,8 +66,5 @@ export async function POST(request: NextRequest) {
       return data;
     });
     return successResponse(data);
-  } catch (err) {
-    console.error("[Finance/Invoices] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

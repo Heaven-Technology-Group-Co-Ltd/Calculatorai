@@ -11,7 +11,14 @@ describe("registration security", () => {
     expect((await POST(request("ก".repeat(25)))).status).toBe(400);
     expect((await POST(request("x".repeat(73)))).status).toBe(400);
   });
+  it("rejects passwords shorter than eight characters", async () => {
+    expect((await POST(request("1234567"))).status).toBe(400);
+  });
   it("rejects registration during maintenance", async () => {
     mocks.maintenance.mockResolvedValue({ maintenanceMode: true }); expect((await POST(request("longpassword"))).status).toBe(503);
+  });
+  it("returns 503 when the rate limiter is unavailable", async () => {
+    mocks.quota.mockRejectedValueOnce(new Error("offline"));
+    expect((await POST(request("longpassword"))).status).toBe(503);
   });
 });

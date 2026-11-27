@@ -25,4 +25,9 @@ describe("password recovery", () => {
   it("returns 503 when the rate limiter fails", async () => {
     mocks.quota.mockRejectedValueOnce(new Error("offline")); expect((await POST(request())).status).toBe(503);
   });
+  it("returns 503 when the recipient limiter fails", async () => {
+    mocks.quota.mockResolvedValueOnce({ allowed: true }).mockRejectedValueOnce(new Error("offline"));
+    expect((await POST(request())).status).toBe(503);
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
 });

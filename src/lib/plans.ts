@@ -1,3 +1,5 @@
+import { PLANS } from "@/lib/validation/vocabulary";
+
 /**
  * Single Source of Truth for Plans, Pricing, and Subscription Intervals.
  *
@@ -13,15 +15,7 @@ export type CheckoutPlanId = (typeof CHECKOUT_PLAN_IDS)[number];
 export const ADMIN_ASSIGNABLE_PLANS = ["basic", "pro", "enterprise"] as const;
 export type AdminAssignablePlan = (typeof ADMIN_ASSIGNABLE_PLANS)[number];
 
-export const DB_PLAN_IDS = [
-  "free",
-  "basic",
-  "pro",
-  "enterprise",
-  "monthly",
-  "yearly",
-  "lifetime",
-] as const;
+export const DB_PLAN_IDS = PLANS;
 export type DbPlanId = (typeof DB_PLAN_IDS)[number];
 
 export type BillingInterval = "month" | "year" | "lifetime";

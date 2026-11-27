@@ -1,3 +1,4 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 import { computePercentages } from "./percentages";
 /**
  * Stats API — serves real data to the dashboard Overview page.
@@ -7,10 +8,8 @@ import { computePercentages } from "./percentages";
  * Admin-only endpoint. Returns aggregated statistics with no PII.
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { NextRequest } from "next/server";
+import { successResponse } from "@/lib/api-response";
 
 /** Parse User-Agent string into device type */
 function parseDeviceType(ua: string | null): "desktop" | "mobile" | "tablet" {
@@ -22,15 +21,7 @@ function parseDeviceType(ua: string | null): "desktop" | "mobile" | "tablet" {
 }
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
+  return withAdmin(request, async ({ supabase }) => {
 
     const nowMs = Date.now();
     const yesterday = new Date(nowMs - 86_400_000).toISOString();
@@ -128,8 +119,5 @@ export async function GET(request: NextRequest) {
       totalPageViews7d: totalPageViews7d || 0,
       serverTime: new Date().toISOString(),
     });
-  } catch (err) {
-    console.error("[Stats] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

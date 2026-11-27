@@ -1,3 +1,4 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 /**
  * GET /api/finance/revenue
  *
@@ -5,16 +6,11 @@
  * and monthly revenue breakdown for the past 12 months.
  * Requires admin authentication.
  */
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, serverErrorResponse } from "@/lib/api-response";
+import { NextRequest } from "next/server";
+import { successResponse } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    await requireAdmin(request);
+  return withAdmin(request, async ({ supabase }) => {
 
     const { data: activeSubs } = await supabase
       .from("subscriptions")
@@ -79,8 +75,5 @@ export async function GET(request: NextRequest) {
       activeSubscriptions: activeSubs?.length ?? 0,
       monthlyRevenue,
     });
-  } catch (err) {
-    console.error("[Finance/Revenue] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

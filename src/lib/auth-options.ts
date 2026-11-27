@@ -1,3 +1,4 @@
+import { consumePolicy, RATE_LIMIT_POLICIES } from "@/lib/rate-limit-policies";
 import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
@@ -7,9 +8,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { SupabaseCustomAdapter } from "./supabase-adapter";
 import { getSessionCookieName } from "./session-cookie";
 import { isSessionValid } from "./admin/session-store";
-import { checkRateLimitStrict } from "./rate-limiter";
 import { getClientIpFromHeaders } from "./client-ip";
-import { RATE_LIMIT } from "./api-constants";
 
 function toHeaders(source?: Record<string, string | string[] | undefined>): Headers {
   const headers = new Headers();
@@ -62,8 +61,8 @@ export const authOptions: NextAuthOptions = {
 
         const email = credentials.email.trim().toLowerCase();
         const ip = getClientIpFromHeaders(toHeaders(request?.headers));
-        const accountGate = await checkRateLimitStrict(`login:ip-acct:${ip}:${email}`, RATE_LIMIT.AUTH.limit, RATE_LIMIT.AUTH.windowMs);
-        const ipGate = ip === "unknown" ? null : await checkRateLimitStrict(`login:ip:${ip}`, 30, RATE_LIMIT.AUTH.windowMs);
+        const accountGate = await consumePolicy(RATE_LIMIT_POLICIES.LOGIN_IP_ACCOUNT, `${ip}:${email}`);
+        const ipGate = ip === "unknown" ? null : await consumePolicy(RATE_LIMIT_POLICIES.LOGIN_IP, ip);
         if (!accountGate.allowed || (ipGate && !ipGate.allowed)) {
           await bcrypt.compare(credentials.password, await getTimingEqualizerHash());
           return null;

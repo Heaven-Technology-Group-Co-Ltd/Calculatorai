@@ -1,14 +1,14 @@
-import { guardAdminChange } from "@/lib/admin/user-guard";
+import { FIELD_LIMITS } from "@/lib/validation/vocabulary";
+import { USER_SAFE_SELECT_COLUMNS } from "@/lib/admin/user-columns";
+import { assertAdminMutationAllowed } from "@/lib/admin/user-guard";
 import { z } from "zod";
 import { DB_PLAN_IDS } from "@/lib/plans";
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { withAuditLog } from "@/lib/admin/audit";
-import { successResponse, badRequestResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse, notFoundResponse } from "@/lib/api-response";
+import { NextRequest } from "next/server";
+import { withAdmin } from "@/lib/admin/with-admin";
+import { successResponse, badRequestResponse } from "@/lib/api-response";
 
 const UserUpdateSchema = z.object({
-  name: z.string().max(100).nullable().optional(),
+  name: z.string().max(FIELD_LIMITS.name).nullable().optional(),
   plan: z.enum(DB_PLAN_IDS).optional(),
   is_admin: z.boolean().optional(),
   is_banned: z.boolean().optional(),
@@ -20,18 +20,9 @@ const UserUpdateSchema = z.object({
  * Admin only.
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
-
+  return withAdmin(request, async ({ supabase }) => {
     const { id } = await params;
-    const { data: user, error } = await supabase.from("users").select("id, name, email, image, email_verified, is_admin, is_banned, banned_at, banned_reason, last_active_at, session_version, plan, created_at, updated_at").eq("id", id).single();
+    const { data: user, error } = await supabase.from("users").select(USER_SAFE_SELECT_COLUMNS).eq("id", id).single();
     if (error) throw new Error(error.message);
 
     const { data: sub } = await supabase.from("subscriptions").select("plan, status, amount_monthly").eq("user_id", id).eq("status", "active").limit(1).single();
@@ -52,10 +43,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       topFormula: topFormula ? { id: topFormula[0], count: topFormula[1] } : null,
       recentSessions: [],
     });
-  } catch (err) {
-    console.error("[User Detail] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }
 
 /**
@@ -64,34 +52,21 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
  * Admin only.
  */
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    let admin: { id: string; name: string | null; email: string | null };
-    try {
-      admin = await requireAdmin(request);
-    } catch (__err){
-      return adminGateErrorResponse(__err) ?? forbiddenResponse("Admin access required");
-    }
-
+  return withAdmin(request, async ({ admin, supabase, audit }) => {
     const { id } = await params;
     const body = await request.json();
     const parsed = UserUpdateSchema.safeParse(body);
     if (!parsed.success) return badRequestResponse("Invalid user fields");
     const updateData = parsed.data;
-    const guardError = await guardAdminChange(admin.id, id, updateData);
-    if (guardError) return forbiddenResponse(guardError);
+    await assertAdminMutationAllowed(admin.id, id, updateData);
 
-    const data = await withAuditLog({ adminUserId: admin.id, action: "update_user", targetType: "user", targetId: id, metadata: updateData }, async () => {
-    const { data, error } = await supabase.from("users").update(updateData).eq("id", id).select("id, name, email, image, email_verified, is_admin, is_banned, banned_at, banned_reason, last_active_at, session_version, plan, created_at, updated_at").single();
+    const data = await audit({ action: "update_user", targetType: "user", targetId: id, metadata: updateData }, async () => {
+    const { data, error } = await supabase.from("users").update(updateData).eq("id", id).select(USER_SAFE_SELECT_COLUMNS).single();
     if (error) throw new Error(error.message);
 
 
       return data;
     });
     return successResponse(data);
-  } catch (err) {
-    console.error("[User Detail] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }

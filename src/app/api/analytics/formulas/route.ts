@@ -1,19 +1,15 @@
+import { withAdmin } from "@/lib/admin/with-admin";
 /**
  * GET /api/analytics/formulas
  *
  * Returns formula usage heatmap (last 30 days) and top 10 formulas.
  * Requires admin authentication.
  */
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-client";
-import { requireAdmin, adminGateErrorResponse } from "@/lib/admin/auth-middleware";
-import { successResponse, serverErrorResponse } from "@/lib/api-response";
+import { NextRequest } from "next/server";
+import { successResponse } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = getSupabaseAdmin();
-
-    await requireAdmin(request);
+  return withAdmin(request, async ({ supabase }) => {
 
     const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000).toISOString();
     const { data } = await supabase.from("formula_usage").select("formula_id, created_at").gte("created_at", thirtyDaysAgo);
@@ -35,8 +31,5 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b.total - a.total).slice(0, 10);
 
     return successResponse({ heatmap: rows, topFormulas, days });
-  } catch (err) {
-    console.error("[Analytics/Formulas] Error:", err);
-    return adminGateErrorResponse(err) ?? serverErrorResponse();
-  }
+  });
 }
