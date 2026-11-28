@@ -23,6 +23,7 @@ export function ConversionFunnel() {
   }
 
   const stages: FunnelStage[] = data ?? [];
+  const max = Math.max(0, ...stages.map((stage) => stage.count));
 
   return (
     <Panel padding="md">
@@ -41,7 +42,7 @@ export function ConversionFunnel() {
               <div className={styles.funnelBarTrack}>
                 <div
                   className={styles.funnelBarFill}
-                  style={{ width: `${Math.min(s.percentage, 100)}%` }}
+                  style={{ width: `${max > 0 ? Math.min((s.count / max) * 100, 100) : 0}%` }}
                 />
               </div>
               <span className={styles.funnelStageCount}>{s.count.toLocaleString()}</span>

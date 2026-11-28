@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { deriveStatusModel, SERVICES, type StatusData, type HistoryData } from "./status-model";
 
 const status: StatusData = {
-  status: "operational", maintenanceMode: false, maintenanceMessage: null, uptimeSeconds: 1,
+  status: "operational", maintenanceMode: false, maintenanceMessage: null,
   checks: Object.fromEntries(SERVICES.map((service) => [service, { status: "ok", latencyMs: 5 }])),
   stats: {} as StatusData["stats"], totalLatencyMs: 5, timestamp: "2026-11-27T00:00:00Z",
 };

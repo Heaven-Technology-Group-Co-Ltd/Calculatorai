@@ -7,7 +7,7 @@ import { departments } from "@/lib/math-data";
 import { uiTranslations } from "@/lib/translations";
 import type { Lang } from "@/types/locale";
 import { useLanguage } from "@/lib/LanguageContext";
-import { formulas } from "@/lib/formulas/registry";
+import { formulas, getFormulaById } from "@/lib/formulas/registry";
 import { FormulaGrid } from "@/components/formulas/FormulaGrid";
 import { HomeHero } from "@/components/HomeHero";
 import { HistorySidebar } from "@/components/features/history/HistorySidebar";
@@ -47,6 +47,7 @@ export function AppShell() {
   }, [sessionUser, lang]);
 
   const [search, setSearch] = useState("");
+  const [legacyFormulaId, setLegacyFormulaId] = useState<string | null>(null);
   const [activeLevel, setActiveLevel] = useState<string>("all");
   const [activeDepartment, setActiveDepartment] = useState<string>("all");
   const [showFormulas, setShowFormulas] = useState(true);
@@ -142,6 +143,11 @@ export function AppShell() {
 
   const restoreItem = useCallback((item: { calcId: string; inputs: Record<string, string> }) => {
     setRestoration(prev => ({ ...prev, [item.calcId]: item.inputs }));
+    setLegacyFormulaId(item.calcId === "fi_npv" ? item.calcId : null);
+    setSearch("");
+    setActiveLevel("all");
+    setActiveDepartment("all");
+    setShowFormulas(true);
     closeHistory();
   }, [closeHistory]);
 
@@ -152,7 +158,9 @@ export function AppShell() {
     closeConfirm();
   }, [clearAll, closeConfirm]);
 
-  const filtered = formulas.filter(c => {
+  const legacyFormula = legacyFormulaId ? getFormulaById(legacyFormulaId) : undefined;
+  const catalog = legacyFormula ? [...formulas.filter((formula) => formula.id !== "biz_npv"), legacyFormula] : formulas;
+  const filtered = catalog.filter(c => {
     const q = search.trim().toLowerCase();
     const matchSearch =
       !q ||
@@ -198,9 +206,9 @@ export function AppShell() {
       <Sidebar
         lang={lang}
         activeLevel={activeLevel}
-        setActiveLevel={setActiveLevel}
+        setActiveLevel={(level) => { setActiveLevel(level); if (window.innerWidth <= 640) setShowSidebar(false); }}
         activeDepartment={activeDepartment}
-        setActiveDepartment={setActiveDepartment}
+        setActiveDepartment={(department) => { setActiveDepartment(department); if (window.innerWidth <= 640) setShowSidebar(false); }}
         departments={departments}
         onShowHistory={() => setShowHistory(true)}
         onShowInfo={() => setShowModal(true)}
@@ -293,6 +301,7 @@ export function AppShell() {
         {/* Main scrollable content */}
         <div className="app-wrapper">
           <HomeHero
+            formulaCount={filtered.length}
             lang={lang}
             searchQuery={search}
             setSearchQuery={setSearch}

@@ -33,8 +33,9 @@ const COLOR_ICON_CLASS: Record<KpiColor, string> = {
 
 function formatValue(val: number | string, fmt?: KpiFormat): string {
   if (typeof val === "string") return val;
+  if (!Number.isFinite(val)) return "—";
   switch (fmt) {
-    case "currency": return `$${val.toLocaleString()}`;
+    case "currency": return `$${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     case "percent": return `${val}%`;
     default: return val.toLocaleString();
   }

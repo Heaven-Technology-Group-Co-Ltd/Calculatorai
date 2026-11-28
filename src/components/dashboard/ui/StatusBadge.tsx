@@ -3,17 +3,19 @@
 import { useDashboardT, type DashboardTKey } from "../i18n/useDashboardT";
 import styles from "../styles/dashboard-blocks.module.css";
 
-type Status = "active" | "suspended" | "banned";
+type Status = "active" | "suspended" | "banned" | "unverified";
 
 const STATUS_CLASS: Record<Status, string> = {
   active: styles.badgeActive,
   suspended: styles.badgeSuspended,
+  unverified: styles.badgeSuspended,
   banned: styles.badgeBanned,
 };
 
 const STATUS_KEY: Record<Status, DashboardTKey> = {
   active: "dashboard.status.active",
   suspended: "dashboard.status.suspended",
+  unverified: "dashboard.status.unverified",
   banned: "dashboard.status.banned",
 };
 

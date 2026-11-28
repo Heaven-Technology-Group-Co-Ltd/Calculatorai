@@ -45,15 +45,6 @@ describe("dashboard proxy gate", () => {
     expect(response.headers.get("location")).toBe("https://example.com/");
   });
 
-  it("passes /formulas-demo through outside production so the page can serve it", async () => {
-    // Proxy gates the demo in production (first layer, Node runtime); outside
-    // production it must pass through (second layer: formulas-demo-gate.ts).
-    const response = await proxy(new NextRequest("https://example.com/formulas-demo"));
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get("x-middleware-next")).toBe("1");
-  });
-
   it("leaves Content-Security-Policy to next.config, not the proxy", async () => {
     vi.mocked(checkAdminGate).mockResolvedValue({
       ok: true,

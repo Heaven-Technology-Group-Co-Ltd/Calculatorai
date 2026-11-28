@@ -22,8 +22,19 @@ function iconForAction(action: string): React.ReactNode {
   return key ? ACTION_ICON[key] : ACTION_ICON["default"];
 }
 
+export function formatActivityTime(timestamp: string, locale: string, now = Date.now()): string {
+  const date = new Date(timestamp);
+  if (!Number.isFinite(date.getTime())) return "—";
+  const minutes = Math.max(0, Math.floor((now - date.getTime()) / 60_000));
+  if (minutes >= 43200) return date.toLocaleDateString(locale);
+  const relative = new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" });
+  if (minutes >= 1440) return relative.format(-Math.floor(minutes / 1440), "day");
+  if (minutes >= 60) return relative.format(-Math.floor(minutes / 60), "hour");
+  return relative.format(-minutes, "minute");
+}
+
 export function RecentActivityFeed() {
-  const { t } = useDashboardT();
+  const { t, locale } = useDashboardT();
   const { data, error, isLoading } = useDashboardStats();
 
   if (error) return null; // non-critical, hide on error
@@ -54,7 +65,7 @@ export function RecentActivityFeed() {
                 <span className={styles.activityItemUser}>{item.user}</span>
                 <span className={styles.activityItemAction}>{item.action}</span>
               </div>
-              <span className={styles.activityItemTime}>{item.time}</span>
+              <span className={styles.activityItemTime}>{formatActivityTime(item.time, locale)}</span>
             </div>
           ))}
         </div>

@@ -2,7 +2,7 @@
 
 import { Server } from "lucide-react";
 import type { StatusData } from "../types";
-import { formatTime, formatUptime } from "../utils";
+import { formatTime } from "../utils";
 import styles from "../StatusClient.module.css";
 
 interface SystemInfoProps {
@@ -11,7 +11,6 @@ interface SystemInfoProps {
 
 export function SystemInfo({ status }: SystemInfoProps) {
   const rows = [
-    { label: "Uptime", value: formatUptime(status.uptimeSeconds) },
     { label: "Checked at", value: formatTime(status.timestamp) },
   ];
 

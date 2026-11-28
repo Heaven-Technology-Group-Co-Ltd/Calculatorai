@@ -12,19 +12,6 @@ import { mapDashboardGateResult } from "@/lib/admin/dashboard-gate-mapping";
  *  3. Admin path protection header signals
  */
 export default async function proxy(request: NextRequest) {
-  // First gate for /formulas-demo. Proxy runs on the Node.js runtime and sees
-  // env vars set at `next start` (probe-verified 2026-10-24); the page-level
-  // gate in formulas-demo-gate.ts is the second layer.
-
-  if (
-    request.nextUrl.pathname === "/formulas-demo" ||
-    request.nextUrl.pathname.startsWith("/formulas-demo/")
-  ) {
-    if (process.env.NODE_ENV === "production" && process.env.ENABLE_FORMULAS_DEMO !== "true") {
-      return new NextResponse(null, { status: 404 });
-    }
-  }
-
   if (request.nextUrl.pathname === "/dashboard" || request.nextUrl.pathname.startsWith("/dashboard/")) {
     const gateResult = await checkAdminGate(request);
     const action = mapDashboardGateResult(gateResult);

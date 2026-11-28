@@ -226,7 +226,7 @@ export function StatusClient() {
       </div>
 
       {/* KPI row */}
-      {overall && <KPIBar stats={overall} />}
+      {overall && <KPIBar stats={overall} incidentCount={incidents.length} />}
 
       {/* Service cards */}
       <section className={styles.fade}>

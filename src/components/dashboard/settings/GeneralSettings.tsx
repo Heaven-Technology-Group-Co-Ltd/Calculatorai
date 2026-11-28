@@ -71,6 +71,7 @@ export function GeneralSettings() {
         <label className={styles.formLabel} htmlFor="general-description">{t("dashboard.settings.general.description")}</label>
         <textarea
           id="general-description"
+          placeholder={t("dashboard.settings.general.descriptionPlaceholder")}
           className={styles.formTextarea}
           rows={3}
           value={desc}

@@ -21,7 +21,7 @@
   "dashboard.chart.devices.mobile": "Mobile",
   "dashboard.chart.devices.tablet": "Tablet",
 
-  "dashboard.chart.monthlyRevenue": "Monthly Revenue",
+  "dashboard.chart.monthlyRevenue": "Gross payments (selected range)",
   "dashboard.chart.monthlyRevenue.empty": "No revenue data yet",
   "dashboard.chart.monthlyRevenue.tooltip": "Revenue",
 
@@ -46,7 +46,7 @@
   "dashboard.health.uptime": "Uptime",
   "dashboard.health.sessions": "Active Sessions",
   "dashboard.health.database": "Database",
-  "dashboard.health.revenue": "Monthly Revenue",
+  "dashboard.health.revenue": "Gross payments (selected range)",
   "dashboard.health.serverTime": "Server Time",
 
   "dashboard.plan.breakdown": "Plan Breakdown",
@@ -57,7 +57,7 @@
   "dashboard.formula.showAll": "Show all",
   "dashboard.formula.showTop50": "Show top 50",
 
-  "dashboard.finance.mrr": "MRR",
+  "dashboard.finance.mrr": "Gross payments (selected range)",
   "dashboard.finance.arpu": "ARPU",
   "dashboard.finance.churn": "Churn",
   "dashboard.finance.refunds": "Refunds",
@@ -194,5 +194,7 @@
   "dashboard.error.forbidden": "You do not have permission for this action.",
   "dashboard.error.rateLimited": "Too many requests. Please try again later.",
   "dashboard.error.invalidAction": "Please check the information and try again.",
-  "dashboard.error.network": "Network error. Please try again."
+  "dashboard.error.network": "Network error. Please try again.",
+  "dashboard.settings.general.descriptionPlaceholder": "Describe your site",
+  "dashboard.status.unverified": "Unverified"
 }

@@ -272,7 +272,7 @@ function SidebarInner({
           </button>
 
                     {/* Admin Dashboard (F-14) */}
-          {Boolean((session?.user as any)?.isAdmin || (session?.user as any)?.role === "admin") && (
+          {(session?.user as { isAdmin?: boolean } | undefined)?.isAdmin === true && (
             <Link
               href="/dashboard"
               className="sidebar-footer-item"

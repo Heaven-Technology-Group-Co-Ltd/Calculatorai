@@ -39,6 +39,7 @@ export function ServiceCard({ id, check, uptimePct }: ServiceCardProps) {
       </div>
       <div className={styles.serviceStatus} style={{ "--status-color": color } as React.CSSProperties}>
         {STATUS_LABEL[st]}
+        {st === "ok" && uptimePct !== null && uptimePct < 99 && <span className={styles.serviceMessage}> Rolling uptime below 99%</span>}
         {check?.message ? (
           <span className={styles.serviceMessage} title={check.message}>
             {check.message}

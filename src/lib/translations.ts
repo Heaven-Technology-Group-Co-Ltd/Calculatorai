@@ -875,11 +875,11 @@ export const uiTranslations = {
     ko: '400 + 4 =',
   },
   notFoundDomain: {
-    th: '∉ โดเมนของเรา',
-    en: '∉ our domain',
-    jp: '∉ 定義域外',
-    ch: '∉ 定义域之外',
-    ko: '∉ 도메인 외부',
+    th: 'ไม่พบหน้านี้',
+    en: 'Page not found',
+    jp: 'ページが見つかりません',
+    ch: '找不到页面',
+    ko: '페이지를 찾을 수 없습니다',
   },
   notFoundDesc: {
     th: 'หน้าที่คุณกำลังมองหาไม่มีอยู่ หรือถูกย้ายไปแล้ว',

@@ -1060,3 +1060,5 @@ HANDOFF AUDIT #3 — รายการ | ผ่าน/ไม่ผ่าน | �
 [2026-11-27] WEB-ARCH-5B draft: client API envelope, shared status model and dialog lifecycle, consolidated user actions, status filters, and web/bot HMAC contract; 221 tests and local build gates pass. Error-code mapping remains duplicated because withAdmin is protected; coordinated web/bot release is required for the new signed format. — src, discord-bot
 
 [2026-11-28] WEB-ARCH-5B-R1: restored standalone bot build with mirrored contract parity and independent HMAC golden vectors; localized user-action states and restored specific client error handling. Gates pass: 228 tests, web and bot builds, lint 0 errors/7 warnings, G11 and CSS hex 0; external re-sign-off pending. — src, discord-bot
+
+[2026-11-28] WEB-TRUTH-5C draft: masked webhook projections, replaced finance sample figures with selected-range gross payment metrics, corrected status and user displays, retired dead controls, and retained legacy NPV history. Local gates pass; webhook duplicate races and refund ingestion completeness remain for review. — src

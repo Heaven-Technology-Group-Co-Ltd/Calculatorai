@@ -13,7 +13,6 @@ import {
   Settings,
   Menu,
   X,
-  Bell,
 } from "lucide-react";
 import { useDashboardContext } from "./DashboardProvider";
 import { useDashboardT } from "./i18n/useDashboardT";
@@ -65,7 +64,6 @@ export function DashboardShell({ children }: DashboardShellProps) {
     { value: "7d", label: t("dashboard.filter.last7days") },
     { value: "30d", label: t("dashboard.filter.last30days") },
     { value: "90d", label: t("dashboard.filter.last90days") },
-    { value: "custom", label: t("dashboard.filter.custom") },
   ];
 
   const activeTitle = NAV_ITEMS.find((n) => n.id === activeTab)?.label ?? t("dashboard.nav.overview");
@@ -219,10 +217,6 @@ export function DashboardShell({ children }: DashboardShellProps) {
               ))}
             </div>
 
-            {/* Notification bell */}
-            <button className={styles.iconBtn} aria-label="Notifications">
-              <Bell size={18} />
-            </button>
           </div>
         </header>
 

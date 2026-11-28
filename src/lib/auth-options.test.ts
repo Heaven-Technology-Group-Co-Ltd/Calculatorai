@@ -230,3 +230,17 @@ it("revokes a JWT when its user has been deleted", async () => {
   const token = await callback({ token: { sub: "deleted", iat: 1 } });
   expect(token.revoked).toBe(true); expect(token.sub).toBeUndefined();
 });
+
+it("populates account plan and admin status from the database", async () => {
+  mockSupabase.from.mockReturnValue({ select: () => ({ eq: () => ({ single: async () => ({ data: { is_admin: true, plan: "pro" }, error: null }) }) }) });
+  const callback = authOptions.callbacks?.session as unknown as (args: { session: { user: { name: string }; expires: string }; token: { sub: string } }) => Promise<{ user?: { isAdmin?: boolean; plan?: string } }>;
+  const session = await callback({ session: { user: { name: "Admin" }, expires: "future" }, token: { sub: "u1" } });
+  expect(session.user).toMatchObject({ isAdmin: true, plan: "pro" });
+});
+
+it("does not retain admin status when the account lookup fails", async () => {
+  mockSupabase.from.mockReturnValue({ select: () => ({ eq: () => ({ single: async () => ({ data: null, error: { message: "offline" } }) }) }) });
+  const callback = authOptions.callbacks?.session as unknown as (args: { session: { user: { isAdmin: boolean; plan: string }; expires: string }; token: { sub: string } }) => Promise<{ user?: { isAdmin?: boolean; plan?: string } }>;
+  const session = await callback({ session: { user: { isAdmin: true, plan: "pro" }, expires: "future" }, token: { sub: "u1" } });
+  expect(session.user).toMatchObject({ isAdmin: false, plan: undefined });
+});

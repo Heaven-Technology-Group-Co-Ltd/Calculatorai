@@ -160,7 +160,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
           aria-labelledby={`info-device-tab-${deviceTab}`}
           tabIndex={0}
         >
-          {filteredSteps.map((step) => {
+          {filteredSteps.map((step, index) => {
             const StepIcon = step.icon;
             return (
               <div key={step.id} className="m-info-step">
@@ -169,7 +169,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
                 </div>
                 <div className="m-info-step-content">
                   <div className={styles.stepTitleContainer}>
-                    <div className={styles.stepTitleText}>{step.title[lang]}</div>
+                    <div className={styles.stepTitleText}>{index + 1}. {step.title[lang].replace(/^\d+\.\s*/, "")}</div>
                     <div className={styles.badgeRow}>
                       {step.device === "pc" && (
                         <span className={`${styles.badge} ${styles.badgePC}`}>💻 PC</span>

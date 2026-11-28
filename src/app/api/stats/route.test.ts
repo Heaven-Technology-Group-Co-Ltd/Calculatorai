@@ -14,7 +14,7 @@ describe("GET /api/stats", () => {
       let columns = "";
       const chain = {
         select: (selection: string) => { columns = selection; return chain; },
-        gte: () => chain, eq: () => chain, order: () => chain, limit: () => chain,
+        gte: () => chain, eq: () => chain, in: () => chain, order: () => chain, limit: () => chain, range: () => chain,
         then: (resolve: (value: unknown) => void) => resolve({
           data: table === "page_views" && columns.includes("session_id") ? [
             { session_id: "one", user_agent: "iPhone", created_at: now },

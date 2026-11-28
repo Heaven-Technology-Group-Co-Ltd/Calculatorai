@@ -1,6 +1,7 @@
 import { withAdmin } from "@/lib/admin/with-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { UpdateWebhookSchema } from "@/lib/admin/schemas";
+import { maskWebhook } from "@/lib/admin/webhooks";
 import { successResponse } from "@/lib/api-response";
 
 /**
@@ -16,6 +17,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const parsed = UpdateWebhookSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ success: false, error: `Validation failed: ${parsed.error.issues.map((i) => i.message).join("; ")}` }, { status: 422 });
 
+    if (parsed.data.url) {
+      const { data: existing, error: lookupError } = await supabase.from("discord_webhooks").select("id").eq("url", parsed.data.url).neq("id", id).limit(1);
+      if (lookupError) throw new Error(lookupError.message);
+      if (existing?.length) return NextResponse.json({ success: false, error: "Webhook already exists" }, { status: 409 });
+    }
+
     const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
     if (parsed.data.name) updateData.name = parsed.data.name;
     if (parsed.data.url) updateData.url = parsed.data.url;
@@ -28,7 +35,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
       return data;
     });
-    return successResponse(data);
+    return successResponse(maskWebhook(data));
   });
 }
 

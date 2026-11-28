@@ -13,10 +13,9 @@ interface MonthlyRevenuePoint {
 }
 
 export interface RevenueResponse {
-  mrr: number;
-  arr: number;
-  churnRate: number;
-  activeSubscriptions: number;
+  revenue: number;
+  arpu: number | null;
+  refunds: number;
   monthlyRevenue: MonthlyRevenuePoint[];
 }
 

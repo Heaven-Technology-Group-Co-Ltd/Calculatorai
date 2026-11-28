@@ -27,7 +27,6 @@ export interface StatusData {
   status: "operational" | "degraded";
   maintenanceMode: boolean;
   maintenanceMessage: string | null;
-  uptimeSeconds: number;
   checks: Record<string, ServiceCheck>;
   stats: Record<Range, RangeStats>;
   totalLatencyMs: number;

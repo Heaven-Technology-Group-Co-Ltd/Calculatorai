@@ -1,14 +1,15 @@
 "use client";
 
-import { Activity, AlertTriangle, CheckCircle, Zap, type LucideIcon } from "lucide-react";
+import { AlertTriangle, CheckCircle, Zap, type LucideIcon } from "lucide-react";
 import type { RangeStats } from "../types";
 import styles from "../StatusClient.module.css";
 
 interface KPIBarProps {
   stats: RangeStats;
+  incidentCount: number;
 }
 
-export function KPIBar({ stats }: KPIBarProps) {
+export function KPIBar({ stats, incidentCount }: KPIBarProps) {
   const items: { icon: LucideIcon; label: string; value: string; color: string }[] = [
     {
       icon: CheckCircle,
@@ -17,12 +18,11 @@ export function KPIBar({ stats }: KPIBarProps) {
       color: stats.uptimePct === null ? "var(--text-secondary)" : "var(--success)",
     },
     { icon: Zap, label: "Avg latency", value: `${stats.avgLatencyMs}ms`, color: "var(--primary)" },
-    { icon: Activity, label: "Checks", value: String(stats.checks), color: "#7DD3FC" },
     {
       icon: AlertTriangle,
       label: "Incidents",
-      value: String(stats.incidents),
-      color: stats.incidents > 0 ? "var(--error)" : "var(--text-secondary)",
+      value: String(incidentCount),
+      color: incidentCount > 0 ? "var(--error)" : "var(--text-secondary)",
     },
   ];
 

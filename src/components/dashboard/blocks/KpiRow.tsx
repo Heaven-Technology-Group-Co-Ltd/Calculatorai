@@ -24,26 +24,14 @@ export function KpiRow() {
     );
   }
 
-  const trendDirection =
-    data?.userGrowth && data.userGrowth.length >= 2
-      ? data.userGrowth.at(-1)!.value > data.userGrowth.at(-2)!.value
-        ? "up"
-        : "down"
-      : undefined;
-
   return (
     <div className={styles.kpiRow}>
       <KpiCard
         icon={<Users size={16} />}
         label={t("dashboard.kpi.activeUsers")}
-        value={data?.activeUsers ?? 0}
+        value={data?.activeUsers ?? "—"}
         format="number"
         color="green"
-        trend={
-          trendDirection && data?.userGrowth && data.userGrowth.length >= 2
-            ? { direction: trendDirection, value: `${Math.abs(data.userGrowth.at(-1)!.value - data.userGrowth.at(-2)!.value)}` }
-            : undefined
-        }
       />
       <KpiCard
         icon={<Users size={16} />}
@@ -55,19 +43,14 @@ export function KpiRow() {
       <KpiCard
         icon={<Percent size={16} />}
         label={t("dashboard.kpi.conversionRate")}
-        value={data?.conversionRate ?? 0}
+        value={data?.conversionRate ?? "—"}
         format="percent"
         color="gold"
-        trend={
-          data
-            ? { direction: data.conversionRate >= 3 ? "up" : "down", value: `${data.conversionRate}%` }
-            : undefined
-        }
       />
       <KpiCard
         icon={<TrendingDown size={16} />}
         label={t("dashboard.kpi.bounceRate")}
-        value={data?.bounceRate ?? 0}
+        value={data?.bounceRate ?? "—"}
         format="percent"
         color="pink"
       />

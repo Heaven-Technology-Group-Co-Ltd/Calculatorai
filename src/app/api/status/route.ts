@@ -254,10 +254,6 @@ export async function GET(request: Request) {
       probesCache = snapshot;
     }
 
-    const uptimeSeconds = Math.floor(
-      (Date.now() - new Date(state.uptimeStart).getTime()) / 1000,
-    );
-
     const allOk =
       SERVICES.every((s) => snapshot.checks[s].status === "ok") && !state.maintenanceMode;
 
@@ -265,7 +261,6 @@ export async function GET(request: Request) {
       status: allOk ? ("operational" as const) : ("degraded" as const),
       maintenanceMode: state.maintenanceMode,
       maintenanceMessage: state.maintenanceMessage,
-      uptimeSeconds,
       checks: snapshot.checks,
       stats: snapshot.stats,
       totalLatencyMs: Date.now() - start,

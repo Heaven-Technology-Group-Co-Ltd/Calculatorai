@@ -133,7 +133,7 @@ describe("CI Guardrails & Quality Gates (G8-G11)", () => {
     expect(globals).not.toContain("255, 47, 146");
 
     // 3. Core UI pages & error boundaries must not contain raw hex
-    const coreUiFiles = walk("src/app", (f) => f.endsWith(".tsx") && !f.includes("formulas-demo") && !f.includes("status"));
+    const coreUiFiles = walk("src/app", (f) => f.endsWith(".tsx") && !f.includes("status"));
     const tsxViolations: string[] = [];
     for (const file of coreUiFiles) {
       const content = readFileSync(file, "utf8");
@@ -202,7 +202,6 @@ describe("CI Guardrails & Quality Gates (G8-G11)", () => {
       "src/app/status/StatusClient.tsx": 5,
       "src/app/status/components/Charts.tsx": 4,
       "src/lib/payment-data.ts": 2,
-      "src/app/formulas-demo/FormulasDemoClient.tsx": 2,
       "src/app/status/components/KPIBar.tsx": 1,
       "src/app/api/stats/route.ts": 1,
     };
@@ -400,9 +399,9 @@ describe("CI Guardrails & Quality Gates (G8-G11)", () => {
   });
 
   // ── Page Metadata Coverage ──
-  it("Page Metadata: all 10 main app pages declare export const metadata with unique titles", () => {
+  it("Page Metadata: all 9 main app pages declare export const metadata with unique titles", () => {
     const pageFiles = walk("src/app", (f) => basename(f) === "page.tsx");
-    expect(pageFiles.length, "Must find exactly 10 route pages").toBe(10);
+    expect(pageFiles.length, "Must find exactly 9 route pages").toBe(9);
 
     const titles = new Set<string>();
 
@@ -416,7 +415,7 @@ describe("CI Guardrails & Quality Gates (G8-G11)", () => {
       titles.add(title);
     }
 
-    expect(titles.size).toBe(10);
+    expect(titles.size).toBe(9);
   });
 
   // ── Global A11y (Focus-Visible & Reduced-Motion) ──
