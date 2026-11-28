@@ -9,7 +9,7 @@ import { UserPlus, Mail, Lock, User, CheckCircle, Loader2, ArrowLeft, Eye, EyeOf
 import { uiTranslations } from "@/lib/translations";
 import { useLanguage } from "@/lib/LanguageContext";
 import { apiPost } from "@/lib/api-client";
-import { PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
+import { PASSWORD_POLICY, isValidEmailAddress, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 import styles from "./SignUp.module.css";
 import fieldStyles from "@/components/ui/FormField.module.css";
 
@@ -76,7 +76,7 @@ export function SignUpClient() {
       setMessage({ type: "error", text: lang === "th" ? "กรุณากรอกข้อมูลให้ครบทุกช่อง" : "Please fill in all fields" });
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    if (!isValidEmailAddress(email)) {
       setMessage({ type: "error", text: lang === "th" ? "กรุณากรอกอีเมลให้ถูกต้อง" : "Enter a valid email address" });
       return;
     }

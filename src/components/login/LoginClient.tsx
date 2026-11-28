@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, LogIn, Loader2, AlertCircle, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { apiPost, ClientApiError } from "@/lib/api-client";
+import { isValidEmailAddress } from "@/lib/validation/vocabulary";
 import styles from "./Login.module.css";
 import fieldStyles from "@/components/ui/FormField.module.css";
 
@@ -53,7 +54,7 @@ export function LoginClient() {
       setError(tr("loginErrorRequired"));
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    if (!isValidEmailAddress(email)) {
       setError(lang === "th" ? "กรุณากรอกอีเมลให้ถูกต้อง" : "Enter a valid email address");
       return;
     }
@@ -118,7 +119,7 @@ export function LoginClient() {
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotEmail.trim())) {
+    if (!isValidEmailAddress(forgotEmail)) {
       setError(lang === "th" ? "กรุณากรอกอีเมลให้ถูกต้อง" : "Enter a valid email address");
       return;
     }

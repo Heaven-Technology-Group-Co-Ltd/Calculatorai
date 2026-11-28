@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { FIELD_LIMITS, isWithinPasswordByteLimit, PASSWORD_POLICY, PLANS, USER_STATUS_FILTERS } from "./vocabulary";
+import { FIELD_LIMITS, isValidEmailAddress, isWithinPasswordByteLimit, PASSWORD_POLICY, PLANS, USER_STATUS_FILTERS } from "./vocabulary";
 
 describe("shared validation vocabulary", () => {
   it("enforces UTF-8 byte boundaries", () => {
@@ -13,6 +13,16 @@ describe("shared validation vocabulary", () => {
   it("defines the minimum password length and byte ceiling", () => {
     expect(PASSWORD_POLICY).toEqual({ minChars: 8, maxBytes: 72 });
     expect(z.string().min(PASSWORD_POLICY.minChars).safeParse("1234567").success).toBe(false);
+  });
+
+  it("validates email structure without backtracking regexes", () => {
+    expect(isValidEmailAddress("person@example.com")).toBe(true);
+    expect(isValidEmailAddress("person+tag@sub.example.co.th")).toBe(true);
+    expect(isValidEmailAddress(" person@example.com ")).toBe(true);
+    expect(isValidEmailAddress("person @example.com")).toBe(false);
+    expect(isValidEmailAddress("person@@example.com")).toBe(false);
+    expect(isValidEmailAddress("person@example.")).toBe(false);
+    expect(isValidEmailAddress("@example.com")).toBe(false);
   });
 
   it("defines supported plans, filters and field limits", () => {

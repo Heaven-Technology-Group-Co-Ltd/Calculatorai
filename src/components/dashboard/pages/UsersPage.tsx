@@ -73,7 +73,7 @@ export function UsersPage() {
 
       {/* Table */}
       <Panel padding="md">
-        <div className={styles.tableWrap} role="region" tabIndex={0} aria-label={t("dashboard.users.table.scrollHint")}>
+        <div className={styles.tableWrap} role="region" aria-label={t("dashboard.users.table.scrollHint")}>
           <table className={styles.table}>
             <thead>
               <tr>
