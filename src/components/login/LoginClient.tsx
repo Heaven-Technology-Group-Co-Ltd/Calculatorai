@@ -8,7 +8,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, LogIn, Loader2, AlertCircle, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { apiPost, ClientApiError } from "@/lib/api-client";
+import { isValidEmailAddress } from "@/lib/validation/vocabulary";
 import styles from "./Login.module.css";
+import fieldStyles from "@/components/ui/FormField.module.css";
 
 /* ─── animation presets ─── */
 const fadeSlideUp = {
@@ -50,6 +52,10 @@ export function LoginClient() {
 
     if (!email.trim() || !password.trim()) {
       setError(tr("loginErrorRequired"));
+      return;
+    }
+    if (!isValidEmailAddress(email)) {
+      setError(lang === "th" ? "กรุณากรอกอีเมลให้ถูกต้อง" : "Enter a valid email address");
       return;
     }
 
@@ -112,9 +118,12 @@ export function LoginClient() {
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!forgotEmail.trim()) return;
-    setForgotLoading(true);
     setError(null);
+    if (!isValidEmailAddress(forgotEmail)) {
+      setError(lang === "th" ? "กรุณากรอกอีเมลให้ถูกต้อง" : "Enter a valid email address");
+      return;
+    }
+    setForgotLoading(true);
     try {
       await apiPost("/api/auth/forgot-password", { email: forgotEmail });
       setForgotSent(true);
@@ -169,6 +178,7 @@ export function LoginClient() {
                   {/* Error */}
                   {error && (
                     <motion.div
+                      id="login-form-error"
                       role="alert"
                       className={`${styles.messageBox} ${styles.messageError}`}
                       variants={fadeSlideUp}
@@ -225,7 +235,9 @@ export function LoginClient() {
                     </label>
                     <input
                       id="login-email"
-                      className={`${styles.input} ${error ? styles.inputError : ""}`}
+                      className={`${styles.input} ${error ? `${styles.inputError} ${fieldStyles.inputError}` : ""}`}
+                      aria-invalid={Boolean(error)}
+                      aria-describedby={error ? "login-form-error" : undefined}
                       type="email"
                       placeholder="hello@example.com"
                       value={email}
@@ -268,7 +280,9 @@ export function LoginClient() {
                     <div style={{ position: "relative" }}>
                       <input
                         id="login-password"
-                        className={`${styles.input} ${error ? styles.inputError : ""}`}
+                        className={`${styles.input} ${error ? `${styles.inputError} ${fieldStyles.inputError}` : ""}`}
+                        aria-invalid={Boolean(error)}
+                        aria-describedby={error ? "login-form-error" : undefined}
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
                         value={password}
@@ -296,7 +310,7 @@ export function LoginClient() {
                           alignItems: "center",
                         }}
                       >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        {showPassword ? <EyeOff size={16} aria-hidden="true" focusable="false" /> : <Eye size={16} aria-hidden="true" focusable="false" />}
                       </button>
                     </div>
                   </motion.div>
@@ -355,7 +369,7 @@ export function LoginClient() {
                     {googleLoading ? (
                       <Loader2 size={18} className={styles.spinner} />
                     ) : (
-                      <svg className={styles.googleIcon} viewBox="0 0 24 24">
+                      <svg className={styles.googleIcon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <path
                           fill="#4285F4"
                           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
@@ -420,9 +434,9 @@ export function LoginClient() {
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleForgotSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <form onSubmit={handleForgotSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                     {error && (
-                      <div role="alert" className={`${styles.messageBox} ${styles.messageError}`}>
+                    <div id="forgot-form-error" role="alert" className={`${styles.messageBox} ${styles.messageError}`}>
                         <AlertCircle size={14} />
                         {error}
                       </div>
@@ -436,7 +450,9 @@ export function LoginClient() {
                       </label>
                       <input
                         id="forgot-email"
-                        className={styles.input}
+                        className={`${styles.input} ${error ? `${styles.inputError} ${fieldStyles.inputError}` : ""}`}
+                        aria-invalid={Boolean(error)}
+                        aria-describedby={error ? "forgot-form-error" : undefined}
                         type="email"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}

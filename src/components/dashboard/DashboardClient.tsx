@@ -2,6 +2,7 @@
 
 import { DashboardProvider } from "./DashboardProvider";
 import { DashboardShell } from "./DashboardShell";
+import { ToastProvider } from "@/components/ui/Toast";
 import { useDashboardContext } from "./DashboardProvider";
 import { OverviewPage } from "./pages/OverviewPage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
@@ -32,10 +33,12 @@ type TabId = "overview" | "analytics" | "finance" | "users" | "settings";
 
 export function DashboardClient({ initialTab = "overview" }: { initialTab?: TabId }) {
   return (
-    <DashboardProvider initialTab={initialTab}>
-      <DashboardShell>
-        <DashboardRouter />
-      </DashboardShell>
-    </DashboardProvider>
+    <ToastProvider>
+      <DashboardProvider initialTab={initialTab}>
+        <DashboardShell>
+          <DashboardRouter />
+        </DashboardShell>
+      </DashboardProvider>
+    </ToastProvider>
   );
 }

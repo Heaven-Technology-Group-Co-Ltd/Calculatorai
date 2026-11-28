@@ -121,7 +121,7 @@ function SidebarInner({
             className={`modal-close ${styles.closeBtn}`}
             aria-label="Close sidebar"
           >
-            <X size={14} />
+            <X size={14} aria-hidden="true" focusable="false" />
           </button>
         </div>
 

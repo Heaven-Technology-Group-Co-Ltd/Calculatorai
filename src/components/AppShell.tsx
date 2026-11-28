@@ -65,11 +65,12 @@ export function AppShell() {
 
   // ── Responsive breakpoint detection ──
   useEffect(() => {
-    const tabletMq = window.matchMedia("(max-width: 1024px)");
-    const mobileMq = window.matchMedia("(max-width: 768px)");
+    const tabletMq = window.matchMedia("(max-width: 900px)");
+    const mobileMq = window.matchMedia("(max-width: 900px)");
     const handler = () => {
       setIsTablet(tabletMq.matches);
       setIsMobile(mobileMq.matches);
+      if (tabletMq.matches) setShowSidebar(false);
     };
     handler();
     tabletMq.addEventListener("change", handler);
@@ -377,7 +378,7 @@ export function AppShell() {
             className={`mb-item ${!showHistory && !showModal && !showSidebar && activeLevel === "all" ? "mb-item-active" : ""}`}
             onClick={() => { setActiveLevel("all"); setActiveDepartment("all"); setSearch(""); setShowHistory(false); setShowModal(false); if(showSidebar) setShowSidebar(false); }}
           >
-            <svg width={20} height={20} className="mb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <svg width={20} height={20} className="mb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>{lang === "th" ? "หน้าแรก" : "Home"}</span>
           </button>
           <button

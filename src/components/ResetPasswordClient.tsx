@@ -9,6 +9,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { apiPost } from "@/lib/api-client";
 import { PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 import styles from "./ResetPassword.module.css";
+import fieldStyles from "@/components/ui/FormField.module.css";
 
 const fadeSlideUp = {
   hidden: { opacity: 0, y: 20 },
@@ -98,7 +99,7 @@ export default function ResetPasswordClient() {
         </div>
 
         {error && (
-          <div role="alert" className={`${styles.messageBox} ${styles.messageError}`}>{error}</div>
+          <div id="reset-form-error" role="alert" className={`${styles.messageBox} ${styles.messageError}`}>{error}</div>
         )}
 
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -109,7 +110,9 @@ export default function ResetPasswordClient() {
               <input
                 id="reset-new-password"
                 type={showPassword ? "text" : "password"}
-                className={styles.input}
+                className={`${styles.input} ${error ? fieldStyles.inputError : ""}`}
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? "reset-form-error" : undefined}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("signUpPasswordPlaceholder")}
@@ -122,7 +125,7 @@ export default function ResetPasswordClient() {
                 aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
                 aria-pressed={showPassword}
               >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showPassword ? <EyeOff size={16} aria-hidden="true" focusable="false" /> : <Eye size={16} aria-hidden="true" focusable="false" />}
               </button>
             </div>
           </div>
@@ -134,7 +137,9 @@ export default function ResetPasswordClient() {
               <input
                 id="reset-confirm-password"
                 type={showPassword ? "text" : "password"}
-                className={styles.input}
+                className={`${styles.input} ${error ? fieldStyles.inputError : ""}`}
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? "reset-form-error" : undefined}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder={t("signUpConfirmPasswordPlaceholder")}

@@ -83,7 +83,7 @@
 
 .clearBtn:hover {
   color: var(--error);
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--error-bg);
 }
 
 .clearBtn:focus-visible {
@@ -299,11 +299,12 @@ button:focus-visible {
 
 .deleteBtn:hover {
   color: var(--error);
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--error-bg);
 }
 
 /* ── Responsive ── */
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  .closeBtn, .restoreBtn, .deleteBtn { min-width: var(--tap-target-mobile); min-height: var(--tap-target-mobile); display: inline-flex; align-items: center; justify-content: center; }
   .panel {
     width: 100vw;
     padding: 24px;

@@ -164,7 +164,7 @@
 }
 
 .btnSecondary {
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: var(--surface-subtle);
 }
 
 /* ── Error Message ── */
@@ -172,8 +172,8 @@
   margin-top: 12px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.12);
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
   color: var(--error);
   font-size: 0.8rem;
 }

@@ -27,7 +27,7 @@ export default function GlobalError({ reset }: { reset: () => void }) {
       >
         <div>
           <h1 style={{ fontSize: "2rem", marginBottom: "1rem", color: "var(--error)" }}>
-            ⚠️ Something went wrong
+            <span aria-hidden="true">⚠️</span> Something went wrong
           </h1>
           <p style={{ opacity: 0.7, marginBottom: "2rem", color: "var(--text-secondary)" }}>
             Please try again. If this keeps happening, contact support.

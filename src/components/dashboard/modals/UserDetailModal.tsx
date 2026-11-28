@@ -83,7 +83,7 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
     >
       <div className={styles.header}>
         <span id="user-detail-title" className={styles.title}>{t("dashboard.modal.userDetails.title")}</span>
-        <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close">✕</button>
+        <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close"><span aria-hidden="true">✕</span></button>
       </div>
       <div className={styles.body}>
         {loading && (

@@ -196,5 +196,21 @@
   "dashboard.error.invalidAction": "Please check the information and try again.",
   "dashboard.error.network": "Network error. Please try again.",
   "dashboard.settings.general.descriptionPlaceholder": "Describe your site",
-  "dashboard.status.unverified": "Unverified"
+  "dashboard.status.unverified": "Unverified",
+  "dashboard.users.table.scrollHint": "User table. Swipe horizontally to view status and actions.",
+  "dashboard.toast.userBanned": "User banned successfully.",
+  "dashboard.toast.userUnbanned": "User unbanned successfully.",
+  "dashboard.toast.planChanged": "User plan changed successfully.",
+  "dashboard.toast.messageSent": "Message sent successfully.",
+  "dashboard.toast.settingsSaved": "Settings saved successfully.",
+  "dashboard.toast.webhookTested": "Webhook test sent successfully.",
+  "dashboard.toast.webhookDeleted": "Webhook deleted successfully.",
+  "dashboard.toast.webhookAdded": "Webhook added successfully.",
+  "dashboard.settings.webhooks.name": "Name",
+  "dashboard.settings.webhooks.add": "Add Webhook",
+  "dashboard.settings.webhooks.adding": "Adding…",
+  "dashboard.settings.webhooks.backup": "Backup",
+  "dashboard.settings.webhooks.analytics": "Analytics",
+  "dashboard.settings.webhooks.errorAlert": "Error Alert",
+  "dashboard.settings.webhooks.custom": "Custom"
 }

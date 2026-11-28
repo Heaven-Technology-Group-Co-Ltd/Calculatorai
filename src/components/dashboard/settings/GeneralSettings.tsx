@@ -5,12 +5,14 @@ import { apiGet, apiPost, ClientApiError } from "@/lib/api-client";
 import { Panel } from "../ui/Panel";
 import styles from "../styles/dashboard-settings.module.css";
 import { useDashboardT } from "../i18n/useDashboardT";
+import { useToast } from "@/components/ui/Toast";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 type LoadState = "loading" | "loaded" | "error";
 
 export function GeneralSettings() {
   const { t } = useDashboardT();
+  const { showToast } = useToast();
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [state, setState] = useState<SaveState>("idle");
@@ -47,6 +49,7 @@ export function GeneralSettings() {
     try {
       await Promise.all([put("site_name", name), put("description", desc)]);
       setState("saved");
+      showToast(t("dashboard.toast.settingsSaved"));
     } catch (failure) {
       setSaveError(failure instanceof ClientApiError ? failure.message : null);
       setState("error");

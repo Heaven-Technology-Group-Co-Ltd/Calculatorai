@@ -15,6 +15,7 @@
   --surface: #2F3D44;
   --surface-card: rgba(59, 74, 82, 0.40);
   --surface-hover: rgba(74, 90, 98, 0.35);
+  --surface-subtle: rgba(255, 255, 255, 0.04);
   --surface-glass: rgba(36, 47, 53, 0.88);
   --sidebar-bg: #1B272C;
   --card-bg: rgba(59, 74, 82, 0.12);
@@ -22,6 +23,7 @@
   /* ── Borders ── */
   --border: rgba(232, 184, 150, 0.10);
   --border-hover: rgba(232, 184, 150, 0.15);
+  --border-subtle: rgba(242, 230, 218, 0.08);
   --border-gold: rgba(232, 184, 150, 0.22);
   --border-gold-hover: rgba(232, 184, 150, 0.38);
 
@@ -29,6 +31,8 @@
   --primary: #E8B896;
   --primary-light: #F0CCAE;
   --primary-subtle: rgba(232, 184, 150, 0.10);
+  --primary-bg: rgba(232, 184, 150, 0.10);
+  --primary-border: rgba(232, 184, 150, 0.22);
   --secondary: #D9A47E;
   --accent-teal: #4A5A62;
 
@@ -54,6 +58,13 @@
   --error: #FF8A8A;
   --warning: #facc15;
   --info: #70b4ff;
+  --success-bg: color-mix(in srgb, var(--success) 12%, transparent);
+  --success-border: color-mix(in srgb, var(--success) 28%, transparent);
+  --error-bg: color-mix(in srgb, var(--error) 12%, transparent);
+  --error-border: color-mix(in srgb, var(--error) 24%, transparent);
+  --error-subtle: color-mix(in srgb, var(--error) 8%, transparent);
+  --warning-bg: color-mix(in srgb, var(--warning) 12%, transparent);
+  --warning-border: color-mix(in srgb, var(--warning) 28%, transparent);
   --status-unknown: #a8b0bc;
 
   /* ── Type Scale (6 steps: 1.25 minor third) ── */
@@ -63,6 +74,20 @@
   --fs-4: 17px;
   --fs-5: 21px;
   --fs-6: 27px;
+  --fs-2xs: 10px;
+  --fs-xs: 11px;
+  --fs-display-sm: clamp(2rem, 4vw, 3rem);
+  --fs-display-lg: clamp(2.5rem, 7vw, 5rem);
+  /* 16px prevents automatic page zoom when focusing inputs in iOS Safari. */
+  --fs-input: 1rem;
+  --tracking-display: -0.025em;
+  --control-height-md: 44px;
+  --btn-height-sm: 36px;
+  --btn-height-md: var(--control-height-md);
+  --btn-height-lg: 52px;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --tap-target-mobile: 44px;
 
   /* ── Z-Index Scale (5 standard layers) ── */
   --z-base: 0;
@@ -89,7 +114,6 @@
   --font-mono: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
   --primary-soft: var(--primary-subtle);
   --primary-glow: rgba(232, 184, 150, 0.08);
-  --primary-border: var(--border-gold);
   --border-primary: var(--border-gold);
   --border-strong: var(--border-hover);
   --surface-opaque: #2F3D44;
@@ -163,7 +187,7 @@ input, textarea { font-family: inherit; }
   pointer-events: none;
 }
 /* On tablet/mobile, sidebar becomes a fixed overlay panel */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .sidebar-premium {
     position: fixed;
     top: 0;
@@ -529,8 +553,8 @@ dialog::backdrop {
   width: 48px; height: 48px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(239, 68, 68, 0.08);
-  color: #FF8A8A;
+  background: var(--error-bg);
+  color: var(--error);
   margin: 0 auto var(--space-md);
 }
 .confirm-title {
@@ -555,12 +579,12 @@ dialog::backdrop {
 }
 .cancel-btn-p:hover { background: var(--surface-hover); color: var(--text); border-color: var(--border-hover); }
 .confirm-btn-p {
-  background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #FF8A8A;
+  background: var(--error-bg); border: 1px solid var(--error-border);
+  color: var(--error);
 }
 .confirm-btn-p:hover {
-  background: rgba(239, 68, 68, 0.2);
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.08);
+  background: var(--error-border);
+  box-shadow: 0 0 16px var(--error-bg);
 }
 .m-info-container {
   max-width: 660px;
@@ -730,10 +754,10 @@ dialog.m-info-container[open] {
 }
 .hero h1 {
   font-family: "Outfit", sans-serif;
-  font-size: 28px;
+  font-size: var(--fs-display-sm);
+  letter-spacing: var(--tracking-display);
   font-weight: 800;
   margin-bottom: 6px;
-  letter-spacing: -0.3px;
 }
 .hero p {
   font-size: 14px;
@@ -807,8 +831,11 @@ dialog.m-info-container[open] {
   .hero-stats { gap: 8px; flex-wrap: wrap; margin-top: 8px; }
   .hero-stat { font-size: 11px; padding: 3px 8px; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); border: 1px solid var(--border); }
   .search-row { max-width: 100%; height: 46px; }
-  .search-row input { font-size: 16px !important; }
-  input.p-input { font-size: 16px !important; height: 44px; }
+  .search-row input { font-size: var(--fs-input); }
+  input.p-input { font-size: var(--fs-input); height: var(--control-height-md); }
+}
+@media (max-width: 640px) {
+  .modal-close { min-width: var(--tap-target-mobile); min-height: var(--tap-target-mobile); display: inline-flex; align-items: center; justify-content: center; }
 }
 @media (max-width: 480px) {
   .hero h1 { font-size: 20px; }
@@ -842,7 +869,7 @@ dialog.m-info-container[open] {
   top: 0;
   z-index: var(--z-drawer);
 }
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .topbar {
     padding: 10px var(--space-md);
   }
@@ -899,7 +926,7 @@ dialog.m-info-container[open] {
   border-top: 1px solid var(--border-gold);
   padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
 }
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .mobileBottomNav {
     display: flex;
     align-items: center;

@@ -12,3 +12,14 @@ export const FIELD_LIMITS = {
 export function isWithinPasswordByteLimit(password: string): boolean {
   return new TextEncoder().encode(password).length <= PASSWORD_POLICY.maxBytes;
 }
+
+export function isValidEmailAddress(address: string): boolean {
+  const normalizedAddress = address.trim();
+  const atIndex = normalizedAddress.indexOf("@");
+  if (atIndex <= 0 || atIndex !== normalizedAddress.lastIndexOf("@")) return false;
+
+  const domain = normalizedAddress.slice(atIndex + 1);
+  const lastDotIndex = domain.lastIndexOf(".");
+  const containsWhitespace = Array.from(normalizedAddress).some((character) => character.trim().length === 0);
+  return lastDotIndex > 0 && lastDotIndex < domain.length - 1 && !containsWhitespace;
+}
