@@ -22,13 +22,13 @@ export function GeographyList() {
         <span className={styles.panelTitle}>{t("dashboard.geography.title")}</span>
       </div>
       {countries.map((c: { name: string; value: number }, i: number) => (
-        <div key={c.name || i} style={{ marginBottom: 8 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 3 }}>
+        <div key={c.name || i} className={styles.countryRow}>
+          <div className={styles.countryHeading}>
             <span>{c.name}</span>
-            <span style={{ color: "var(--text-secondary)" }}>{c.value.toLocaleString()}</span>
+            <span className={styles.countryValue}>{c.value.toLocaleString()}</span>
           </div>
-          <div style={{ height: 4, background: "rgba(232,184,150,0.1)", borderRadius: 2 }}>
-            <div style={{ width: `${(c.value / maxVal) * 100}%`, height: "100%", background: "#E8B896", borderRadius: 2 }} />
+          <div className={styles.countryTrack}>
+            <div className={styles.countryFill} style={{ width: `${(c.value / maxVal) * 100}%` }} />
           </div>
         </div>
       ))}

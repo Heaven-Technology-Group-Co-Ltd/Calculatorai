@@ -87,7 +87,7 @@ export function WebhookManager() {
 
   return (
     <Panel>
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20, color: "var(--text)" }}>
+      <h3 className={`${styles.sectionTitle} ${styles.sectionTitleSpaced}`}>
         {t("dashboard.settings.webhooks.title")}
       </h3>
       {actionError && <p role="alert">{actionError}</p>}

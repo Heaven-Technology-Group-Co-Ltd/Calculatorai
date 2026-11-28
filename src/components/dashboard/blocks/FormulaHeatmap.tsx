@@ -31,19 +31,13 @@ function HeatmapCell({
     <div
       style={{
         ...style,
-        background: `rgba(232, 184, 150, ${(intensity / 100) * 0.4})`,
-        border: "1px solid rgba(232, 184, 150, 0.08)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 11,
-        cursor: "default",
+        "--cell-intensity": intensity,
       } as CSSProperties}
+      className={styles.heatmapCell}
       title={`${f.name}: ${f.count}`}
     >
-      <span style={{ fontWeight: 600 }}>{f.name}</span>
-      <span style={{ color: "var(--text-secondary)" }}>{f.count}</span>
+      <span className={styles.heatmapName}>{f.name}</span>
+      <span className={styles.heatmapCount}>{f.count}</span>
     </div>
   );
 }
@@ -68,9 +62,8 @@ export function FormulaHeatmap() {
         {formulas.length > 50 && (
           <button
             type="button"
-            className={styles.panelAction}
             onClick={() => setShowAll((v) => !v)}
-            style={{ cursor: "pointer", background: "none", border: "none", padding: 0, font: "inherit" }}
+            className={`${styles.panelAction} ${styles.panelActionButton}`}
           >
             {showAll ? t("dashboard.formula.showTop50") : `${t("dashboard.formula.showAll")} (${formulas.length})`}
           </button>

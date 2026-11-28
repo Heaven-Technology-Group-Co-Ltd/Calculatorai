@@ -17,10 +17,10 @@ export function SystemInfo({ status }: SystemInfoProps) {
   return (
     <div className={styles.panel}>
       <div className={styles.chartTitle}>
-        <Server size={16} color="var(--primary)" />
+        <Server size={16} color="var(--primary)" aria-hidden="true" focusable="false" />
         System info
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div className={styles.infoRows}>
         {rows.map((row) => (
           <div key={row.label} className={styles.infoRow}>
             <span className={styles.infoLabel}>{row.label}</span>

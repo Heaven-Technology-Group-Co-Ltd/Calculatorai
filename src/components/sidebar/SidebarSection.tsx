@@ -72,7 +72,7 @@ const SidebarSectionInner: React.FC<SidebarSectionProps> = ({
         </span>
 
         {/* Right: extra + chevron */}
-        <span style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+        <span className={styles.sectionActions}>
           {extra}
           <motion.span
             className={styles.sectionChevron}

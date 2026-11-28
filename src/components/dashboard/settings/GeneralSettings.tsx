@@ -58,7 +58,7 @@ export function GeneralSettings() {
 
   return (
     <Panel>
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20, color: "var(--text)" }}>
+      <h3 className={`${styles.sectionTitle} ${styles.sectionTitleSpaced}`}>
         {t("dashboard.settings.general.title")}
       </h3>
       <div className={styles.formGroup}>
@@ -82,15 +82,15 @@ export function GeneralSettings() {
         />
       </div>
       {loadState === "error" && (
-        <div role="alert" style={{ marginBottom: 16, color: "var(--error)", fontSize: 13 }}>
+        <div role="alert" className={styles.loadError}>
           Failed to load current settings. Saving is disabled to prevent data loss.
         </div>
       )}
       <button className={styles.saveBtn} onClick={handleSave} disabled={loadState !== "loaded" || state === "saving"}>
         {t("dashboard.common.save")}
       </button>
-      {state === "saved" && <span role="status" style={{ marginLeft: 12, color: "var(--primary)" }}>Saved</span>}
-      {state === "error" && <span role="alert" style={{ marginLeft: 12, color: "var(--error)" }}>{saveError ?? "Save failed"}</span>}
+      {state === "saved" && <span role="status" className={`${styles.inlineState} ${styles.inlineSuccess}`}>Saved</span>}
+      {state === "error" && <span role="alert" className={`${styles.inlineState} ${styles.inlineError}`}>{saveError ?? "Save failed"}</span>}
     </Panel>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { X } from "lucide-react";
 import styles from "./Toast.module.css";
 
@@ -9,17 +9,19 @@ export interface ToastMessage { id: number; message: string; tone: ToastTone }
 export const TOAST_DURATION_MS = 4000;
 interface ToastContextValue { showToast: (message: string, tone?: ToastTone) => void }
 const ToastContext = createContext<ToastContextValue | null>(null);
+let nextToastId = 0;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [notices, setNotices] = useState<ToastMessage[]>([]);
   const showToast = useCallback((message: string, tone: ToastTone = "success") => {
-    const id = Date.now() + Math.random();
+    const id = ++nextToastId;
     setNotices((current) => [...current, { id, message, tone }]);
   }, []);
   const dismiss = useCallback((id: number) => setNotices((current) => current.filter((notice) => notice.id !== id)), []);
+  const contextValue = useMemo(() => ({ showToast }), [showToast]);
 
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       <div className={styles.region}>
         {notices.map((notice) => (

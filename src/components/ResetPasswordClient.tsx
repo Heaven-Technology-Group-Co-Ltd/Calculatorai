@@ -9,7 +9,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { apiPost } from "@/lib/api-client";
 import { PASSWORD_POLICY, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 import styles from "./ResetPassword.module.css";
-import fieldStyles from "@/components/ui/FormField.module.css";
+import { FormField } from "@/components/ui/FormField";
 
 const fadeSlideUp = {
   hidden: { opacity: 0, y: 20 },
@@ -82,7 +82,7 @@ export default function ResetPasswordClient() {
           <CheckCircle size={48} className={styles.successIcon} />
           <h2 className={styles.successTitle}>{t("resetPasswordSuccess")}</h2>
           <p className={styles.successDesc}>{t("resetPasswordSuccessDesc")}</p>
-          <Link href="/login" className={styles.submitBtn} style={{ textAlign: "center", textDecoration: "none" }}>
+          <Link href="/login" className={`${styles.submitBtn} ${styles.backLink}`}>
             {t("signUpSignIn")}
           </Link>
         </motion.div>
@@ -103,50 +103,44 @@ export default function ResetPasswordClient() {
         )}
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputGroup}>
-            <label className={styles.label} htmlFor="reset-new-password">{t("signUpPasswordLabel")}</label>
-            <div className={styles.passwordWrap}>
-              <Lock size={16} className={styles.inputIcon} />
-              <input
-                id="reset-new-password"
-                type={showPassword ? "text" : "password"}
-                className={`${styles.input} ${error ? fieldStyles.inputError : ""}`}
-                aria-invalid={Boolean(error)}
-                aria-describedby={error ? "reset-form-error" : undefined}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("signUpPasswordPlaceholder")}
-                autoComplete="new-password"
-              />
-              <button
-                type="button"
-                className={styles.toggleBtn}
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
-                aria-pressed={showPassword}
-              >
-                {showPassword ? <EyeOff size={16} aria-hidden="true" focusable="false" /> : <Eye size={16} aria-hidden="true" focusable="false" />}
-              </button>
-            </div>
-          </div>
+          <FormField
+            id="reset-new-password"
+            label={<><Lock size={16} aria-hidden="true" focusable="false" />{t("signUpPasswordLabel")}</>}
+            labelClassName={styles.label}
+            fieldClassName={styles.inputGroup}
+            className={styles.input}
+            invalid={Boolean(error)}
+            describedById={error ? "reset-form-error" : undefined}
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={t("signUpPasswordPlaceholder")}
+            autoComplete="new-password"
+            endAdornment={<button
+              type="button"
+              className={styles.passwordAdornment}
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
+              aria-pressed={showPassword}
+            >
+              {showPassword ? <EyeOff size={16} aria-hidden="true" focusable="false" /> : <Eye size={16} aria-hidden="true" focusable="false" />}
+            </button>}
+          />
 
-          <div className={styles.inputGroup}>
-            <label className={styles.label} htmlFor="reset-confirm-password">{t("signUpConfirmPasswordLabel")}</label>
-            <div className={styles.passwordWrap}>
-              <Lock size={16} className={styles.inputIcon} />
-              <input
-                id="reset-confirm-password"
-                type={showPassword ? "text" : "password"}
-                className={`${styles.input} ${error ? fieldStyles.inputError : ""}`}
-                aria-invalid={Boolean(error)}
-                aria-describedby={error ? "reset-form-error" : undefined}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder={t("signUpConfirmPasswordPlaceholder")}
-                autoComplete="new-password"
-              />
-            </div>
-          </div>
+          <FormField
+            id="reset-confirm-password"
+            label={<><Lock size={16} aria-hidden="true" focusable="false" />{t("signUpConfirmPasswordLabel")}</>}
+            labelClassName={styles.label}
+            fieldClassName={styles.inputGroup}
+            className={styles.input}
+            invalid={Boolean(error)}
+            describedById={error ? "reset-form-error" : undefined}
+            type={showPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder={t("signUpConfirmPasswordPlaceholder")}
+            autoComplete="new-password"
+          />
 
           <button type="submit" disabled={submitting} className={styles.submitBtn}>
             {submitting ? <Loader2 size={18} className={styles.spinner} /> : null}

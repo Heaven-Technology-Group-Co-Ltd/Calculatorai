@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { signupFieldInvalid } from "./SignUpClient";
+import { signupFieldForServerCode, signupFieldInvalid } from "./SignUpClient";
 
 describe("signup field errors", () => {
-  it("marks only the email field for an email format error", () => {
-    expect(signupFieldInvalid("email", "broken", "Enter a valid email address")).toBe(true);
-    expect(signupFieldInvalid("password", "long-enough", "Enter a valid email address")).toBe(false);
+  it("attributes client validation from the selected field state", () => {
+    expect(signupFieldInvalid("email", "email")).toBe(true);
+    expect(signupFieldInvalid("password", "email")).toBe(false);
   });
 
-  it("marks both password fields when confirmation does not match", () => {
-    expect(signupFieldInvalid("password", "password1", "Passwords do not match")).toBe(true);
-    expect(signupFieldInvalid("confirm", "password2", "Passwords do not match")).toBe(true);
-    expect(signupFieldInvalid("email", "person@example.com", "Passwords do not match")).toBe(false);
+  it("maps server error codes before showing a form-level message", () => {
+    expect(signupFieldForServerCode("EMAIL_ALREADY_EXISTS")).toBe("email");
+    expect(signupFieldForServerCode("INVALID_PASSWORD")).toBe("password");
+    expect(signupFieldForServerCode("RATE_LIMITED")).toBeNull();
   });
 });

@@ -8,7 +8,7 @@ export function BillingSettings() {
   const { t } = useDashboardT();
   return (
     <Panel>
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: "var(--text)" }}>
+      <h3 className={`${styles.sectionTitle} ${styles.sectionTitleCompact}`}>
         {t("dashboard.settings.billing.title")}
       </h3>
       <div className={styles.formGroup}>
@@ -31,7 +31,7 @@ export function BillingSettings() {
           <option>{t("dashboard.settings.billing.tierPremium")}</option>
         </select>
       </div>
-      <button className={styles.saveBtn} disabled title="ยังไม่พร้อมใช้งาน" style={{ opacity: 0.5, cursor: "not-allowed" }}>{t("dashboard.common.save")}</button>
+      <button className={`${styles.saveBtn} ${styles.saveBtnDisabled}`} disabled title="ยังไม่พร้อมใช้งาน">{t("dashboard.common.save")}</button>
     </Panel>
   );
 }

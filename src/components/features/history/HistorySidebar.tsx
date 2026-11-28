@@ -44,7 +44,7 @@ function HistoryItem({
         className={`modal-close ${styles.itemDeleteBtn}`}
         aria-label="Delete"
       >
-        <Trash2 size={12} />
+        <Trash2 size={16} aria-hidden="true" focusable="false" />
       </button>
     </div>
   );
@@ -111,7 +111,7 @@ function HistorySidebarInner({
                   className={styles.restoreBtn}
                   aria-label="Restore"
                 >
-                  <Clock size={14} />
+                  <Clock size={16} aria-hidden="true" focusable="false" />
                 </button>
                 <button
                   onClick={(e) => {
@@ -121,7 +121,7 @@ function HistorySidebarInner({
                   className={styles.deleteBtn}
                   aria-label="Delete"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} aria-hidden="true" focusable="false" />
                 </button>
               </div>
             ))
@@ -143,7 +143,7 @@ function HistorySidebarInner({
       <div className={styles.drawerInner}>
         <div className={styles.headerRow}>
           <div className={styles.headerTitle}>
-            <Clock size={18} />
+            <Clock size={20} aria-hidden="true" focusable="false" />
             {historyLabel}
           </div>
           <div className={styles.headerActions}>
@@ -168,7 +168,7 @@ function HistorySidebarInner({
         <div className={styles.list}>
           {history.length === 0 ? (
             <div className={styles.empty}>
-              <Ghost size={32} />
+              <Ghost size={20} aria-hidden="true" focusable="false" />
               <span>{emptyLabel}</span>
             </div>
           ) : (

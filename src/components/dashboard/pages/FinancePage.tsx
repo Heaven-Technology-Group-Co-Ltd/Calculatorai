@@ -13,7 +13,7 @@ export function FinancePage() {
   const { data: revenue } = useRevenue();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+    <div className={styles.dashboardColumn}>
       <div className={styles.kpiRow}>
         <KpiCard icon={<DollarSign size={16} />} label={t("dashboard.finance.mrr")} value={revenue?.revenue ?? "—"} format="currency" color="blue" />
         <KpiCard icon={<TrendingUp size={16} />} label={t("dashboard.finance.arpu")} value={revenue?.arpu ?? "—"} format="currency" color="gold" />

@@ -10,7 +10,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: var(--space-24) var(--space-16);
 }
 
 /* ── Card ── */
@@ -21,20 +21,20 @@
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 40px var(--ursa-overlay-alpha-30);
 }
 
 /* ── Calculator Display Strip ── */
 .display {
-  background: rgba(0, 0, 0, 0.25);
-  padding: 16px 20px;
+  background: var(--ursa-overlay-alpha-25);
+  padding: var(--space-16) var(--space-20);
   border-bottom: 1px solid var(--border);
   text-align: right;
 }
 
 .displayPrompt {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
   opacity: 0.7;
   letter-spacing: 0.05em;
@@ -42,7 +42,7 @@
 
 .displayStatus {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 1.6rem;
+  font-size: var(--fs-6);
   font-weight: 700;
   color: var(--primary);
   margin-top: 2px;
@@ -54,7 +54,7 @@
   width: 2px;
   height: 1.3em;
   background: var(--primary);
-  margin-left: 4px;
+  margin-left: var(--space-4);
   vertical-align: text-bottom;
   animation: blink 1s step-end infinite;
 }
@@ -66,35 +66,43 @@
 
 /* ── Form Body ── */
 .body {
-  padding: 28px 24px 24px;
+  padding: var(--space-28) var(--space-24) var(--space-24);
 }
 
 /* ── Input Group ── */
 .field {
-  margin-bottom: 18px;
+  margin-bottom: var(--space-20);
 }
+.forgotLink { color: var(--primary); cursor: pointer; font-size: var(--fs-1); padding: 0; }
+.passwordToggle { display: flex; align-items: center; color: var(--text-secondary); cursor: pointer; padding: var(--space-4); }
+.forgotForm { display: flex; flex-direction: column; gap: var(--space-12); }
+.messageActions { display: flex; flex-direction: column; gap: var(--space-4); width: 100%; }
+.resendWrap { margin-top: var(--space-4); }
+.resendStatus { color: var(--success); font-weight: 500; }
+.resendButton { background: none; border: none; color: var(--primary); cursor: pointer; text-decoration: underline; padding: 0; font-size: var(--fs-1); font-weight: 600; }
+.forgotSentWrap { display: flex; flex-direction: column; gap: var(--space-16); }
 
 .label {
   display: block;
-  font-size: 0.8rem;
+  font-size: var(--fs-2);
   font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-8);
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
 .input {
   width: 100%;
-  padding: 12px 14px;
-  background: rgba(0, 0, 0, 0.2);
+  padding: var(--space-12) var(--space-16);
+  background: var(--ursa-overlay-alpha-20);
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: var(--fs-3);
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
   box-sizing: border-box;
 }
 
@@ -105,37 +113,37 @@
 
 .input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(232, 184, 150, 0.2);
+  box-shadow: 0 0 0 3px var(--ursa-primary-alpha-20);
 }
 
 .input.inputError {
   border-color: var(--error);
-  box-shadow: 0 0 0 3px rgba(232, 88, 107, 0.15);
+  box-shadow: 0 0 0 3px var(--ursa-error-alpha-15);
 }
 
 /* ── Submit Button ("=" key style) ── */
 .submitBtn {
   width: 100%;
-  padding: 14px;
+  padding: var(--space-16);
   background: var(--primary);
   color: var(--bg);
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
+  font-size: var(--fs-4);
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  transition: background var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-top: 24px;
+  gap: var(--space-8);
+  margin-top: var(--space-24);
 }
 
 .submitBtn:hover:not(:disabled) {
   background: var(--primary-light);
-  box-shadow: 0 4px 16px rgba(232, 184, 150, 0.3);
+  box-shadow: 0 4px 16px var(--ursa-primary-alpha-30);
 }
 
 .submitBtn:active:not(:disabled) {
@@ -154,29 +162,29 @@
 
 /* ── Error Message ── */
 .messageBox {
-  padding: 10px 14px;
+  padding: var(--space-12) var(--space-16);
   border-radius: 8px;
-  font-size: 0.85rem;
-  margin-bottom: 8px;
+  font-size: var(--fs-2);
+  margin-bottom: var(--space-8);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .messageError {
-  background: rgba(232, 88, 107, 0.12);
+  background: var(--ursa-error-alpha-12);
   color: var(--error);
-  border: 1px solid rgba(232, 88, 107, 0.25);
+  border: 1px solid var(--ursa-error-alpha-25);
 }
 
 /* ── Divider ── */
 .divider {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 22px 0;
+  gap: var(--space-12);
+  margin: var(--space-24) 0;
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: var(--fs-1);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -192,23 +200,23 @@
 /* ── Google Button ── */
 .googleBtn {
   width: 100%;
-  padding: 12px;
+  padding: var(--space-12);
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background var(--transition-base), border-color var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: var(--space-12);
 }
 
 .googleBtn:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--ursa-text-alpha-04);
   border-color: var(--text-secondary);
 }
 
@@ -223,6 +231,7 @@
 }
 
 .googleIcon {
+  color: var(--primary);
   width: 18px;
   height: 18px;
   flex-shrink: 0;
@@ -232,15 +241,15 @@
 .footer {
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.85rem;
-  margin-top: 24px;
+  font-size: var(--fs-2);
+  margin-top: var(--space-24);
 }
 
 .footerLink {
   color: var(--primary);
   text-decoration: none;
   font-weight: 600;
-  transition: opacity 0.2s;
+  transition: opacity var(--transition-base);
 }
 
 .footerLink:hover {
@@ -262,7 +271,7 @@
    ══════════════════════════════════════════════════ */
 @media (max-width: 900px) {
   .body {
-    padding: 24px 20px 20px;
+    padding: var(--space-24) var(--space-20) var(--space-20);
   }
 }
 
@@ -271,8 +280,8 @@
    ══════════════════════════════════════════════════ */
 @media (max-width: 640px) {
   .shell {
-    padding: 16px 12px;
-    padding-bottom: calc(16px + 80px); /* bottom nav clearance */
+    padding: var(--space-16) var(--space-12);
+    padding-bottom: calc(var(--space-16) + var(--space-80)); /* bottom nav clearance */
   }
 
   .card {
@@ -281,36 +290,36 @@
   }
 
   .display {
-    padding: 14px 16px;
+    padding: var(--space-16) var(--space-16);
   }
 
   .displayStatus {
-    font-size: 1.35rem;
+    font-size: var(--fs-5);
   }
 
   .body {
-    padding: 20px 16px 16px;
+    padding: var(--space-20) var(--space-16) var(--space-16);
   }
 
   .input {
-    padding: 11px 12px;
-    font-size: 0.9rem;
+    padding: var(--space-12) var(--space-12);
+    font-size: var(--fs-3);
   }
 
   .submitBtn {
-    padding: 13px;
-    font-size: 0.95rem;
-    margin-top: 20px;
+    padding: var(--space-12);
+    font-size: var(--fs-3);
+    margin-top: var(--space-20);
   }
 
   .googleBtn {
-    padding: 11px;
-    font-size: 0.85rem;
+    padding: var(--space-12);
+    font-size: var(--fs-2);
   }
 
   .footer {
-    font-size: 0.8rem;
-    margin-top: 20px;
+    font-size: var(--fs-2);
+    margin-top: var(--space-20);
   }
 }
 
@@ -319,28 +328,28 @@
   overflow: hidden;
 }
 .forgotDesc {
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
-  margin: 0 0 4px;
+  margin: 0 0 var(--space-4);
   line-height: 1.5;
 }
 .forgotBtn {
   width: 100%;
-  padding: 12px;
+  padding: var(--space-12);
   background: var(--primary);
   color: var(--bg);
   border: none;
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
+  transition: background var(--transition-base), transform var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-top: 4px;
+  gap: var(--space-8);
+  margin-top: var(--space-4);
 }
 .forgotBtn:hover:not(:disabled) {
   background: var(--primary-light);
@@ -350,24 +359,24 @@
   cursor: not-allowed;
 }
 .forgotSent {
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   color: var(--primary);
   text-align: center;
   margin: 0;
-  padding: 8px 0;
+  padding: var(--space-8) 0;
 }
 .forgotBack {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--space-8);
   background: none;
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 0.8rem;
-  padding: 8px 0 0;
-  transition: color 0.2s;
+  font-size: var(--fs-2);
+  padding: var(--space-8) 0 0;
+  transition: color var(--transition-base);
   width: 100%;
 }
 .forgotBack:hover {
@@ -385,25 +394,25 @@
 /* ── ≤640px Mobile ── */
 @media (max-width: 640px) {
   .forgotWrap {
-    margin-top: 8px;
+    margin-top: var(--space-8);
   }
   .forgotDesc {
-    font-size: 0.75rem;
-    margin-bottom: 8px;
+    font-size: var(--fs-1);
+    margin-bottom: var(--space-8);
   }
   .forgotBtn {
-    font-size: 0.8rem;
-    padding: 10px 16px;
+    font-size: var(--fs-2);
+    padding: var(--space-12) var(--space-16);
   }
 }
 
 /* ══════════════════════════════════════════════════
    Responsive — ≤400px (small phone)
    ══════════════════════════════════════════════════ */
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .shell {
-    padding: 12px 10px;
-    padding-bottom: calc(12px + 80px);
+    padding: var(--space-12) var(--space-12);
+    padding-bottom: calc(var(--space-12) + var(--space-80));
   }
 
   .card {
@@ -411,46 +420,46 @@
   }
 
   .display {
-    padding: 12px 14px;
+    padding: var(--space-12) var(--space-16);
   }
 
   .displayStatus {
-    font-size: 1.15rem;
+    font-size: var(--fs-4);
   }
 
   .displayPrompt {
-    font-size: 0.75rem;
+    font-size: var(--fs-1);
   }
 
   .body {
-    padding: 16px 12px 14px;
+    padding: var(--space-16) var(--space-12) var(--space-16);
   }
 
   .label {
-    font-size: 0.75rem;
+    font-size: var(--fs-1);
   }
 
   .input {
-    padding: 10px 10px;
-    font-size: 0.85rem;
+    padding: var(--space-12) var(--space-12);
+    font-size: var(--fs-2);
     border-radius: 8px;
   }
 
   .submitBtn {
-    padding: 12px;
-    font-size: 0.9rem;
+    padding: var(--space-12);
+    font-size: var(--fs-3);
     border-radius: 8px;
-    margin-top: 16px;
+    margin-top: var(--space-16);
   }
 
   .googleBtn {
-    padding: 10px;
-    font-size: 0.8rem;
+    padding: var(--space-12);
+    font-size: var(--fs-2);
     border-radius: 8px;
   }
 
   .messageBox {
-    font-size: 0.78rem;
-    padding: 8px 10px;
+    font-size: var(--fs-2);
+    padding: var(--space-8) var(--space-12);
   }
 }

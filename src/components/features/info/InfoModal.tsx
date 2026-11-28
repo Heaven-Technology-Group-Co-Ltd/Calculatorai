@@ -20,15 +20,17 @@ import styles from "./InfoModal.module.css";
 import { useSyncExternalStore } from "react";
 import { useDialog } from "@/hooks/useDialog";
 
-const MOBILE_QUERY = "(max-width: 767px)";
+const MOBILE_QUERY = "(max-width: 640px)";
 
 function subscribeViewport(onChange: () => void) {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") return () => undefined;
   const mql = window.matchMedia(MOBILE_QUERY);
   mql.addEventListener("change", onChange);
   return () => mql.removeEventListener("change", onChange);
 }
 
 function getIsNarrowViewport() {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") return false;
   return window.matchMedia(MOBILE_QUERY).matches;
 }
 
@@ -88,7 +90,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
     >
       <div className="modal-header">
         <div className="modal-header-icon">
-          <BookOpen size={20} />
+          <BookOpen size={20} aria-hidden="true" focusable="false" />
         </div>
         <div className={`modal-header-text ${styles.headerText}`}>
           <div className="modal-header-title" id="info-modal-title">
@@ -104,7 +106,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
           onClick={() => handleClose()}
           aria-label={lang === "th" ? "ปิด" : "Close"}
         >
-          <X size={16} />
+          <X size={16} aria-hidden="true" focusable="false" />
         </button>
       </div>
 
@@ -121,7 +123,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
             aria-controls="info-device-panel"
             tabIndex={deviceTab === "all" ? 0 : -1}
           >
-            <Layers size={14} />
+            <Layers size={16} aria-hidden="true" focusable="false" />
             <span>{INFO_TRANSLATIONS.guideTabAll[lang]}</span>
           </button>
           <button
@@ -134,7 +136,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
             aria-controls="info-device-panel"
             tabIndex={deviceTab === "pc" ? 0 : -1}
           >
-            <Monitor size={14} />
+            <Monitor size={16} aria-hidden="true" focusable="false" />
             <span>{INFO_TRANSLATIONS.guideTabPC[lang]}</span>
           </button>
           <button
@@ -147,7 +149,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
             aria-controls="info-device-panel"
             tabIndex={deviceTab === "mobile" ? 0 : -1}
           >
-            <Smartphone size={14} />
+            <Smartphone size={16} aria-hidden="true" focusable="false" />
             <span>{INFO_TRANSLATIONS.guideTabMobile[lang]}</span>
           </button>
         </div>
@@ -165,7 +167,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
             return (
               <div key={step.id} className="m-info-step">
                 <div className="m-info-step-num">
-                  <StepIcon size={18} />
+                  <StepIcon size={16} aria-hidden="true" focusable="false" />
                 </div>
                 <div className="m-info-step-content">
                   <div className={styles.stepTitleContainer}>
@@ -197,7 +199,7 @@ function InfoModalInner({ show, onClose, lang }: InfoModalProps) {
           <div className="m-info-tips">
             {filteredTips.map((tip) => (
               <span key={tip.id} className="m-info-tip">
-                <Lightbulb size={13} style={{ color: "var(--warning)", flexShrink: 0 }} />
+                <Lightbulb size={16} className={styles.tipIcon} aria-hidden="true" focusable="false" />
                 <span className={styles.tipLabel}>{tip.text[lang]}</span>
               </span>
             ))}

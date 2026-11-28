@@ -64,20 +64,10 @@ export function KpiCard({
   return (
     <Panel padding="sm">
       <div className={styles.kpiHeader}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div className={styles.kpiMeta}>
           <span className={styles.kpiLabel}>{label}</span>
           {badge && (
-            <span
-              style={{
-                fontSize: 10,
-                padding: "2px 6px",
-                borderRadius: "var(--radius-full)",
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                color: "var(--text-secondary)",
-                fontWeight: 600,
-              }}
-            >
+            <span className={styles.kpiBadge}>
               {badge}
             </span>
           )}

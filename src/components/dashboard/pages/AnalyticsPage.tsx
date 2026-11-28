@@ -11,7 +11,7 @@ import styles from "../styles/dashboard-blocks.module.css";
 export function AnalyticsPage() {
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+    <div className={styles.dashboardColumn}>
       <div className={styles.grid2col}>
         <TrafficAreaChart />
         <DevicePieChart />

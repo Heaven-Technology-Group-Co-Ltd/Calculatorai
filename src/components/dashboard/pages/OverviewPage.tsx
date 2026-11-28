@@ -15,13 +15,12 @@ export function OverviewPage() {
   const { triggerRefresh } = useDashboardContext();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+    <div className={styles.dashboardColumn}>
       {/* Filter bar */}
       <div className={styles.chipRow}>
         <button
-          className={styles.chip}
+          className={`${styles.chip} ${styles.dashboardHeaderAction}`}
           onClick={triggerRefresh}
-          style={{ marginLeft: "auto" }}
         >
           ⟳ Refresh
         </button>

@@ -40,7 +40,7 @@ export function UsersPage() {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+    <div className={styles.dashboardColumn}>
       {/* Search + Filters */}
       <div className={blockStyles.chipRow}>
         <div className={styles.searchWrap}>
@@ -165,7 +165,7 @@ export function UsersPage() {
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
-              <ChevronLeft size={15} style={{ marginRight: 2 }} />
+              <ChevronLeft size={16} className={styles.paginationIconLeft} />
               {t("dashboard.users.pagination.previous")}
             </button>
             <span className={styles.pageInfo}>
@@ -177,7 +177,7 @@ export function UsersPage() {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             >
               {t("dashboard.users.pagination.next")}
-              <ChevronRight size={15} style={{ marginLeft: 2 }} />
+              <ChevronRight size={16} className={styles.paginationIconRight} />
             </button>
           </div>
         )}

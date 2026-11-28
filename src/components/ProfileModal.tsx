@@ -39,7 +39,7 @@ return (
       <div className={styles.profileModalHeader}>
         <div className={styles.largeAvatar}>
           {user.image ? (
-            <img src={user.image} alt="Avatar" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
+            <img src={user.image} alt="Avatar" className={styles.avatarImage} />
           ) : (
             <User size={32} />
           )}
@@ -47,7 +47,7 @@ return (
         <h3 id="profile-modal-title" className={styles.modalTitle}>
           {user.name || (lang === "th" ? "ผู้ใช้งาน" : "User Profile")}
         </h3>
-        <p className={styles.modalText} style={{ marginBottom: 16 }}>
+        <p className={`${styles.modalText} ${styles.profileEmail}`}>
           {user.email || ""}
         </p>
       </div>
@@ -67,14 +67,14 @@ return (
         </div>
         <div className={styles.profileDetailItem}>
           <span className={styles.detailLabel}>{lang === "th" ? "สถานะบัญชี:" : "Status:"}</span>
-          <span className={styles.detailValue} style={{ color: "var(--success)" }}>
+          <span className={`${styles.detailValue} ${styles.profileActive}`}>
             ● {lang === "th" ? "เข้าสู่ระบบอยู่" : "Active"}
           </span>
         </div>
       </div>
 
       {user.isAdmin === true && <Link className={styles.cancelBtn} href="/dashboard" onClick={onClose}>{lang === "th" ? "แดชบอร์ดผู้ดูแล" : "Admin Dashboard"}</Link>}
-      <div className={styles.modalBtnRow} style={{ marginTop: 24 }}>
+      <div className={`${styles.modalBtnRow} ${styles.profileActions}`}>
         <button
           type="button"
           onClick={onClose}

@@ -86,12 +86,11 @@ function LanguageDropdownInner({
         aria-controls={showLangMenu ? "lang-menu" : undefined}
         onClick={() => setShowLangMenu(!showLangMenu)}
       >
-        <Globe size={14} />
-        <span style={{ fontWeight: 600, fontSize: 12 }}>{langInfo[lang].label}</span>
-        <ChevronDown size={12} style={{
-          transition: "transform 0.2s ease",
+        <Globe size={16} aria-hidden="true" focusable="false" />
+        <span className={styles.languageLabel}>{langInfo[lang].label}</span>
+        <ChevronDown size={16} className={styles.dropdownChevron} style={{
           transform: showLangMenu ? "rotate(180deg)" : "rotate(0deg)",
-        }} />
+        }} aria-hidden="true" focusable="false" />
       </button>
 
       {showLangMenu && (

@@ -21,8 +21,8 @@
   overflow: hidden;
   opacity: 1;
   transform: scale(1);
-  transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1),
-              transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity var(--transition-slow) cubic-bezier(0.22, 1, 0.36, 1),
+              transform var(--transition-slow) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .container.exiting {
@@ -35,9 +35,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 22px;
+  gap: var(--space-24);
   text-align: center;
-  padding: 0 24px;
+  padding: 0 var(--space-24);
 }
 
 /* ── Brand Block — fades up first ── */
@@ -46,12 +46,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-4);
 }
 
 .brand {
   font-family: var(--font-title);
-  font-size: clamp(2.4rem, 9vw, 3.5rem);
+  font-size: var(--fs-display-sm);
   font-weight: 800;
   letter-spacing: 0.05em;
   color: var(--text);
@@ -66,7 +66,7 @@
 
 .brandSub {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: var(--fs-2);
   font-weight: 500;
   letter-spacing: 0.38em;
   color: var(--text-secondary);
@@ -78,14 +78,14 @@
 .counterWrap {
   display: flex;
   align-items: baseline;
-  gap: 3px;
+  gap: var(--space-4);
   justify-content: center;
-  margin: 4px 0;
+  margin: var(--space-4) 0;
 }
 
 .counter {
   font-family: var(--font-title);
-  font-size: clamp(4rem, 12vw, 7rem);
+  font-size: var(--fs-display-lg);
   font-weight: 700;
   color: var(--text);
   line-height: 1;
@@ -95,7 +95,7 @@
 
 .counterPct {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: var(--fs-3);
   font-weight: 600;
   color: var(--text-secondary);
   letter-spacing: 0.08em;
@@ -104,7 +104,7 @@
 /* ── Progress Segments ── */
 .progressRow {
   display: flex;
-  gap: 3px;
+  gap: var(--space-4);
   justify-content: center;
 }
 
@@ -112,7 +112,7 @@
   width: clamp(12px, 3vw, 18px);
   height: 3px;
   border-radius: 2px;
-  transition: background 200ms ease;
+  transition: background var(--transition-base) ease;
 }
 
 .segmentFilled {
@@ -120,39 +120,39 @@
 }
 
 .segmentEmpty {
-  background: rgba(242, 230, 218, 0.07);
+  background: var(--ursa-text-alpha-07);
 }
 
 /* ── Phase Status Text ── */
 .statusText {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   font-weight: 500;
   letter-spacing: 0.16em;
   color: var(--text-secondary);
   text-transform: uppercase;
-  transition: opacity 300ms ease;
+  transition: opacity var(--transition-base) ease;
   min-height: 1.3em;
   user-select: none;
 }
 
 /* ── Explore Button ── */
 .exploreBtn {
-  margin-top: 6px;
-  padding: 11px 42px;
+  margin-top: var(--space-8);
+  padding: var(--space-12) var(--space-44);
   border: 1px solid var(--primary);
   background: transparent;
   color: var(--text);
   font-family: var(--font-title);
-  font-size: 0.82rem;
+  font-size: var(--fs-2);
   font-weight: 600;
   letter-spacing: 0.22em;
   border-radius: 4px;
   cursor: pointer;
-  transition: opacity 350ms ease,
-              transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
-              background 220ms ease,
-              color 220ms ease;
+  transition: opacity var(--transition-slow) ease,
+              transform var(--transition-slow) cubic-bezier(0.22, 1, 0.36, 1),
+              background var(--transition-base) ease,
+              color var(--transition-base) ease;
   user-select: none;
 }
 
@@ -186,6 +186,6 @@
     transition: none;
   }
   .exploreBtn {
-    transition: opacity 150ms ease;
+    transition: opacity var(--transition-fast) ease;
   }
 }

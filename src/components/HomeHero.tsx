@@ -5,6 +5,7 @@ import { Search, X } from "lucide-react";
 import type { Lang } from "@/types/locale";
 import { formulas } from "@/lib/formulas/registry";
 import { levels } from "@/lib/math-data";
+import styles from "./HomeHero.module.css";
 
 interface HomeHeroProps {
   lang: Lang;
@@ -47,7 +48,7 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
           borderColor: isSearchFocused ? "var(--border-gold)" : undefined,
         }}
       >
-        <Search size={16} style={{ opacity: 0.35, flexShrink: 0 }} />
+        <Search size={16} className={styles.searchIcon} aria-hidden="true" focusable="false" />
         <input
           ref={inputRef}
           type="text"

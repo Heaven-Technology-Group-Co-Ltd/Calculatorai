@@ -31,7 +31,7 @@ export const PAYMENT_PACKAGES: PaymentPackage[] = [
     ],
     highlighted: false,
     icon: BookOpen,
-    accentColor: "#10B981",
+    accentColor: "var(--success)",
     stripeProductName: "Math Calculator — Basic Plan",
   },
   {

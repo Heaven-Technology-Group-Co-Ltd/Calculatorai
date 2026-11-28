@@ -1,5 +1,5 @@
-.region { position: fixed; z-index: var(--z-toast); right: 24px; bottom: 24px; display: grid; gap: 10px; width: min(380px, calc(100vw - 32px)); }
-.toast { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 16px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface); color: var(--text); box-shadow: var(--shadow-md); animation: toastIn 180ms ease-out; }
+.region { position: fixed; z-index: var(--z-toast); right: 24px; bottom: 24px; display: grid; gap: var(--space-12); width: min(380px, calc(100vw - 32px)); }
+.toast { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); padding: var(--space-12) var(--space-12) var(--space-12) var(--space-16); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface); color: var(--text); box-shadow: var(--shadow-md); animation: toastIn 180ms ease-out; }
 .success { border-color: var(--success-border); }
 .error { border-color: var(--error-border); }
 .info { border-color: var(--primary-border); }

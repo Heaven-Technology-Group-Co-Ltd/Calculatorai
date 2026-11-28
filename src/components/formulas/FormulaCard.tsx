@@ -55,7 +55,7 @@ const subjectIcon: Record<string, LucideIcon> = {
 /* ─── Department → Flat Background Color Mapping ─── */
 const DEPT_BG: Record<string, string> = {
   business: "rgba(249, 115, 22, 0.08)",
-  "civil-engineering": "rgba(239, 68, 68, 0.08)",
+  "civil-engineering": "var(--error-bg)",
 };
 
 function getIconBg(subject?: string): string {
@@ -290,7 +290,7 @@ function FormulaCardInner({
               duration: 0.25,
               ease: [0.25, 1, 0.5, 1],
             }}
-            style={{ overflow: "hidden" }}
+            className={styles.expandedFormula}
             onKeyDown={handleKeyDown}
           >
             <div className={styles.divider} />

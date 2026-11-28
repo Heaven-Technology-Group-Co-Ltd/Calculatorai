@@ -14,13 +14,13 @@ export function IncidentTimeline({ incidents, range }: IncidentTimelineProps) {
   return (
     <div className={styles.panel}>
       <div className={styles.chartTitle}>
-        <AlertTriangle size={16} color="var(--primary)" />
+        <AlertTriangle size={16} color="var(--primary)" aria-hidden="true" focusable="false" />
         Incident timeline
         <span className={styles.incidentCount}>{incidents.length}</span>
       </div>
       {incidents.length === 0 ? (
         <div className={styles.incidentNone}>
-          <CheckCircle size={18} />
+          <CheckCircle size={16} aria-hidden="true" focusable="false" />
           No incidents in the last {range} — smooth sailing.
         </div>
       ) : (

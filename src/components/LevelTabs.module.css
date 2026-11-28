@@ -3,9 +3,9 @@
 /* Horizontal chip scroll (mobile) */
 .tabsRow {
   display: flex;
-  gap: 6px;
-  padding: 0 24px;
-  margin-bottom: 16px;
+  gap: var(--space-8);
+  padding: 0 var(--space-24);
+  margin-bottom: var(--space-16);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -15,13 +15,13 @@
 .tabsRow > * { flex-shrink: 0; }
 
 /* Keep desktop wrap behavior */
-@media (min-width: 769px) {
+@media (min-width: 900px) {
   .tabsRow {
     flex-wrap: wrap;
     overflow-x: visible;
     padding: 0;
-    margin-bottom: 24px;
-    gap: 8px;
+    margin-bottom: var(--space-24);
+    gap: var(--space-8);
   }
 }
 
@@ -29,10 +29,10 @@
 .chip {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-20);
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: var(--fs-2);
   font-weight: 600;
   color: var(--text-secondary);
   background: var(--surface);
@@ -48,9 +48,9 @@
 }
 
 .chipActive {
-  background: var(--primary) !important;
-  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.3);
-  color: var(--bg) !important;
+  background: var(--primary);
+  box-shadow: 0 2px 12px var(--ursa-primary-alpha-30);
+  color: var(--bg);
 }
 
 .chipIcon {

@@ -34,7 +34,7 @@ export function TopPagesTable() {
             <thead>
               <tr>
                 <th>{t("dashboard.table.topPages.headerPage")}</th>
-                <th style={{ textAlign: "right" }}>{t("dashboard.table.topPages.headerViews")}</th>
+                <th className={styles.alignRight}>{t("dashboard.table.topPages.headerViews")}</th>
               </tr>
             </thead>
             <tbody>
@@ -43,7 +43,7 @@ export function TopPagesTable() {
                   <td>
                     <span className={styles.pageLink}>{p.path}</span>
                   </td>
-                  <td style={{ textAlign: "right" }}>{p.views.toLocaleString()}</td>
+                  <td className={styles.alignRight}>{p.views.toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>

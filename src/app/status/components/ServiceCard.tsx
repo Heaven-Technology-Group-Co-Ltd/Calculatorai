@@ -25,9 +25,9 @@ export function ServiceCard({ id, check, uptimePct }: ServiceCardProps) {
     >
       <div className={styles.serviceHeader}>
         <span className={styles.serviceIcon}>
-          <Icon size={18} />
+          <Icon size={20} aria-hidden="true" focusable="false" />
         </span>
-        <div style={{ minWidth: 0 }}>
+        <div className={styles.serviceText}>
           <div className={styles.serviceName}>{meta.label}</div>
           <div className={styles.serviceHint}>{meta.hint}</div>
         </div>

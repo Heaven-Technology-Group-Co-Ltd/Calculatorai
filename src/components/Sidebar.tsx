@@ -176,16 +176,11 @@ function SidebarInner({
           itemCount={visibleDeptCount + 1}
         >
           <button
-            className={`dept-nav-item ${activeDepartment === "all" ? "active" : ""}`}
+            className={`dept-nav-item ${styles.allDepartments} ${activeDepartment === "all" ? "active" : ""}`}
             onClick={() => setActiveDepartment("all")}
             aria-pressed={activeDepartment === "all"}
-            style={
-              {
-                "--level-color": "var(--primary)",
-              } as React.CSSProperties
-            }
           >
-            <span style={{ color: "var(--primary)" }}>
+            <span className={styles.primaryIcon}>
               <Layers size={14} />
             </span>
             <span className="navLabel">
@@ -291,7 +286,7 @@ function SidebarInner({
 
           {/* Profile Section */}
           {status === "loading" ? (
-            <div className="sidebar-bottom-profile" style={{ opacity: 0.5 }}>
+            <div className={`sidebar-bottom-profile ${styles.profileLoading}`}>
               <div className="profile-avatar"><User size={16} /></div>
               <div className="profile-info">
                 <div className="profile-name">
@@ -309,7 +304,7 @@ function SidebarInner({
               >
                 <span className="profile-avatar">
                   {session.user.image ? (
-                    <img src={session.user.image} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
+                    <img src={session.user.image} alt="" className={styles.profileAvatarImage} />
                   ) : (
                     <User size={16} />
                   )}

@@ -2,13 +2,13 @@
 
 .filterRow {
   display: flex;
-  gap: 8px;
-  padding: 8px 0;
+  gap: var(--space-8);
+  padding: var(--space-8) 0;
   flex-wrap: wrap;
 }
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .filterRow {
-    padding: 8px 12px;
+    padding: var(--space-8) var(--space-12);
     overflow-x: auto;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
@@ -21,27 +21,27 @@
 
 .filterChip {
   white-space: nowrap;
-  padding: 8px 16px;
+  padding: var(--space-8) var(--space-16);
   min-height: 42px;
   border-radius: var(--radius-full);
-  font-size: 13px;
+  font-size: var(--fs-2);
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--ursa-text-alpha-03);
   border: 1px solid var(--border);
   color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
   transition: all var(--transition-fast);
   font-family: inherit;
   scroll-snap-align: start;
 }
-.filterChip:hover { border-color: rgba(255,255,255,0.12); }
+.filterChip:hover { border-color: var(--ursa-text-alpha-12); }
 .filterChip:active { transform: scale(0.96); }
 .filterChip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .filterChipActive {
-  background: rgba(232, 184, 150, 0.12);
+  background: var(--ursa-primary-alpha-12);
   border-color: var(--border-gold);
   color: var(--primary);
   font-weight: 600;

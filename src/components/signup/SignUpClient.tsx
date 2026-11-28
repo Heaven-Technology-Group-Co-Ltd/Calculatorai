@@ -8,10 +8,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus, Mail, Lock, User, CheckCircle, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { uiTranslations } from "@/lib/translations";
 import { useLanguage } from "@/lib/LanguageContext";
-import { apiPost } from "@/lib/api-client";
+import { apiPost, ClientApiError } from "@/lib/api-client";
 import { PASSWORD_POLICY, isValidEmailAddress, isWithinPasswordByteLimit } from "@/lib/validation/vocabulary";
 import styles from "./SignUp.module.css";
-import fieldStyles from "@/components/ui/FormField.module.css";
+import { FormField } from "@/components/ui/FormField";
 
 /* ─── animation presets ─── */
 const fadeSlideUp = {
@@ -30,15 +30,17 @@ const scaleIn = {
 
 type SignUpField = "name" | "email" | "password" | "confirm";
 
-export function signupFieldInvalid(field: SignUpField, value: string, message: string | null): boolean {
-  if (!message) return false;
-  const normalizedMessage = message.toLowerCase();
-  if (normalizedMessage.includes("fill in all fields") || normalizedMessage.includes("กรุณากรอกข้อมูล")) return !value.trim();
-  if (normalizedMessage.includes("password") || normalizedMessage.includes("รหัสผ่าน")) {
-    return field === "password" || (field === "confirm" && (normalizedMessage.includes("match") || normalizedMessage.includes("ตรงกัน")));
-  }
-  if (normalizedMessage.includes("email") || normalizedMessage.includes("อีเมล")) return field === "email";
-  return field === "email";
+export function signupFieldInvalid(field: SignUpField, invalidField: SignUpField | null): boolean {
+  return invalidField === field;
+}
+
+export function signupFieldForServerCode(code: string | undefined): SignUpField | null {
+  if (!code) return null;
+  const normalizedCode = code.toUpperCase();
+  if (normalizedCode.includes("EMAIL")) return "email";
+  if (normalizedCode.includes("PASSWORD")) return "password";
+  if (normalizedCode.includes("NAME")) return "name";
+  return null;
 }
 
 export function SignUpClient() {
@@ -52,6 +54,7 @@ export function SignUpClient() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [invalidField, setInvalidField] = useState<SignUpField | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   /* ─── redirect if already logged in ─── */
@@ -61,34 +64,39 @@ export function SignUpClient() {
 
   /* ─── t helper ─── */
   const t = (key: keyof typeof uiTranslations) => uiTranslations[key][lang];
-  const formError = message?.type === "error" ? message.text : null;
-  const nameInvalid = signupFieldInvalid("name", name, formError);
-  const emailInvalid = signupFieldInvalid("email", email, formError);
-  const passwordInvalid = signupFieldInvalid("password", password, formError);
-  const confirmationInvalid = signupFieldInvalid("confirm", confirmPassword, formError);
+  const nameInvalid = signupFieldInvalid("name", invalidField);
+  const emailInvalid = signupFieldInvalid("email", invalidField);
+  const passwordInvalid = signupFieldInvalid("password", invalidField);
+  const confirmationInvalid = signupFieldInvalid("confirm", invalidField);
 
   /* ─── submit handler ─── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
+    setInvalidField(null);
 
     if (!name.trim() || !email.trim() || !password.trim()) {
+      setInvalidField(!name.trim() ? "name" : !email.trim() ? "email" : "password");
       setMessage({ type: "error", text: lang === "th" ? "กรุณากรอกข้อมูลให้ครบทุกช่อง" : "Please fill in all fields" });
       return;
     }
     if (!isValidEmailAddress(email)) {
+      setInvalidField("email");
       setMessage({ type: "error", text: lang === "th" ? "กรุณากรอกอีเมลให้ถูกต้อง" : "Enter a valid email address" });
       return;
     }
     if (password.length < PASSWORD_POLICY.minChars) {
+      setInvalidField("password");
       setMessage({ type: "error", text: lang === "th" ? "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร" : "Password must be at least 8 characters" });
       return;
     }
     if (!isWithinPasswordByteLimit(password)) {
+      setInvalidField("password");
       setMessage({ type: "error", text: lang === "th" ? `รหัสผ่านต้องมีขนาดไม่เกิน ${PASSWORD_POLICY.maxBytes} ไบต์` : `Password must be at most ${PASSWORD_POLICY.maxBytes} bytes` });
       return;
     }
     if (password !== confirmPassword) {
+      setInvalidField("confirm");
       setMessage({ type: "error", text: uiTranslations.signUpPasswordMismatch?.[lang] ?? "Passwords do not match" });
       return;
     }
@@ -100,6 +108,7 @@ export function SignUpClient() {
       setMessage({ type: "success", text: "" });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Something went wrong";
+      if (err instanceof ClientApiError) setInvalidField(signupFieldForServerCode(err.code));
       setMessage({ type: "error", text: errorMessage });
     } finally {
       setLoading(false);
@@ -157,8 +166,7 @@ export function SignUpClient() {
               {t("signUpSuccessDesc")}
             </motion.p>
             <motion.button
-              className={styles.submitBtn}
-              style={{ marginTop: 20, maxWidth: 260 }}
+              className={`${styles.submitBtn} ${styles.successButton}`}
               onClick={() => router.push("/")}
               variants={fadeSlideUp}
               custom={2}
@@ -198,15 +206,13 @@ export function SignUpClient() {
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {/* Name field */}
           <motion.div className={styles.inputGroup} variants={fadeSlideUp} custom={1} initial="hidden" animate="visible">
-            <label className={styles.inputLabel} htmlFor="signup-name">
-              <User size={12} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />
-              {t("signUpNameLabel")}
-            </label>
-            <input
+            <FormField
               id="signup-name"
-              className={`${styles.inputField} ${nameInvalid ? fieldStyles.inputError : ""}`}
-              aria-invalid={nameInvalid}
-              aria-describedby={nameInvalid ? "signup-form-error" : undefined}
+              label={<><User size={16} aria-hidden="true" focusable="false" />{t("signUpNameLabel")}</>}
+              labelClassName={styles.inputLabel}
+              className={styles.inputField}
+              invalid={nameInvalid}
+              describedById={nameInvalid ? "signup-form-error" : undefined}
               type="text"
               placeholder={t("signUpNamePlaceholder")}
               value={name}
@@ -218,15 +224,13 @@ export function SignUpClient() {
 
           {/* Email field */}
           <motion.div className={styles.inputGroup} variants={fadeSlideUp} custom={2} initial="hidden" animate="visible">
-            <label className={styles.inputLabel} htmlFor="signup-email">
-              <Mail size={12} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />
-              {t("signUpEmailLabel")}
-            </label>
-            <input
+            <FormField
               id="signup-email"
-              className={`${styles.inputField} ${emailInvalid ? fieldStyles.inputError : ""}`}
-              aria-invalid={emailInvalid}
-              aria-describedby={emailInvalid ? "signup-form-error" : undefined}
+              label={<><Mail size={16} aria-hidden="true" focusable="false" />{t("signUpEmailLabel")}</>}
+              labelClassName={styles.inputLabel}
+              className={styles.inputField}
+              invalid={emailInvalid}
+              describedById={emailInvalid ? "signup-form-error" : undefined}
               type="email"
               placeholder={t("signUpEmailPlaceholder")}
               value={email}
@@ -238,51 +242,41 @@ export function SignUpClient() {
 
           {/* Password field */}
           <motion.div className={styles.inputGroup} variants={fadeSlideUp} custom={3} initial="hidden" animate="visible">
-            <label className={styles.inputLabel} htmlFor="signup-password">
-              <Lock size={12} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />
-              {t("signUpPasswordLabel")}
-            </label>
-            <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-              <input
-                id="signup-password"
-                className={`${styles.inputField} ${passwordInvalid ? fieldStyles.inputError : ""}`}
-                aria-invalid={passwordInvalid}
-                aria-describedby={passwordInvalid ? "signup-form-error" : undefined}
-                type={showPassword ? "text" : "password"}
-                placeholder={t("signUpPasswordPlaceholder")}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-                minLength={PASSWORD_POLICY.minChars}
-                disabled={loading}
-                style={{ paddingRight: 36 }}
-              />
-              <button
+            <FormField
+              id="signup-password"
+              label={<><Lock size={16} aria-hidden="true" focusable="false" />{t("signUpPasswordLabel")}</>}
+              labelClassName={styles.inputLabel}
+              className={styles.inputField}
+              invalid={passwordInvalid}
+              describedById={passwordInvalid ? "signup-form-error" : undefined}
+              type={showPassword ? "text" : "password"}
+              placeholder={t("signUpPasswordPlaceholder")}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              minLength={PASSWORD_POLICY.minChars}
+              disabled={loading}
+              endAdornment={<button
                 type="button"
+                className={styles.passwordToggle}
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
                 aria-pressed={showPassword}
-                style={{
-                  position: "absolute", right: 8, background: "none", border: "none",
-                  color: "var(--text-secondary)", cursor: "pointer", padding: 4, display: "flex"
-                }}
               >
                 {showPassword ? <EyeOff size={16} aria-hidden="true" focusable="false" /> : <Eye size={16} aria-hidden="true" focusable="false" />}
-              </button>
-            </div>
+              </button>}
+            />
           </motion.div>
 
           {/* Confirm Password field */}
           <motion.div className={styles.inputGroup} variants={fadeSlideUp} custom={4} initial="hidden" animate="visible">
-            <label className={styles.inputLabel} htmlFor="signup-confirm">
-              <Lock size={12} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />
-              {t("signUpConfirmPasswordLabel")}
-            </label>
-            <input
+            <FormField
               id="signup-confirm"
-              className={`${styles.inputField} ${confirmationInvalid ? fieldStyles.inputError : ""}`}
-              aria-invalid={confirmationInvalid}
-              aria-describedby={confirmationInvalid ? "signup-form-error" : undefined}
+              label={<><Lock size={16} aria-hidden="true" focusable="false" />{t("signUpConfirmPasswordLabel")}</>}
+              labelClassName={styles.inputLabel}
+              className={styles.inputField}
+              invalid={confirmationInvalid}
+              describedById={confirmationInvalid ? "signup-form-error" : undefined}
               type={showPassword ? "text" : "password"}
               placeholder={t("signUpConfirmPasswordPlaceholder")}
               value={confirmPassword}
@@ -353,10 +347,10 @@ export function SignUpClient() {
           whileTap={{ scale: 0.98 }}
         >
           <svg className={styles.googleIcon} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09a6.6 6.6 0 0 1-.35-2.09c0-.73.12-1.44.35-2.09V7.12H2.18a11 11 0 0 0 0 9.76l3.66-2.79z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A10.9 10.9 0 0 0 12 1a10.98 10.98 0 0 0-9.82 6.12l3.66 2.79A6.6 6.6 0 0 1 12 5.38z"/>
+            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+            <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="currentColor" d="M5.84 14.09a6.6 6.6 0 0 1-.35-2.09c0-.73.12-1.44.35-2.09V7.12H2.18a11 11 0 0 0 0 9.76l3.66-2.79z"/>
+            <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A10.9 10.9 0 0 0 12 1a10.98 10.98 0 0 0-9.82 6.12l3.66 2.79A6.6 6.6 0 0 1 12 5.38z"/>
           </svg>
           {t("signUpGoogle")}
         </motion.button>

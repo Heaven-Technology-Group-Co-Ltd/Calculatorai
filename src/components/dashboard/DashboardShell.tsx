@@ -37,6 +37,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
     const mobileQuery = window.matchMedia("(max-width: 900px)");
     const closeDrawer = () => setDrawerOpen(false);
     mobileQuery.addEventListener("change", closeDrawer);
@@ -112,21 +113,14 @@ export function DashboardShell({ children }: DashboardShellProps) {
         <div className={styles.sidebarFooter}>
           <div className={styles.userRow}>
             <div className={styles.userAvatar}>{adminInitial}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div className={styles.navContent}>
               <div className={styles.userName}>{adminName}</div>
               <div className={styles.userRole}>Administrator</div>
             </div>
             <Link
               href="/"
               title="Exit to Calculator"
-              style={{
-                color: "var(--text-secondary)",
-                display: "flex",
-                alignItems: "center",
-                padding: 4,
-                borderRadius: 4,
-                textDecoration: "none",
-              }}
+              className={styles.exitLink}
             >
               <LogOut size={16} />
             </Link>
@@ -174,21 +168,14 @@ export function DashboardShell({ children }: DashboardShellProps) {
         <div className={styles.sidebarFooter}>
           <div className={styles.userRow}>
             <div className={styles.userAvatar}>{adminInitial}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div className={styles.navContent}>
               <div className={styles.userName}>{adminName}</div>
               <div className={styles.userRole}>Administrator</div>
             </div>
             <Link
               href="/"
               title="Exit to Calculator"
-              style={{
-                color: "var(--text-secondary)",
-                display: "flex",
-                alignItems: "center",
-                padding: 4,
-                borderRadius: 4,
-                textDecoration: "none",
-              }}
+              className={styles.exitLink}
             >
               <LogOut size={16} />
             </Link>

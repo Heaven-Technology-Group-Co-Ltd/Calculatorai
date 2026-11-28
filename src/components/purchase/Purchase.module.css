@@ -3,20 +3,20 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 24px;
+  padding: var(--space-60) var(--space-24);
   width: 100%;
 }
 
 .backBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-8);
   font-size: var(--fs-5);
   color: var(--text-secondary);
   background: none;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 8px 14px;
+  padding: var(--space-8) var(--space-16);
   cursor: pointer;
   transition: all var(--transition-fast);
   margin-bottom: var(--space-lg);
@@ -36,7 +36,7 @@
 
 .header h1 {
   font-family: var(--font-title);
-  font-size: 1.8rem;
+  font-size: var(--fs-display-sm);
   font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: var(--space-sm);
@@ -45,15 +45,15 @@
 
 .header p {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
 }
 
 /* ── Plan Grid ── */
 .planGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-bottom: 32px;
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
 }
 
 /* ── Plan Card ── */
@@ -61,8 +61,8 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: all 0.25s ease;
-  padding: 28px;
+  transition: all var(--transition-base) ease;
+  padding: var(--space-28);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -71,10 +71,10 @@
   height: 100%;
 }
 
-.planCardActive {
+.planCard.planCardActive {
   transform: scale(0.97);
-  border-color: var(--border-gold) !important;
-  background: rgba(22, 8, 22, 0.6) !important;
+  border-color: var(--border-gold);
+  background: var(--ursa-overlay-alpha-60);
 }
 
 .planCard:hover {
@@ -84,7 +84,7 @@
 
 .planCard.active {
   border-color: var(--border-gold);
-  background: rgba(22, 8, 22, 0.6);
+  background: var(--ursa-overlay-alpha-60);
 }
 
 .planCardDisabled {
@@ -98,18 +98,23 @@
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  background: radial-gradient(ellipse at top, var(--primary-subtle), transparent 70%);
 }
+.bestValueBadge svg { margin-right: var(--space-4); }
+.planLoadingIcon { color: var(--text); }
+.planHeaderMain { display: flex; align-items: center; gap: var(--space-12); }
+.checkoutPending { display: flex; align-items: center; justify-content: center; gap: var(--space-8); }
 
 /* ── Best Value Badge ── */
 .bestValueBadge {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  font-size: 0.65rem;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: var(--space-4) var(--space-12);
   border-radius: var(--radius-full);
   background: var(--border-gold);
   color: var(--bg);
@@ -141,19 +146,19 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
-  background: rgba(232, 184, 150, 0.1);
+  background: var(--ursa-primary-alpha-10);
 }
 
 .planNameText {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: var(--fs-4);
   color: var(--text);
 }
 
 /* ── Price ── */
 .planPrice {
   font-family: var(--font-title);
-  font-size: 1.8rem;
+  font-size: var(--fs-display-sm);
   font-weight: 700;
   margin-bottom: var(--space-xs);
   color: var(--text);
@@ -161,7 +166,7 @@
 }
 
 .planPrice small {
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   font-weight: 500;
   color: var(--text-secondary);
   margin-left: 2px;
@@ -169,7 +174,7 @@
 
 /* ── Description ── */
 .planDesc {
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
   margin-bottom: var(--space-md);
   line-height: 1.5;
@@ -193,7 +198,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   color: var(--text);
   padding: 2px 0;
 }
@@ -208,7 +213,7 @@
 /* ── Card Select Button ── */
 .selectCardBtn {
   width: 100%;
-  padding: 12px;
+  padding: var(--space-12);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -216,13 +221,13 @@
   background: var(--surface);
   color: var(--text);
   transition: all var(--transition-fast);
-  min-height: 44px;
+  min-height: var(--control-md);
   cursor: pointer;
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .selectCardBtn:hover {
@@ -242,15 +247,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 40px;
-  gap: 12px;
+  margin-top: var(--space-40);
+  gap: var(--space-12);
   width: 100%;
 }
 
 .checkoutSubmitBtn {
   max-width: 440px;
   width: 100%;
-  padding: 16px 28px;
+  padding: var(--space-16) var(--space-28);
   border: none;
   border-radius: var(--radius-sm);
   font-weight: 700;
@@ -261,8 +266,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  gap: var(--space-12);
+  box-shadow: 0 8px 30px var(--ursa-overlay-alpha-35);
   transition: all var(--transition-fast);
 }
 
@@ -281,7 +286,7 @@
   color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-8);
   margin: 0;
 }
 
@@ -290,14 +295,14 @@
   text-align: center;
   max-width: 500px;
   margin: var(--space-md) auto 0;
-  padding: 12px 16px;
+  padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-md);
   background: var(--error-bg);
   border: 1px solid var(--error-border);
   color: var(--error);
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
   z-index: 1;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base) ease;
 }
 
 /* ── Loading Overlay ── */
@@ -305,14 +310,14 @@
   position: fixed;
   inset: 0;
   z-index: var(--z-modal, 50);
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--ursa-overlay-alpha-80);
   backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 24px;
+  gap: var(--space-16);
+  padding: var(--space-24);
 }
 
 .loadingIconBox {
@@ -322,13 +327,13 @@
   width: 64px;
   height: 64px;
   border-radius: var(--radius-full);
-  background: rgba(232, 184, 150, 0.1);
-  border: 1px solid rgba(232, 184, 150, 0.2);
-  margin-bottom: 8px;
+  background: var(--ursa-primary-alpha-10);
+  border: 1px solid var(--ursa-primary-alpha-20);
+  margin-bottom: var(--space-8);
 }
 
 .loadingTitle {
-  font-size: 1.2rem;
+  font-size: var(--fs-5);
   font-weight: 700;
   font-family: var(--font-title);
   color: var(--text);
@@ -337,7 +342,7 @@
 
 .loadingSub {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
   text-align: center;
 }
 
@@ -346,40 +351,40 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Desktop Default (≥901px) ── */
-@media (min-width: 901px) {
+@media (min-width: 900px) {
   .planGrid {
     grid-template-columns: repeat(3, 1fr);
   }
   .planCard {
-    padding: 28px;
+    padding: var(--space-28);
   }
   .header h1 {
-    font-size: 1.8rem;
+    font-size: var(--fs-display-sm);
   }
 }
 
 /* ── Tablet (≤900px) ── */
 @media (max-width: 900px) {
   .container {
-    padding: 40px 20px;
+    padding: var(--space-40) var(--space-20);
   }
 
   .planGrid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: var(--space-20);
   }
 
   .planCard {
-    padding: 24px 20px;
+    padding: var(--space-24) var(--space-20);
   }
 
   .header h1 {
-    font-size: 1.6rem;
+    font-size: var(--fs-6);
   }
 
   .backBtn {
-    font-size: 0.8rem;
-    padding: 7px 12px;
+    font-size: var(--fs-2);
+    padding: var(--space-8) var(--space-12);
     min-height: 36px;
     margin-bottom: var(--space-md);
   }
@@ -388,50 +393,50 @@
 /* ── Phone (≤640px) ── */
 @media (max-width: 640px) {
   .container {
-    padding: 24px 14px;
-    padding-bottom: calc(24px + 80px); /* Bottom nav clearance to prevent overlapping */
+    padding: var(--space-24) var(--space-16);
+    padding-bottom: calc(var(--space-24) + var(--space-80)); /* Bottom nav clearance to prevent overlapping */
   }
 
   .planGrid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: var(--space-16);
   }
 
   .planCard {
-    padding: 20px 14px;
+    padding: var(--space-20) var(--space-16);
   }
 
   .header h1 {
-    font-size: 20px;
+    font-size: var(--fs-5);
   }
 
   .header p {
-    font-size: 0.85rem;
+    font-size: var(--fs-2);
   }
 
   .planPrice {
-    font-size: 1.6rem;
+    font-size: var(--fs-6);
   }
 
   .planFeatures li {
-    font-size: 0.8rem;
+    font-size: var(--fs-2);
   }
 
   .selectCardBtn {
     font-size: var(--fs-5);
-    padding: 10px;
+    padding: var(--space-12);
   }
 
   .backBtn {
-    font-size: 0.75rem;
-    padding: 6px 10px;
+    font-size: var(--fs-1);
+    padding: var(--space-8) var(--space-12);
     min-height: 34px;
     margin-bottom: var(--space-sm);
   }
 
   .loadingOverlay {
-    padding: 16px;
-    gap: 12px;
+    padding: var(--space-16);
+    gap: var(--space-12);
   }
 
   .loadingIconBox {
@@ -440,49 +445,49 @@
   }
 
   .loadingTitle {
-    font-size: 1rem;
+    font-size: var(--fs-4);
   }
 
   .loadingSub {
-    font-size: 0.8rem;
+    font-size: var(--fs-2);
   }
 
   .error {
-    font-size: 0.85rem;
-    padding: 10px 12px;
+    font-size: var(--fs-2);
+    padding: var(--space-12) var(--space-12);
   }
 }
 
 /* ── Small Phone (≤400px) ── */
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .container {
-    padding: 16px 10px;
-    padding-bottom: calc(16px + 80px);
+    padding: var(--space-16) var(--space-12);
+    padding-bottom: calc(var(--space-16) + var(--space-80));
   }
 
   .planGrid {
-    gap: 12px;
+    gap: var(--space-12);
   }
 
   .planCard {
-    padding: 16px 10px;
+    padding: var(--space-16) var(--space-12);
   }
 
   .header h1 {
-    font-size: 17px;
+    font-size: var(--fs-4);
   }
 
   .header p {
-    font-size: 0.75rem;
+    font-size: var(--fs-1);
     margin-bottom: var(--space-sm);
   }
 
   .planPrice {
-    font-size: 1.4rem;
+    font-size: var(--fs-6);
   }
 
   .planDesc {
-    font-size: 0.75rem;
+    font-size: var(--fs-1);
     margin-bottom: var(--space-sm);
   }
 
@@ -492,18 +497,18 @@
   }
 
   .planFeatures li {
-    font-size: 0.75rem;
+    font-size: var(--fs-1);
   }
 
   .selectCardBtn {
-    font-size: 0.85rem;
-    padding: 8px;
+    font-size: var(--fs-2);
+    padding: var(--space-8);
     min-height: 44px;
   }
 
   .backBtn {
-    font-size: 0.7rem;
-    padding: 4px 8px;
+    font-size: var(--fs-xs);
+    padding: var(--space-4) var(--space-8);
     min-height: 32px;
   }
 }
@@ -514,12 +519,12 @@
   gap: var(--space-sm);
   max-width: 680px;
   margin: 0 auto var(--space-lg);
-  padding: 12px 18px;
+  padding: var(--space-12) var(--space-20);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
 }
 
 .canceledIcon {
