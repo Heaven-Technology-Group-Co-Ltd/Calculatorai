@@ -1,10 +1,12 @@
 /* ── LanguageDropdown styles ── */
 
 .flagEmoji {
-  font-size: 16px;
+  font-size: var(--fs-4);
   line-height: 1;
 }
 
 .checkMark {
   margin-left: auto;
 }
+.languageLabel { font-weight: 600; font-size: var(--fs-1); }
+.dropdownChevron { transition: transform var(--transition-base); }

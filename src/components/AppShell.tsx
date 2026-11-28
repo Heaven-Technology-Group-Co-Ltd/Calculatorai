@@ -57,7 +57,6 @@ export function AppShell() {
   const [showModal, setShowModal] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [restoration, setRestoration] = useState<Record<string, Record<string, string> | null>>({});
-  const [isTablet, setIsTablet] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -65,20 +64,15 @@ export function AppShell() {
 
   // ── Responsive breakpoint detection ──
   useEffect(() => {
-    const tabletMq = window.matchMedia("(max-width: 900px)");
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
     const mobileMq = window.matchMedia("(max-width: 900px)");
     const handler = () => {
-      setIsTablet(tabletMq.matches);
       setIsMobile(mobileMq.matches);
-      if (tabletMq.matches) setShowSidebar(false);
+      if (mobileMq.matches) setShowSidebar(false);
     };
     handler();
-    tabletMq.addEventListener("change", handler);
     mobileMq.addEventListener("change", handler);
-    return () => {
-      tabletMq.removeEventListener("change", handler);
-      mobileMq.removeEventListener("change", handler);
-    };
+    return () => mobileMq.removeEventListener("change", handler);
   }, []);
 
   // ── Keyboard shortcuts (⌘K or / to search, Escape to close modals) ──
@@ -122,7 +116,7 @@ export function AppShell() {
 
   // Lock body scroll when mobile sidebar, history drawer, or info modal is open
   useEffect(() => {
-    const shouldLock = (isTablet && showSidebar) || showHistory || showModal || showConfirm;
+    const shouldLock = (isMobile && showSidebar) || showHistory || showModal || showConfirm;
     if (shouldLock) {
       document.body.style.overflow = "hidden";
     } else {
@@ -131,7 +125,7 @@ export function AppShell() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isTablet, showSidebar, showHistory, showModal, showConfirm]);
+  }, [isMobile, showSidebar, showHistory, showModal, showConfirm]);
 
   // Update restoration when a new item is added
   const handleAddToHistory = useCallback(
@@ -178,7 +172,6 @@ export function AppShell() {
     return matchSearch && matchLevel && matchDept;
   });
 
-  const collapsed = isTablet && !isMobile;
   const sidebarOpen = showSidebar;
 
   const getBreadcrumb = useCallback(() => {
@@ -217,7 +210,7 @@ export function AppShell() {
         isOpen={sidebarOpen}
         historyCount={history.length}
         onClearHistory={openConfirm}
-        collapsed={collapsed}
+        collapsed={false}
       />
 
       {/* Main Content Column */}
@@ -247,7 +240,7 @@ export function AppShell() {
           {isMobile ? (
             /* Mobile Topbar: Brand on left, Language selector on right. Zero duplicate buttons! */
             <>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div className={styles.brandRow}>
                 <Calculator size={18} color="var(--primary)" />
                 <span className="topbar-mobile-title">MathCalc</span>
               </div>
@@ -264,7 +257,7 @@ export function AppShell() {
           ) : (
             /* Desktop Topbar: Sidebar Toggle & Dynamic Breadcrumb on left, Language & History on right */
             <>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div className={styles.desktopActions}>
                 <button
                   className="tb-btn"
                   onClick={toggleSidebar}
@@ -310,7 +303,7 @@ export function AppShell() {
           />
 
           {isMobile && (
-            <div style={{ marginBottom: 8 }}>
+            <div className={styles.mobileLevelFilter}>
               <LevelFilter
                 lang={lang}
                 activeLevel={activeLevel}
@@ -343,7 +336,7 @@ export function AppShell() {
                 <Info size={14} />
                 <span>{lang === "th" ? "เกี่ยวกับ" : "About"}</span>
               </button>
-              <a href="/status" className="tb-btn" style={{ textDecoration: "none" }}>
+              <a href="/status" className={`tb-btn ${styles.statusLink}`}>
                 <Activity size={14} />
                 <span>{lang === "th" ? "สถานะระบบ" : "Status"}</span>
               </a>
@@ -392,7 +385,7 @@ export function AppShell() {
             className={`mb-item ${showHistory ? "mb-item-active" : ""}`}
             onClick={() => setShowHistory(true)}
           >
-            <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div className={styles.mobileHistoryIcon}>
               <Clock size={20} className="mb-icon" />
               {history.length > 0 && (
                 <span className="mb-badge">{history.length}</span>

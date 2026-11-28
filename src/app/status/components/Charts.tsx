@@ -50,7 +50,7 @@ export function Charts({
       {/* Uptime chart */}
       <div className={styles.panel}>
         <div className={styles.chartTitle}>
-          <Activity size={16} color="var(--primary)" />
+          <Activity size={16} color="var(--primary)" aria-hidden="true" focusable="false" />
           Uptime %
         </div>
         <p className={styles.chartSubtitle}>
@@ -58,7 +58,7 @@ export function Charts({
         </p>
         {historyError || !hasUptime ? (
           <div className={styles.chartEmpty}>
-            <Activity size={24} style={{ opacity: 0.4 }} />
+            <Activity size={20} className={styles.emptyIcon} aria-hidden="true" focusable="false" />
             {historyError ?? "No uptime data yet — check back after a few checks run."}
           </div>
         ) : (
@@ -108,13 +108,13 @@ export function Charts({
       {/* Latency chart */}
       <div className={styles.panel}>
         <div className={styles.chartTitle}>
-          <Zap size={16} color="var(--primary)" />
+          <Zap size={16} color="var(--primary)" aria-hidden="true" focusable="false" />
           Response time
         </div>
         <p className={styles.chartSubtitle}>Avg latency per service · ms</p>
         {historyError || !hasLatency ? (
           <div className={styles.chartEmpty}>
-            <Zap size={24} style={{ opacity: 0.4 }} />
+            <Zap size={20} className={styles.emptyIcon} aria-hidden="true" focusable="false" />
             {historyError ?? "No latency data yet — check back after a few checks run."}
           </div>
         ) : (

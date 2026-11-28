@@ -166,7 +166,7 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
           </>
         )}
         {!loading && !error && !detail && (
-          <div style={{ color: "var(--text-secondary)", textAlign: "center", padding: 24 }}>
+          <div className={styles.emptyDetails}>
             {t("dashboard.modal.userDetails.empty")}
           </div>
         )}

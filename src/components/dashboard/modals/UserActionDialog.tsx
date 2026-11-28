@@ -48,7 +48,7 @@ export function UserActionDialog({ user, action, onClose, onSuccess }: UserActio
         {action === "plan" && <select className={styles.modalSelect} aria-label={t("dashboard.modal.plan.title")} value={plan} onChange={(event) => setPlan(event.target.value)}>{ADMIN_ASSIGNABLE_PLANS.map((option) => <option key={option} value={option}>{planLabels[option]}</option>)}</select>}
         {(action === "message" || (action === "ban" && !isBanned)) && <textarea className={styles.modalTextarea} aria-label={action === "ban" ? t("dashboard.modal.ban.reasonPlaceholder") : t("dashboard.modal.message.placeholder")} placeholder={action === "ban" ? t("dashboard.modal.ban.reasonPlaceholder") : t("dashboard.modal.message.placeholder")} value={content} onChange={(event) => setContent(event.target.value)} maxLength={maxLength} />}
         {action === "message" && <div className={styles.charCount}>{t("dashboard.modal.message.remaining", { count: (maxLength - content.length).toLocaleString() })}</div>}
-        {error && <div role="alert" style={{ color: "var(--error)" }}>{displayError}</div>}
+        {error && <div role="alert" className={styles.actionError}>{displayError}</div>}
         <div className={styles.actions}>
           <button type="button" className={styles.btnCancel} onClick={onClose}>{t("dashboard.modal.cancel")}</button>
           <button type="button" className={action === "ban" && !isBanned ? styles.btnDanger : styles.btnPrimary} onClick={confirm} disabled={invalid || submitting}>{submitting ? busyLabel : submitLabel}</button>

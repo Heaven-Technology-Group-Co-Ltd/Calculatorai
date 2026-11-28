@@ -163,9 +163,6 @@ export function PurchaseClient() {
               {pkg.highlighted && (
                 <div
                   className={styles.highlightBg}
-                  style={{
-                    background: `radial-gradient(ellipse at top, var(--primary-subtle), transparent 70%)`,
-                  }}
                 />
               )}
 
@@ -176,7 +173,7 @@ export function PurchaseClient() {
                   animate={{ opacity: 1, scale: 1 }}
                   className={styles.bestValueBadge}
                 >
-                  <Sparkles size={10} style={{ marginRight: 4, display: "inline" }} />
+                  <Sparkles size={16} aria-hidden="true" focusable="false" />
                   {lang === "th" ? "คุ้มค่าที่สุด" : "Best Value"}
                 </motion.div>
               )}
@@ -188,13 +185,13 @@ export function PurchaseClient() {
                   animate={{ opacity: 1 }}
                   className={styles.planLoadingIndicator}
                 >
-                  <Loader2 size={14} className="spin-animation" style={{ color: "var(--text)" }} />
+                  <Loader2 size={16} className={`${styles.planLoadingIcon} spin-animation`} aria-hidden="true" focusable="false" />
                 </motion.div>
               )}
 
               {/* ── Plan Header ── */}
               <div className={styles.planHeader}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div className={styles.planHeaderMain}>
                   <div className={styles.planIconBox}>
                     <Icon size={20} color="var(--primary)" />
                   </div>
@@ -258,7 +255,7 @@ export function PurchaseClient() {
               onClick={() => handlePurchase(activePlan.id)}
             >
               {loading ? (
-                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <span className={styles.checkoutPending}>
                   <Loader2 size={18} className="spin-animation" />
                   {lang === "th" ? "กำลังนำทางไปหน้าชำระเงิน..." : "Redirecting to checkout..."}
                 </span>

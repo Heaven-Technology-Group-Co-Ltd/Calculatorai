@@ -1,12 +1,18 @@
 /* ── Status Page — uses design tokens from globals.css ── */
+.backLinkWrap { margin-bottom: var(--space-16); }
+.backLink { display: inline-flex; align-items: center; gap: var(--space-8); font-size: var(--fs-2); color: var(--text-secondary); text-decoration: none; padding: var(--space-8) var(--space-12); border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); transition: all var(--transition-fast); }
+.bannerText { min-width: 0; }
+.serviceText { min-width: 0; }
+.infoRows { display: flex; flex-direction: column; gap: var(--space-12); }
+.emptyIcon { opacity: 0.4; }
 
 .container {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 40px 24px 64px;
+  padding: var(--space-40) var(--space-24) var(--space-64);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-20);
 }
 
 /* ── Animations ── */
@@ -36,36 +42,36 @@
 .kpis {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--space-12);
 }
 .services {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--space-12);
 }
 .charts {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: var(--space-12);
 }
 .bottom {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
-  gap: 12px;
+  gap: var(--space-12);
   align-items: start;
 }
 .head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-16);
   flex-wrap: wrap;
 }
 .tabs {
   display: flex;
-  gap: 6px;
-  padding: 4px;
-  background: rgba(0, 0, 0, 0.25);
+  gap: var(--space-8);
+  padding: var(--space-4);
+  background: var(--ursa-overlay-alpha-25);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
 }
@@ -75,37 +81,37 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: var(--space-20);
 }
 
 /* ── Header ── */
 .title {
   font-family: var(--font-title);
-  font-size: 1.8rem;
+  font-size: var(--fs-display-sm);
   font-weight: 700;
   color: var(--text);
   margin: 0;
 }
 .subtitle {
-  font-size: 0.8rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
-  margin: 4px 0 0;
+  margin: var(--space-4) 0 0;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-8);
 }
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-12);
   flex-wrap: wrap;
 }
 
 /* ── Tab buttons ── */
 .tab {
-  padding: 7px 18px;
+  padding: var(--space-8) var(--space-20);
   border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  font-size: var(--fs-1);
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -124,13 +130,13 @@
 .refreshBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 16px;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-16);
   border-radius: var(--radius-full);
   background: var(--surface);
   border: 1px solid var(--border-gold);
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: var(--fs-2);
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -148,23 +154,23 @@
 .maintenance {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
+  gap: var(--space-12);
+  padding: var(--space-16) var(--space-20);
   border-radius: var(--radius-md);
-  background: rgba(234, 179, 8, 0.08);
-  border: 1px solid rgba(234, 179, 8, 0.25);
+  background: var(--ursa-warning-alpha-08);
+  border: 1px solid var(--ursa-warning-alpha-25);
   color: var(--warning);
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
 }
 
 /* ── Overall banner ── */
 .banner {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 26px 28px;
+  gap: var(--space-20);
+  padding: var(--space-28) var(--space-28);
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, var(--banner-color) 0%, transparent 60%), var(--surface);
+  background: linear-gradient(135deg, var(--banner-surface) 0%, transparent 60%), var(--surface);
   border: 1px solid var(--banner-border);
   box-shadow: 0 0 32px var(--banner-glow);
 }
@@ -183,16 +189,16 @@
 }
 .bannerTitle {
   font-family: var(--font-title);
-  font-size: 1.45rem;
+  font-size: var(--fs-6);
   font-weight: 800;
   color: var(--banner-color);
   margin: 0;
   letter-spacing: var(--tracking-display);
 }
 .bannerSubtitle {
-  font-size: 0.82rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
-  margin: 4px 0 0;
+  margin: var(--space-4) 0 0;
 }
 .bannerUptime {
   margin-left: auto;
@@ -208,11 +214,11 @@
   line-height: 1;
 }
 .bannerUptimeLabel {
-  font-size: 0.68rem;
+  font-size: var(--fs-xs);
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-top: 4px;
+  margin-top: var(--space-4);
 }
 
 @media (max-width: 640px) {
@@ -222,13 +228,13 @@
 
 /* ── KPI cards ── */
 .kpiCard {
-  padding: 16px 18px;
+  padding: var(--space-16) var(--space-20);
 }
 .kpiLabel {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.68rem;
+  gap: var(--space-8);
+  font-size: var(--fs-xs);
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -236,25 +242,25 @@
 }
 .kpiValue {
   font-family: var(--font-title);
-  font-size: 1.5rem;
+  font-size: var(--fs-6);
   font-weight: 800;
   color: var(--text);
-  margin-top: 6px;
+  margin-top: var(--space-8);
 }
 
 /* ── Service cards ── */
 .serviceCard {
-  padding: 18px;
+  padding: var(--space-20);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-12);
   border-top: 2px solid var(--service-color);
   transition: border-color var(--transition-base);
 }
 .serviceHeader {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-12);
 }
 .serviceIcon {
   width: 36px;
@@ -269,12 +275,12 @@
   flex-shrink: 0;
 }
 .serviceName {
-  font-size: 0.88rem;
+  font-size: var(--fs-3);
   font-weight: 700;
   color: var(--text);
 }
 .serviceHint {
-  font-size: 0.7rem;
+  font-size: var(--fs-xs);
   color: var(--text-secondary);
 }
 .serviceDot {
@@ -287,7 +293,7 @@
   flex-shrink: 0;
 }
 .serviceStatus {
-  font-size: 0.75rem;
+  font-size: var(--fs-1);
   font-weight: 600;
   color: var(--status-color);
 }
@@ -305,15 +311,15 @@
   align-items: baseline;
   justify-content: space-between;
   border-top: 1px solid var(--border);
-  padding-top: 10px;
+  padding-top: var(--space-12);
   font-family: var(--font-mono);
 }
 .serviceLatency {
-  font-size: 0.78rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
 }
 .serviceUptime {
-  font-size: 0.78rem;
+  font-size: var(--fs-2);
   color: var(--primary);
   font-weight: 600;
 }
@@ -321,27 +327,27 @@
 /* ── Section title ── */
 .sectionTitle {
   font-family: var(--font-title);
-  font-size: 1rem;
+  font-size: var(--fs-4);
   font-weight: 600;
   color: var(--text-secondary);
-  margin: 0 0 12px;
+  margin: 0 0 var(--space-12);
 }
 
 /* ── Chart panel ── */
 .chartTitle {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-  font-size: 0.95rem;
+  gap: var(--space-8);
+  margin-bottom: var(--space-4);
+  font-size: var(--fs-3);
   font-weight: 700;
   font-family: var(--font-title);
   color: var(--text);
 }
 .chartSubtitle {
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   color: var(--text-secondary);
-  margin: 0 0 12px;
+  margin: 0 0 var(--space-12);
 }
 .chartEmpty {
   height: 240px;
@@ -349,21 +355,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-8);
   color: var(--text-secondary);
-  font-size: 0.82rem;
+  font-size: var(--fs-2);
 }
 
 /* ── Incident timeline ── */
 .incidentCount {
   margin-left: auto;
-  font-size: 0.7rem;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--text-secondary);
   background: var(--primary-subtle);
   border: 1px solid var(--border-gold);
   border-radius: var(--radius-full);
-  padding: 2px 10px;
+  padding: 2px var(--space-12);
 }
 .incidentList {
   display: flex;
@@ -374,11 +380,11 @@
 }
 .incidentItem {
   display: flex;
-  gap: 12px;
-  padding: 10px 4px;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-4);
   border-left: 2px solid var(--incident-color);
-  padding-left: 14px;
-  margin-left: 6px;
+  padding-left: var(--space-16);
+  margin-left: var(--space-8);
   position: relative;
 }
 .incidentItemBorder {
@@ -391,35 +397,35 @@
 .incidentHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
   flex-wrap: wrap;
 }
 .incidentService {
-  font-size: 0.8rem;
+  font-size: var(--fs-2);
   color: var(--text);
 }
 .incidentBadge {
-  font-size: 0.65rem;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   color: var(--incident-color);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 .incidentOngoing {
-  font-size: 0.62rem;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   color: var(--sidebar-bg);
   background: var(--warning);
   border-radius: var(--radius-full);
-  padding: 1px 8px;
+  padding: 1px var(--space-8);
 }
 .incidentMessage {
-  font-size: 0.78rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
   margin-top: 2px;
 }
 .incidentTime {
-  font-size: 0.68rem;
+  font-size: var(--fs-xs);
   color: var(--text-secondary);
   white-space: nowrap;
   font-family: var(--font-mono);
@@ -427,13 +433,13 @@
 .incidentNone {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 18px;
+  gap: var(--space-12);
+  padding: var(--space-20);
   border-radius: var(--radius-sm);
-  background: rgba(34, 197, 94, 0.06);
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: var(--ursa-success-alpha-06);
+  border: 1px solid var(--ursa-success-alpha-20);
   color: var(--success);
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
 }
 
 /* ── System info ── */
@@ -441,10 +447,10 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
-  font-size: 0.8rem;
+  gap: var(--space-12);
+  font-size: var(--fs-2);
   border-bottom: 1px solid var(--border);
-  padding-bottom: 8px;
+  padding-bottom: var(--space-8);
 }
 .infoLabel {
   color: var(--text-secondary);
@@ -464,8 +470,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 48px;
+  gap: var(--space-16);
+  padding: var(--space-48);
 }
 .spinner {
   width: 32px;
@@ -476,25 +482,25 @@
   animation: spin 1s linear infinite;
 }
 .stateText {
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
   color: var(--text-secondary);
 }
 .retryBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 24px;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-24);
   border-radius: var(--radius-sm);
   background: var(--primary-subtle);
   border: 1px solid var(--border-gold);
   color: var(--text);
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   cursor: pointer;
 }
 
 /* ── Responsive ── */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .services { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

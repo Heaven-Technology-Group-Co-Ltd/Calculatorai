@@ -14,11 +14,11 @@
   width: 220px;
   flex-shrink: 0;
   background: var(--bg);
-  border-right: 1px solid rgba(232, 184, 150, 0.12);
-  padding: 20px 14px;
+  border-right: 1px solid var(--ursa-primary-alpha-12);
+  padding: var(--space-20) var(--space-16);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-4);
   position: sticky;
   top: 0;
   height: 100vh;
@@ -29,10 +29,10 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 10px 20px;
-  border-bottom: 1px solid rgba(232, 184, 150, 0.08);
-  margin-bottom: 8px;
+  gap: var(--space-12);
+  padding: 0 var(--space-12) var(--space-20);
+  border-bottom: 1px solid var(--ursa-primary-alpha-08);
+  margin-bottom: var(--space-8);
 }
 
 .brandIcon {
@@ -45,18 +45,18 @@
   justify-content: center;
   color: var(--sidebar-bg);
   font-weight: 800;
-  font-size: 16px;
+  font-size: var(--fs-4);
 }
 
 .brandText {
   font-weight: 700;
-  font-size: 15px;
+  font-size: var(--fs-3);
   color: var(--text);
   letter-spacing: -0.01em;
 }
 
 .brandSub {
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -65,14 +65,14 @@
 .navItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-12);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: var(--fs-2);
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 150ms;
+  transition: all var(--transition-fast);
   border: none;
   background: none;
   width: 100%;
@@ -80,12 +80,12 @@
 }
 
 .navItem:hover {
-  background: rgba(232, 184, 150, 0.06);
+  background: var(--ursa-primary-alpha-06);
   color: var(--text);
 }
 
 .navItemActive {
-  background: rgba(232, 184, 150, 0.12);
+  background: var(--ursa-primary-alpha-12);
   color: var(--primary);
 }
 
@@ -94,33 +94,35 @@
 /* Sidebar footer (user section) */
 .sidebarFooter {
   margin-top: auto;
-  padding: 12px 10px 0;
-  border-top: 1px solid rgba(232, 184, 150, 0.08);
+  padding: var(--space-12) var(--space-12) 0;
+  border-top: 1px solid var(--ursa-primary-alpha-08);
 }
 
 .userRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px;
+  gap: var(--space-12);
+  padding: var(--space-8);
   border-radius: 8px;
 }
+.navContent { flex: 1; min-width: 0; }
+.exitLink { color: var(--text-secondary); display: flex; align-items: center; padding: var(--space-4); border-radius: var(--radius-sm); text-decoration: none; }
 
 .userAvatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(232, 184, 150, 0.2);
+  background: var(--ursa-primary-alpha-20);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: var(--fs-2);
   color: var(--primary);
   font-weight: 600;
 }
 
-.userName { font-size: 13px; font-weight: 600; color: var(--text); }
-.userRole { font-size: 11px; color: var(--text-secondary); }
+.userName { font-size: var(--fs-2); font-weight: 600; color: var(--text); }
+.userRole { font-size: var(--fs-xs); color: var(--text-secondary); }
 
 /* ── Main area (topbar + content, right of sidebar) ── */
 .main {
@@ -136,10 +138,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  background: rgba(27, 39, 44, 0.8);
+  padding: 0 var(--space-24);
+  background: var(--ursa-overlay-alpha-80);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(232, 184, 150, 0.08);
+  border-bottom: 1px solid var(--ursa-primary-alpha-08);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky, 10);
@@ -161,7 +163,7 @@
 
 /* Page title area */
 .pageTitle {
-  font-size: 17px;
+  font-size: var(--fs-4);
   font-weight: 700;
   color: var(--text);
 }
@@ -170,7 +172,7 @@
 .topbarActions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 /* Date range pill group */
@@ -184,27 +186,27 @@
 }
 
 .datePill {
-  padding: 5px 14px;
-  font-size: 12px;
+  padding: var(--space-4) var(--space-16);
+  font-size: var(--fs-1);
   font-weight: 500;
   color: var(--text-secondary);
   border-radius: 6px;
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: all 150ms;
+  transition: all var(--transition-fast);
 }
 
 .datePill:hover { color: var(--text); }
 
 .datePillActive {
-  background: rgba(232, 184, 150, 0.15);
+  background: var(--ursa-primary-alpha-15);
   color: var(--primary);
 }
 
 /* ── Content ── */
 .content {
-  padding: 24px;
+  padding: var(--space-24);
   flex: 1;
 }
 
@@ -216,8 +218,8 @@
   left: 0;
   right: 0;
   background: var(--bg);
-  border-top: 1px solid rgba(232, 184, 150, 0.12);
-  padding: 6px 12px max(6px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--ursa-primary-alpha-12);
+  padding: var(--space-8) var(--space-12) max(var(--space-8), env(safe-area-inset-bottom));
   z-index: var(--z-sticky, 10);
 }
 
@@ -227,15 +229,15 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 6px 0;
+  padding: var(--space-8) 0;
   border: none;
   background: none;
   color: var(--text-secondary);
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: 500;
   cursor: pointer;
   border-radius: 6px;
-  transition: all 150ms;
+  transition: all var(--transition-fast);
 }
 
 .bottomNavItem:hover { color: var(--text); }
@@ -246,11 +248,11 @@
 .drawerOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--ursa-overlay-alpha-50);
   z-index: var(--z-drawer, 40);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 250ms;
+  transition: opacity var(--transition-base);
 }
 
 .drawerOverlayOpen {
@@ -265,14 +267,14 @@
   bottom: 0;
   width: 240px;
   background: var(--bg);
-  border-right: 1px solid rgba(232, 184, 150, 0.12);
+  border-right: 1px solid var(--ursa-primary-alpha-12);
   z-index: var(--z-drawer, 40);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 20px 14px;
+  gap: var(--space-4);
+  padding: var(--space-20) var(--space-16);
   transform: translateX(-100%);
-  transition: transform 250ms;
+  transition: transform var(--transition-base);
 }
 
 .drawerOpen { transform: translateX(0); }
@@ -281,9 +283,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px 16px;
-  border-bottom: 1px solid rgba(232, 184, 150, 0.08);
-  margin-bottom: 8px;
+  padding: 0 var(--space-12) var(--space-16);
+  border-bottom: 1px solid var(--ursa-primary-alpha-08);
+  margin-bottom: var(--space-8);
 }
 
 .drawerClose {
@@ -304,19 +306,19 @@
   .navItem, .bottomNavItem { min-height: var(--tap-target-mobile); }
 }
 
-.drawerClose:hover { background: rgba(232, 184, 150, 0.08); color: var(--text); }
+.drawerClose:hover { background: var(--ursa-primary-alpha-08); color: var(--text); }
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .sidebar { display: none; }
   .bottomNav { display: flex; }
-  .content { padding: 16px; padding-bottom: 80px; }
-  .topbar { padding: 0 16px; }
+  .content { padding: var(--space-16); padding-bottom: var(--space-80); }
+  .topbar { padding: 0 var(--space-16); }
   .hamburger { display: flex; }
 }
 
 @media (max-width: 640px) {
-  .content { padding: 12px; padding-bottom: 76px; }
+  .content { padding: var(--space-12); padding-bottom: var(--space-76); }
   .topbar { height: 52px; }
   .datePills { display: none; }
 }

@@ -10,7 +10,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: var(--space-24) var(--space-16);
 }
 
 /* ── Card ── */
@@ -20,7 +20,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 36px 32px;
+  padding: var(--space-36) var(--space-32);
   position: relative;
   overflow: hidden;
 }
@@ -33,38 +33,38 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary), rgba(232, 184, 150, 0.3));
+  background: linear-gradient(90deg, var(--primary), var(--ursa-primary-alpha-30));
 }
 
 /* ── Header ── */
 .header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: var(--space-32);
 }
 
 .iconCircle {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: rgba(232, 184, 150, 0.1);
-  border: 1px solid rgba(232, 184, 150, 0.2);
+  background: var(--ursa-primary-alpha-10);
+  border: 1px solid var(--ursa-primary-alpha-20);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  margin: 0 auto var(--space-16);
 }
 
 .title {
   font-family: var(--font-title);
-  font-size: 1.5rem;
+  font-size: var(--fs-6);
   font-weight: 700;
   color: var(--text);
-  margin: 0 0 6px;
+  margin: 0 0 var(--space-8);
   letter-spacing: -0.02em;
 }
 
 .subtitle {
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.4;
@@ -79,30 +79,35 @@
 
 /* ── Input Group ── */
 .inputGroup {
-  margin-bottom: 18px;
+  margin-bottom: var(--space-20);
   display: flex;
   flex-direction: column;
 }
 
 .inputLabel {
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--fs-2);
   font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-8);
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
+.passwordToggle { display: flex; align-items: center; color: var(--text-secondary); cursor: pointer; padding: var(--space-4); }
+.successButton { margin-top: var(--space-20); max-width: 260px; }
 
 .inputField {
   width: 100%;
-  padding: 12px 14px;
+  padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-sm);
   background: var(--bg);
   border: 1.5px solid var(--border);
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: var(--fs-3);
   font-family: inherit;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color var(--transition-base) ease, box-shadow var(--transition-base) ease;
   min-height: 46px;
   box-sizing: border-box;
 }
@@ -113,18 +118,18 @@
 
 .inputField:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(232, 184, 150, 0.12);
+  box-shadow: 0 0 0 3px var(--ursa-primary-alpha-12);
 }
 
 /* ── Message Box ── */
 .messageBox {
-  padding: 12px 14px;
+  padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  margin-bottom: 18px;
+  font-size: var(--fs-2);
+  margin-bottom: var(--space-20);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
   animation: fadeIn 0.25s ease;
 }
 
@@ -139,26 +144,26 @@
 /* ── Submit Button ── */
 .submitBtn {
   width: 100%;
-  padding: 13px;
+  padding: var(--space-12);
   border: none;
   border-radius: var(--radius-sm);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: var(--fs-4);
   font-family: inherit;
   background: var(--primary);
   color: var(--bg);
-  transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  transition: filter var(--transition-base) ease, box-shadow var(--transition-base) ease, transform var(--transition-fast) ease;
   min-height: 48px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .submitBtn:hover:not(:disabled) {
   filter: brightness(1.08);
-  box-shadow: 0 4px 20px rgba(232, 184, 150, 0.25);
+  box-shadow: 0 4px 20px var(--ursa-primary-alpha-25);
 }
 
 .submitBtn:active:not(:disabled) {
@@ -174,8 +179,8 @@
 .divider {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 24px 0;
+  gap: var(--space-12);
+  margin: var(--space-24) 0;
 }
 
 .divider::before,
@@ -187,7 +192,7 @@
 }
 
 .dividerText {
-  font-size: 0.75rem;
+  font-size: var(--fs-1);
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -197,20 +202,20 @@
 /* ── Google Button ── */
 .googleBtn {
   width: 100%;
-  padding: 12px;
+  padding: var(--space-12);
   border-radius: var(--radius-sm);
   border: 1.5px solid var(--border);
   background: var(--bg);
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: var(--fs-3);
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  gap: var(--space-12);
+  transition: background var(--transition-base) ease, border-color var(--transition-base) ease;
   min-height: 48px;
 }
 
@@ -224,6 +229,7 @@
 }
 
 .googleIcon {
+  color: var(--primary);
   width: 20px;
   height: 20px;
   flex-shrink: 0;
@@ -231,9 +237,9 @@
 
 /* ── Footer ── */
 .footer {
-  margin-top: 28px;
+  margin-top: var(--space-28);
   text-align: center;
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   color: var(--text-secondary);
 }
 
@@ -241,7 +247,7 @@
   color: var(--primary);
   font-weight: 600;
   text-decoration: none;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition-base) ease;
 }
 
 .footerLink:hover {
@@ -255,7 +261,7 @@
   justify-content: center;
   align-items: center;
   min-height: 60vh;
-  gap: 16px;
+  gap: var(--space-16);
   color: var(--text-secondary);
 }
 
@@ -267,31 +273,31 @@
   justify-content: center;
   text-align: center;
   min-height: 320px;
-  gap: 12px;
+  gap: var(--space-12);
 }
 
 .successIcon {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(34, 197, 94, 0.1);
-  border: 2px solid rgba(34, 197, 94, 0.3);
+  background: var(--ursa-success-alpha-10);
+  border: 2px solid var(--ursa-success-alpha-30);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-8);
 }
 
 .successTitle {
   font-family: var(--font-title);
-  font-size: 1.3rem;
+  font-size: var(--fs-5);
   font-weight: 700;
   color: var(--success);
   margin: 0;
 }
 
 .successDesc {
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
@@ -302,46 +308,46 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Desktop (≥901px) — centered card, generous spacing ── */
-@media (min-width: 901px) {
+@media (min-width: 900px) {
   .shell {
-    padding: 48px 24px;
+    padding: var(--space-48) var(--space-24);
   }
   .card {
-    padding: 40px 36px;
+    padding: var(--space-40) var(--space-36);
   }
   .title {
-    font-size: 1.55rem;
+    font-size: var(--fs-6);
   }
 }
 
 /* ── Tablet (≤900px) — slightly tighter card, still centered ── */
 @media (max-width: 900px) {
   .shell {
-    padding: 36px 20px;
+    padding: var(--space-36) var(--space-20);
     justify-content: flex-start;
-    padding-top: 48px;
+    padding-top: var(--space-48);
   }
   .card {
     max-width: 420px;
-    padding: 32px 28px;
+    padding: var(--space-32) var(--space-28);
   }
   .title {
-    font-size: 1.4rem;
+    font-size: var(--fs-6);
   }
 }
 
 /* ── Phone (≤640px) — full-width card, mobile-first design ── */
 @media (max-width: 640px) {
   .shell {
-    padding: 20px 12px;
-    padding-bottom: calc(20px + 80px); /* bottom nav clearance */
+    padding: var(--space-20) var(--space-12);
+    padding-bottom: calc(var(--space-20) + var(--space-80)); /* bottom nav clearance */
     justify-content: flex-start;
-    padding-top: 24px;
+    padding-top: var(--space-24);
   }
 
   .card {
     max-width: 100%;
-    padding: 28px 18px;
+    padding: var(--space-28) var(--space-20);
     border-radius: var(--radius-md);
   }
 
@@ -355,42 +361,42 @@
   }
 
   .title {
-    font-size: 1.3rem;
+    font-size: var(--fs-5);
   }
 
   .subtitle {
-    font-size: 0.8rem;
+    font-size: var(--fs-2);
   }
 
   .header {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-24);
   }
 
   .inputGroup {
-    margin-bottom: 16px;
+    margin-bottom: var(--space-16);
   }
 
   .inputLabel {
-    font-size: 0.75rem;
+    font-size: var(--fs-1);
   }
 
   .inputField {
-    padding: 11px 12px;
-    font-size: 0.9rem;
+    padding: var(--space-12) var(--space-12);
+    font-size: var(--fs-3);
     min-height: 44px;
   }
 
   .submitBtn {
-    font-size: 0.95rem;
-    padding: 12px;
+    font-size: var(--fs-3);
+    padding: var(--space-12);
     min-height: 46px;
   }
 
   .googleBtn {
-    font-size: 0.9rem;
-    padding: 11px;
+    font-size: var(--fs-3);
+    padding: var(--space-12);
     min-height: 46px;
-    gap: 8px;
+    gap: var(--space-8);
   }
 
   .googleIcon {
@@ -399,22 +405,22 @@
   }
 
   .divider {
-    margin: 20px 0;
-    gap: 10px;
+    margin: var(--space-20) 0;
+    gap: var(--space-12);
   }
 
   .dividerText {
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
   }
 
   .footer {
-    margin-top: 22px;
-    font-size: 0.8rem;
+    margin-top: var(--space-24);
+    font-size: var(--fs-2);
   }
 
   .messageBox {
-    font-size: 0.8rem;
-    padding: 10px 12px;
+    font-size: var(--fs-2);
+    padding: var(--space-12) var(--space-12);
   }
 
   .successIcon {
@@ -423,24 +429,24 @@
   }
 
   .successTitle {
-    font-size: 1.15rem;
+    font-size: var(--fs-4);
   }
 
   .successDesc {
-    font-size: 0.85rem;
+    font-size: var(--fs-2);
   }
 }
 
 /* ── Small Phone (≤400px) — ultra compact, maximized space ── */
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .shell {
-    padding: 14px 8px;
-    padding-bottom: calc(14px + 80px);
-    padding-top: 16px;
+    padding: var(--space-16) var(--space-8);
+    padding-bottom: calc(var(--space-16) + var(--space-80));
+    padding-top: var(--space-16);
   }
 
   .card {
-    padding: 22px 14px;
+    padding: var(--space-24) var(--space-16);
     border-radius: var(--radius-sm);
   }
 
@@ -449,65 +455,65 @@
   }
 
   .header {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-20);
   }
 
   .iconCircle {
     width: 40px;
     height: 40px;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-12);
   }
 
   .title {
-    font-size: 1.2rem;
+    font-size: var(--fs-5);
   }
 
   .subtitle {
-    font-size: 0.75rem;
+    font-size: var(--fs-1);
   }
 
   .inputGroup {
-    margin-bottom: 14px;
+    margin-bottom: var(--space-16);
   }
 
   .inputLabel {
-    font-size: 0.7rem;
-    margin-bottom: 4px;
+    font-size: var(--fs-xs);
+    margin-bottom: var(--space-4);
   }
 
   .inputField {
-    padding: 10px 12px;
-    font-size: 0.85rem;
+    padding: var(--space-12) var(--space-12);
+    font-size: var(--fs-2);
     min-height: 42px;
     border-radius: var(--radius-sm);
   }
 
   .submitBtn {
-    font-size: 0.9rem;
-    padding: 11px;
+    font-size: var(--fs-3);
+    padding: var(--space-12);
     min-height: 44px;
   }
 
   .googleBtn {
-    font-size: 0.85rem;
-    padding: 10px;
+    font-size: var(--fs-2);
+    padding: var(--space-12);
     min-height: 44px;
   }
 
   .divider {
-    margin: 18px 0;
-    gap: 8px;
+    margin: var(--space-20) 0;
+    gap: var(--space-8);
   }
 
   .footer {
-    margin-top: 18px;
-    font-size: 0.78rem;
+    margin-top: var(--space-20);
+    font-size: var(--fs-2);
   }
 
   .messageBox {
-    font-size: 0.78rem;
-    padding: 8px 10px;
-    margin-bottom: 14px;
+    font-size: var(--fs-2);
+    padding: var(--space-8) var(--space-12);
+    margin-bottom: var(--space-16);
   }
 
   .successIcon {
@@ -516,10 +522,10 @@
   }
 
   .successTitle {
-    font-size: 1.05rem;
+    font-size: var(--fs-4);
   }
 
   .successDesc {
-    font-size: 0.8rem;
+    font-size: var(--fs-2);
   }
 }

@@ -3,13 +3,18 @@
 .footerCreditSpan {
   opacity: 0.6;
 }
+.brandRow { display: flex; align-items: center; gap: var(--space-8); }
+.desktopActions { display: flex; align-items: center; gap: var(--space-12); }
+.mobileLevelFilter { margin-bottom: var(--space-8); }
+.statusLink { text-decoration: none; }
+.mobileHistoryIcon { position: relative; display: flex; align-items: center; justify-content: center; }
 
 .impersonationBanner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 16px;
+  gap: var(--space-12);
+  padding: var(--space-8) var(--space-16);
   background: var(--surface);
   border-bottom: 1px solid var(--border-gold);
   color: var(--text);
@@ -25,7 +30,7 @@
   border: 1px solid var(--border-gold);
   border-radius: var(--radius-sm);
   color: var(--primary);
-  padding: 4px 12px;
+  padding: var(--space-4) var(--space-12);
   font-size: var(--fs-1);
   font-weight: 600;
   font-family: inherit;

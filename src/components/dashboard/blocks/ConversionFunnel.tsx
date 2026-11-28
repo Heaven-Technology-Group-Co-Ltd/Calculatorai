@@ -29,7 +29,7 @@ export function ConversionFunnel() {
     <Panel padding="md">
       <h3 className={styles.sectionTitle}>{t("dashboard.funnel.conversion")}</h3>
       {isLoading ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div className={styles.funnelLoading}>
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} variant="text" width={360} height={32} />
           ))}

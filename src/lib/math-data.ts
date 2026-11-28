@@ -56,8 +56,8 @@ export const departments: Department[] = [
     label: { th: 'วิศวกรรมโยธา', en: 'Civil Engineering', jp: '土木工学', ch: '土木工程', ko: '토목공학' },
     icon: Building2,
     subjects: ['structure', 'mechanics', 'hydraulics', 'geotechnical', 'materials', 'mechanics_of_materials'],
-    color: '#EF4444',
-    glowColor: 'rgba(239, 68, 68, 0.4)',
+    color: 'var(--error)',
+    glowColor: 'var(--error-bg)',
   },
   {
     id: 'mechanical-engineering',
@@ -72,8 +72,8 @@ export const departments: Department[] = [
     label: { th: 'วิศวกรรมไฟฟ้า', en: 'Electrical Engineering', jp: '電気工学', ch: '电气工程', ko: '전기공학' },
     icon: Zap,
     subjects: ['circuits'],
-    color: '#F59E0B',
-    glowColor: 'rgba(245, 158, 11, 0.4)',
+    color: 'var(--warning)',
+    glowColor: 'var(--warning-bg)',
   },
   {
     id: 'computer-science',
@@ -88,8 +88,8 @@ export const departments: Department[] = [
     label: { th: 'วิศวกรรมเคมี', en: 'Chemical Engineering', jp: '化学工学', ch: '化学工程', ko: '화학공학' },
     icon: FlaskConical,
     subjects: ['fluid_mechanics'],
-    color: '#10B981',
-    glowColor: 'rgba(16, 185, 129, 0.4)',
+    color: 'var(--success)',
+    glowColor: 'var(--success-bg)',
   },
   {
     id: 'industrial-engineering',
@@ -112,7 +112,7 @@ export const departments: Department[] = [
     label: { th: 'วิศวกรรมสิ่งแวดล้อม', en: 'Environmental Engineering', jp: '環境工学', ch: '环境工程', ko: '환경공학' },
     icon: Leaf,
     subjects: ['water_treatment'],
-    color: '#84CC16',
+    color: 'var(--success)',
     glowColor: 'rgba(132, 204, 22, 0.4)',
   },
   {
@@ -128,7 +128,7 @@ export const departments: Department[] = [
     label: { th: 'คณิตศาสตร์และสถิติ', en: 'Mathematics & Statistics', jp: '数学・統計学', ch: '数学与统计', ko: '수학 및 통계학' },
     icon: Calculator,
     subjects: ['discrete_math', 'probability'],
-    color: '#F43F5E',
+    color: 'var(--error)',
     glowColor: 'rgba(244, 63, 94, 0.4)',
   },
   {
@@ -144,16 +144,16 @@ export const departments: Department[] = [
     label: { th: 'ชีววิทยาและพันธุศาสตร์', en: 'Biology & Genetics', jp: '生物学・遺伝学', ch: '生物与遗传', ko: '생물학 및 유전학' },
     icon: Dna,
     subjects: ['genetics', 'cell_biology'],
-    color: '#22C55E',
-    glowColor: 'rgba(34, 197, 94, 0.4)',
+    color: 'var(--success)',
+    glowColor: 'var(--success-bg)',
   },
   {
     id: 'business-administration',
     label: { th: 'บริหารธุรกิจ', en: 'Business Administration', jp: '経営学', ch: '工商管理', ko: '경영학' },
     icon: Briefcase,
     subjects: ['marketing'],
-    color: '#EAB308',
-    glowColor: 'rgba(234, 179, 8, 0.4)',
+    color: 'var(--warning)',
+    glowColor: 'var(--warning-bg)',
   },
   {
     id: 'economics',
@@ -200,8 +200,8 @@ export const departments: Department[] = [
     label: { th: 'ศึกษาศาสตร์', en: 'Education', jp: '教育学', ch: '教育学', ko: '교육학' },
     icon: GraduationCap,
     subjects: ['educational_measurement'],
-    color: '#F59E0B',
-    glowColor: 'rgba(245, 158, 11, 0.4)',
+    color: 'var(--warning)',
+    glowColor: 'var(--warning-bg)',
   },
   {
     id: 'architecture',
@@ -224,14 +224,14 @@ export const departments: Department[] = [
     label: { th: 'แพทยศาสตร์และเภสัชกรรม', en: 'Medicine & Pharmacy', jp: '医学・薬学', ch: '医学与药学', ko: '의학 및 약학' },
     icon: Stethoscope,
     subjects: ['pharmacology'],
-    color: '#DC2626',
+    color: 'var(--error)',
     glowColor: 'rgba(220, 38, 38, 0.4)',
   },
 ];
 
 export const levels: LevelSection[] = [
-  { id: 'elementary',   title: { th: 'ประถมศึกษา', en: 'Elementary', jp: '小学校', ch: '小学', ko: '초등학교' }, icon: BookOpen, color: '#4ade80' },        // Green (ง่ายสุด)
-  { id: 'middleSchool', title: { th: 'มัธยมต้น', en: 'Middle School', jp: '中学校', ch: '初중', ko: '중학교' }, icon: Building2, color: '#facc15' },     // Yellow
+  { id: 'elementary',   title: { th: 'ประถมศึกษา', en: 'Elementary', jp: '小学校', ch: '小学', ko: '초등학교' }, icon: BookOpen, color: 'var(--success)' },        // Green (ง่ายสุด)
+  { id: 'middleSchool', title: { th: 'มัธยมต้น', en: 'Middle School', jp: '中学校', ch: '初중', ko: '중학교' }, icon: Building2, color: 'var(--warning)' },     // Yellow
   { id: 'highSchool',   title: { th: 'มัธยมปลาย', en: 'High School', jp: '高校', ch: '高中', ko: '고등학교' }, icon: GraduationCap, color: '#fb923c' },       // Orange
-  { id: 'university',   title: { th: 'มหาวิทยาลัย', en: 'University', jp: '大学', ch: '大学', ko: '대학교' }, icon: Atom, color: '#ef4444' },                  // Red (ยากสุด)
+  { id: 'university',   title: { th: 'มหาวิทยาลัย', en: 'University', jp: '大学', ch: '大学', ko: '대학교' }, icon: Atom, color: 'var(--error)' },                  // Red (ยากสุด)
 ];

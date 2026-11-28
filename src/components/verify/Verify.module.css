@@ -10,7 +10,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: var(--space-24) var(--space-16);
 }
 
 /* ── Card ── */
@@ -20,7 +20,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 40px 32px;
+  padding: var(--space-40) var(--space-32);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -34,7 +34,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary), rgba(232, 184, 150, 0.3));
+  background: linear-gradient(90deg, var(--primary), var(--ursa-primary-alpha-30));
 }
 
 /* ── Icon Box ── */
@@ -45,18 +45,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
-  transition: background 0.3s, border-color 0.3s;
+  margin: 0 auto var(--space-20);
+  transition: background var(--transition-base), border-color var(--transition-base);
 }
 
 .iconLoading {
-  background: rgba(232, 184, 150, 0.1);
-  border: 2px solid rgba(232, 184, 150, 0.25);
+  background: var(--ursa-primary-alpha-10);
+  border: 2px solid var(--ursa-primary-alpha-25);
 }
 
 .iconSuccess {
-  background: rgba(34, 197, 94, 0.1);
-  border: 2px solid rgba(34, 197, 94, 0.3);
+  background: var(--ursa-success-alpha-10);
+  border: 2px solid var(--ursa-success-alpha-30);
 }
 
 .iconError {
@@ -67,9 +67,9 @@
 /* ── Title ── */
 .title {
   font-family: var(--font-title);
-  font-size: 1.5rem;
+  font-size: var(--fs-6);
   font-weight: 700;
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-8);
   letter-spacing: -0.02em;
 }
 
@@ -87,9 +87,9 @@
 
 /* ── Description ── */
 .desc {
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
   color: var(--text-secondary);
-  margin: 0 0 28px;
+  margin: 0 0 var(--space-28);
   line-height: 1.5;
 }
 
@@ -97,14 +97,14 @@
 .emailChip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-16);
   border-radius: var(--radius-full);
-  background: rgba(232, 184, 150, 0.08);
-  border: 1px solid rgba(232, 184, 150, 0.2);
-  font-size: 0.85rem;
+  background: var(--ursa-primary-alpha-08);
+  border: 1px solid var(--ursa-primary-alpha-20);
+  font-size: var(--fs-2);
   color: var(--primary);
-  margin-bottom: 24px;
+  margin-bottom: var(--space-24);
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -116,23 +116,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 28px;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-28);
   border: none;
   border-radius: var(--radius-sm);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: var(--fs-3);
   font-family: inherit;
   background: var(--primary);
   color: var(--bg);
-  transition: filter 0.2s, box-shadow 0.2s, transform 0.15s;
+  transition: filter var(--transition-base), box-shadow var(--transition-base), transform var(--transition-fast);
   min-height: 46px;
   cursor: pointer;
 }
 
 .btnPrimary:hover {
   filter: brightness(1.08);
-  box-shadow: 0 4px 20px rgba(232, 184, 150, 0.25);
+  box-shadow: 0 4px 20px var(--ursa-primary-alpha-25);
 }
 
 .btnPrimary:active {
@@ -144,18 +144,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 24px;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-24);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--fs-3);
   font-family: inherit;
   background: transparent;
   color: var(--text);
   min-height: 44px;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background var(--transition-base), border-color var(--transition-base);
 }
 
 .btnSecondary:hover {
@@ -172,9 +172,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  margin-top: 20px;
-  font-size: 0.8rem;
+  gap: var(--space-8);
+  margin-top: var(--space-20);
+  font-size: var(--fs-2);
   color: var(--text-secondary);
 }
 
@@ -186,9 +186,9 @@
 .errorActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-12);
   justify-content: center;
-  margin-top: 8px;
+  margin-top: var(--space-8);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -196,15 +196,15 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Desktop (≥901px) ── */
-@media (min-width: 901px) {
+@media (min-width: 900px) {
   .shell {
-    padding: 48px 24px;
+    padding: var(--space-48) var(--space-24);
   }
   .card {
-    padding: 44px 36px;
+    padding: var(--space-44) var(--space-36);
   }
   .title {
-    font-size: 1.55rem;
+    font-size: var(--fs-6);
   }
   .iconBox {
     width: 76px;
@@ -215,16 +215,16 @@
 /* ── Tablet (≤900px) ── */
 @media (max-width: 900px) {
   .shell {
-    padding: 36px 20px;
+    padding: var(--space-36) var(--space-20);
     justify-content: flex-start;
-    padding-top: 48px;
+    padding-top: var(--space-48);
   }
   .card {
     max-width: 420px;
-    padding: 36px 28px;
+    padding: var(--space-36) var(--space-28);
   }
   .title {
-    font-size: 1.4rem;
+    font-size: var(--fs-6);
   }
   .iconBox {
     width: 64px;
@@ -235,15 +235,15 @@
 /* ── Phone (≤640px) ── */
 @media (max-width: 640px) {
   .shell {
-    padding: 20px 12px;
-    padding-bottom: calc(20px + 80px); /* bottom nav clearance */
+    padding: var(--space-20) var(--space-12);
+    padding-bottom: calc(var(--space-20) + var(--space-80)); /* bottom nav clearance */
     justify-content: flex-start;
-    padding-top: 28px;
+    padding-top: var(--space-28);
   }
 
   .card {
     max-width: 100%;
-    padding: 30px 18px;
+    padding: var(--space-32) var(--space-20);
     border-radius: var(--radius-md);
   }
 
@@ -254,41 +254,41 @@
   .iconBox {
     width: 56px;
     height: 56px;
-    margin-bottom: 16px;
+    margin-bottom: var(--space-16);
   }
 
   .title {
-    font-size: 1.25rem;
+    font-size: var(--fs-5);
   }
 
   .desc {
-    font-size: 0.85rem;
-    margin-bottom: 22px;
+    font-size: var(--fs-2);
+    margin-bottom: var(--space-24);
   }
 
   .emailChip {
-    font-size: 0.8rem;
-    padding: 5px 12px;
-    margin-bottom: 18px;
+    font-size: var(--fs-2);
+    padding: var(--space-4) var(--space-12);
+    margin-bottom: var(--space-20);
   }
 
   .btnPrimary {
-    padding: 11px 24px;
-    font-size: 0.9rem;
+    padding: var(--space-12) var(--space-24);
+    font-size: var(--fs-3);
     min-height: 44px;
     width: 100%;
   }
 
   .btnSecondary {
-    padding: 9px 16px;
-    font-size: 0.85rem;
+    padding: var(--space-8) var(--space-16);
+    font-size: var(--fs-2);
     min-height: 42px;
   }
 
   .errorActions {
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-12);
   }
 
   .errorActions .btnPrimary,
@@ -298,21 +298,21 @@
   }
 
   .countdownRing {
-    font-size: 0.75rem;
-    margin-top: 16px;
+    font-size: var(--fs-1);
+    margin-top: var(--space-16);
   }
 }
 
 /* ── Small Phone (≤400px) ── */
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .shell {
-    padding: 14px 8px;
-    padding-bottom: calc(14px + 80px);
-    padding-top: 18px;
+    padding: var(--space-16) var(--space-8);
+    padding-bottom: calc(var(--space-16) + var(--space-80));
+    padding-top: var(--space-20);
   }
 
   .card {
-    padding: 24px 14px;
+    padding: var(--space-24) var(--space-16);
     border-radius: var(--radius-sm);
   }
 
@@ -323,38 +323,38 @@
   .iconBox {
     width: 48px;
     height: 48px;
-    margin-bottom: 14px;
+    margin-bottom: var(--space-16);
   }
 
   .title {
-    font-size: 1.15rem;
+    font-size: var(--fs-4);
   }
 
   .desc {
-    font-size: 0.8rem;
-    margin-bottom: 18px;
+    font-size: var(--fs-2);
+    margin-bottom: var(--space-20);
   }
 
   .emailChip {
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    margin-bottom: 14px;
+    font-size: var(--fs-1);
+    padding: var(--space-4) var(--space-12);
+    margin-bottom: var(--space-16);
   }
 
   .btnPrimary {
-    padding: 10px 16px;
-    font-size: 0.85rem;
+    padding: var(--space-12) var(--space-16);
+    font-size: var(--fs-2);
     min-height: 42px;
   }
 
   .btnSecondary {
-    padding: 8px 14px;
-    font-size: 0.8rem;
+    padding: var(--space-8) var(--space-16);
+    font-size: var(--fs-2);
     min-height: 40px;
   }
 
   .countdownRing {
-    font-size: 0.7rem;
-    margin-top: 12px;
+    font-size: var(--fs-xs);
+    margin-top: var(--space-12);
   }
 }

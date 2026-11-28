@@ -25,7 +25,7 @@ export function RefundTable() {
 
   return (
     <Panel>
-      <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, color: "var(--text)" }}>
+      <h3 className={`${tableStyles.sectionTitle} ${tableStyles.sectionTitleCompact}`}>
         {t("dashboard.finance.refunds.title")}
       </h3>
       {loading && <Skeleton variant="chart" height={200} />}
@@ -46,14 +46,7 @@ export function RefundTable() {
             <tbody>
               {refunds.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={4}
-                    style={{
-                      textAlign: "center",
-                      padding: 24,
-                      color: "#7A7570",
-                    }}
-                  >
+                  <td colSpan={4} className={tableStyles.emptyCell}>
                     {t("dashboard.finance.refunds.empty")}
                   </td>
                 </tr>

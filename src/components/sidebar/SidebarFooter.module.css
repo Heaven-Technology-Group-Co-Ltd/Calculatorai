@@ -2,11 +2,11 @@
 
 .divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
-  margin: 8px 12px;
+  background: linear-gradient(90deg, transparent, var(--ursa-text-alpha-06), transparent);
+  margin: var(--space-8) var(--space-12);
 }
 
 .sectionLabel {
-  padding: 4px 8px;
+  padding: var(--space-4) var(--space-8);
   cursor: default;
 }

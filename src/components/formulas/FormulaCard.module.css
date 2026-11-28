@@ -1,6 +1,7 @@
 /* components/formulas/FormulaCard.module.css */
 
 /* ── Card Container ── */
+.expandedFormula { overflow: hidden; }
 .card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -12,7 +13,7 @@
 
 .card:hover {
   border-color: var(--border-gold);
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 16px var(--ursa-overlay-alpha-15);
 }
 
 .card:active {
@@ -36,15 +37,15 @@
 
 .cardExpanded {
   border-color: var(--primary-border);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--ursa-text-alpha-03);
 }
 
 /* ── Card Header Row ── */
 .header {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px;
+  gap: var(--space-12);
+  padding: var(--space-16);
   width: 100%;
   border: none;
   background: none;
@@ -57,7 +58,7 @@
 .headerMain {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-12);
   width: 100%;
 }
 
@@ -70,7 +71,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-8);
   width: 100%;
   margin-top: 2px;
 }
@@ -83,7 +84,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: var(--fs-2);
   flex-shrink: 0;
 }
 
@@ -91,13 +92,13 @@
 
 /* ── Formula Preview Text Badge ── */
 .cardFormula {
-  font-size: 0.76rem;
+  font-size: var(--fs-1);
   color: var(--primary);
   font-family: "JetBrains Mono", monospace;
   font-weight: 500;
   background: var(--primary-subtle);
   border: 1px solid var(--border-gold);
-  padding: 3px 10px;
+  padding: var(--space-4) var(--space-12);
   border-radius: var(--radius-sm);
   white-space: nowrap;
   overflow: hidden;
@@ -108,16 +109,16 @@
 /* ── Tags Row ── */
 .cardTags {
   display: flex;
-  gap: 6px;
+  gap: var(--space-8);
   align-items: center;
   flex-wrap: wrap;
 }
 
 .cardTag {
-  font-size: 10px;
-  padding: 2px 10px;
+  font-size: var(--fs-2xs);
+  padding: 2px var(--space-12);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--ursa-text-alpha-03);
   border: 1px solid var(--border);
   color: var(--text-secondary);
 }
@@ -126,7 +127,7 @@
 .chevron {
   color: var(--text-secondary);
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-base) ease;
 }
 
 .chevronOpen {
@@ -135,7 +136,7 @@
 
 /* ── Content Area ── */
 .content {
-  padding: 0 16px 4px;
+  padding: 0 var(--space-16) var(--space-4);
 }
 
 
@@ -143,10 +144,10 @@
 /* ── Input Labels ── */
 .inputLabel {
   display: block;
-  font-size: 0.7rem;
+  font-size: var(--fs-xs);
   color: var(--text-secondary);
   font-weight: 600;
-  margin-bottom: 3px;
+  margin-bottom: var(--space-4);
   letter-spacing: 0.03em;
 }
 
@@ -159,8 +160,8 @@
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 12px;
+  gap: var(--space-12);
+  margin-top: var(--space-12);
 }
 
 .btnSecondary {
@@ -169,20 +170,20 @@
 
 /* ── Error Message ── */
 .errorBox {
-  margin-top: 12px;
-  padding: 10px 14px;
+  margin-top: var(--space-12);
+  padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-sm);
   background: var(--error-bg);
   border: 1px solid var(--error-border);
   color: var(--error);
-  font-size: 0.8rem;
+  font-size: var(--fs-2);
 }
 
 /* ── Multi Result Grid ── */
 .multiResult {
-  margin-top: 12px;
+  margin-top: var(--space-12);
   display: grid;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .multiResultItem {
@@ -191,14 +192,14 @@
 
 /* ── Single Result ── */
 .singleResult {
-  margin-top: 12px;
+  margin-top: var(--space-12);
 }
 
 /* ── Divider ── */
 .divider {
   height: 1px;
   background: var(--border);
-  margin: 0 16px;
+  margin: 0 var(--space-16);
 }
 
 /* ── Animation ── */
@@ -224,36 +225,36 @@
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .header {
-    padding: 14px 12px;
-    gap: 8px;
+    padding: var(--space-16) var(--space-12);
+    gap: var(--space-8);
   }
   .cardFormula {
-    font-size: 0.72rem;
-    padding: 3px 8px;
+    font-size: var(--fs-xs);
+    padding: var(--space-4) var(--space-8);
     max-width: 65%;
   }
   .content {
-    padding: 4px 12px 12px;
+    padding: var(--space-4) var(--space-12) var(--space-12);
   }
   .divider {
-    margin: 0 12px;
+    margin: 0 var(--space-12);
   }
   .actions {
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 10px;
+    gap: var(--space-8);
+    margin-top: var(--space-12);
   }
   .actions button {
     min-height: 44px;
-    font-size: 0.8rem;
+    font-size: var(--fs-2);
   }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 640px) {
   .headerMeta {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: var(--space-8);
   }
   .cardFormula {
     max-width: 100%;

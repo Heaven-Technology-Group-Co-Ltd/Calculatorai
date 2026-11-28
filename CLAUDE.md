@@ -30,8 +30,8 @@ since this file was last touched, run a quick check:
    flag it to the user before upgrading. Do not silently major-bump.
 3. Update the "Last verified" line below whenever you check.
 
-**Last verified:** 2026-09-28 — Next.js 16.2.6 pinned in package.json;
-latest is 16.3.6 (same major — no major-bump flag; check again next session).
+**Last verified:** 2026-11-28 — Next.js 16.2.6 pinned in package.json;
+latest is 16.4.6 (same major — no major-bump flag; check again next session).
 React 19.2, Turbopack default, async params, proxy.ts middleware naming.
 
 ## Core Behavior Rules

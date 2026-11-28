@@ -11,18 +11,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: var(--space-24) var(--space-16);
   position: relative;
   overflow: hidden;
 }
+.domainMark { font-size: var(--fs-4); line-height: 1; }
 
 /* ── Decorative math-symbol backdrop ── */
 .shell::before {
   content: "∅";
   position: absolute;
-  font-size: 40vw;
+  font-size: var(--fs-hero-watermark);
   font-weight: 800;
-  color: rgba(232, 184, 150, 0.025);
+  color: var(--ursa-primary-alpha-02);
   font-family: var(--font-title);
   top: 50%;
   left: 50%;
@@ -52,25 +53,25 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary), rgba(232, 184, 150, 0.15));
+  background: linear-gradient(90deg, var(--primary), var(--ursa-primary-alpha-15));
 }
 
 /* ── Calculator Display Panel ── */
 .display {
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--ursa-overlay-alpha-25);
   border-bottom: 1px solid var(--border);
-  padding: 32px 24px;
+  padding: var(--space-32) var(--space-24);
   text-align: right;
   position: relative;
 }
 
 .displayCalcLine {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: var(--fs-3);
   color: var(--text-secondary);
   letter-spacing: 0.04em;
   min-height: 1.4em;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-4);
   opacity: 0.7;
 }
 
@@ -98,39 +99,39 @@
 
 .displayErrTag {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--fs-1);
   color: var(--error);
-  margin-top: 6px;
+  margin-top: var(--space-8);
   letter-spacing: 0.02em;
   opacity: 0.6;
 }
 
 /* ── Body Content ── */
 .body {
-  padding: 32px 32px 36px;
+  padding: var(--space-32) var(--space-32) var(--space-36);
   text-align: center;
 }
 
 .domainTag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-4);
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: var(--fs-2);
   color: var(--primary);
-  background: rgba(232, 184, 150, 0.08);
-  border: 1px solid rgba(232, 184, 150, 0.12);
-  padding: 6px 16px;
+  background: var(--ursa-primary-alpha-08);
+  border: 1px solid var(--ursa-primary-alpha-12);
+  padding: var(--space-8) var(--space-16);
   border-radius: 20px;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-20);
   letter-spacing: 0.02em;
 }
 
 .description {
-  font-size: 0.95rem;
+  font-size: var(--fs-3);
   color: var(--text-secondary);
   line-height: 1.6;
-  margin: 0 0 28px;
+  margin: 0 0 var(--space-28);
   max-width: 360px;
   margin-left: auto;
   margin-right: auto;
@@ -141,24 +142,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 13px 28px;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-28);
   border: none;
   border-radius: var(--radius-sm);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: var(--fs-4);
   font-family: inherit;
   background: var(--primary);
   color: var(--bg);
   cursor: pointer;
-  transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  transition: filter var(--transition-base) ease, box-shadow var(--transition-base) ease, transform var(--transition-fast) ease;
   min-height: 48px;
   text-decoration: none;
 }
 
 .ctaBtn:hover {
   filter: brightness(1.08);
-  box-shadow: 0 4px 20px rgba(232, 184, 150, 0.25);
+  box-shadow: 0 4px 20px var(--ursa-primary-alpha-25);
 }
 
 .ctaBtn:active {
@@ -175,57 +176,57 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Desktop (≥901px) — generous spacing, full display ── */
-@media (min-width: 901px) {
+@media (min-width: 900px) {
   .shell {
-    padding: 48px 24px;
+    padding: var(--space-48) var(--space-24);
   }
   .display {
-    padding: 40px 32px;
+    padding: var(--space-40) var(--space-32);
   }
   .displayResult {
     font-size: var(--fs-display-lg);
   }
   .body {
-    padding: 36px 36px 40px;
+    padding: var(--space-36) var(--space-36) var(--space-40);
   }
   .description {
-    font-size: 1rem;
+    font-size: var(--fs-4);
   }
   .shell::before {
-    font-size: 35vw;
+    font-size: var(--fs-hero-watermark);
   }
 }
 
 /* ── Tablet (≤900px) — tighter, still centered ── */
 @media (max-width: 900px) {
   .shell {
-    padding: 36px 20px;
-    padding-top: 48px;
+    padding: var(--space-36) var(--space-20);
+    padding-top: var(--space-48);
   }
   .card {
     max-width: 440px;
   }
   .display {
-    padding: 28px 20px;
+    padding: var(--space-28) var(--space-20);
   }
   .displayResult {
     font-size: var(--fs-display-sm);
   }
   .body {
-    padding: 28px 28px 32px;
+    padding: var(--space-28) var(--space-28) var(--space-32);
   }
   .displayCalcLine {
-    font-size: 0.85rem;
+    font-size: var(--fs-2);
   }
 }
 
 /* ── Phone (≤640px) — full-width, mobile-first layout ── */
 @media (max-width: 640px) {
   .shell {
-    padding: 16px 12px;
-    padding-bottom: calc(16px + 80px); /* bottom nav clearance */
+    padding: var(--space-16) var(--space-12);
+    padding-bottom: calc(var(--space-16) + var(--space-80)); /* bottom nav clearance */
     justify-content: flex-start;
-    padding-top: 40px;
+    padding-top: var(--space-40);
   }
 
   .card {
@@ -238,11 +239,11 @@
   }
 
   .display {
-    padding: 24px 16px;
+    padding: var(--space-24) var(--space-16);
   }
 
   .displayCalcLine {
-    font-size: 0.8rem;
+    font-size: var(--fs-2);
     margin-bottom: 2px;
   }
 
@@ -257,44 +258,44 @@
   }
 
   .displayErrTag {
-    font-size: 0.7rem;
-    margin-top: 4px;
+    font-size: var(--fs-xs);
+    margin-top: var(--space-4);
   }
 
   .body {
-    padding: 24px 20px 28px;
+    padding: var(--space-24) var(--space-20) var(--space-28);
   }
 
   .domainTag {
-    font-size: 0.8rem;
-    padding: 5px 14px;
-    margin-bottom: 16px;
+    font-size: var(--fs-2);
+    padding: var(--space-4) var(--space-16);
+    margin-bottom: var(--space-16);
   }
 
   .description {
-    font-size: 0.88rem;
-    margin-bottom: 24px;
+    font-size: var(--fs-3);
+    margin-bottom: var(--space-24);
     max-width: 100%;
   }
 
   .ctaBtn {
     width: 100%;
-    font-size: 0.95rem;
-    padding: 12px 20px;
+    font-size: var(--fs-3);
+    padding: var(--space-12) var(--space-20);
     min-height: 46px;
   }
 
   .shell::before {
-    font-size: 50vw;
+    font-size: var(--fs-hero-watermark);
   }
 }
 
 /* ── Small Phone (≤400px) — ultra compact, maximized space ── */
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .shell {
-    padding: 12px 8px;
-    padding-bottom: calc(12px + 80px);
-    padding-top: 24px;
+    padding: var(--space-12) var(--space-8);
+    padding-bottom: calc(var(--space-12) + var(--space-80));
+    padding-top: var(--space-24);
   }
 
   .card {
@@ -302,11 +303,11 @@
   }
 
   .display {
-    padding: 18px 12px;
+    padding: var(--space-20) var(--space-12);
   }
 
   .displayCalcLine {
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
   }
 
   .displayResult {
@@ -314,33 +315,33 @@
   }
 
   .displayErrTag {
-    font-size: 0.65rem;
+    font-size: var(--fs-2xs);
   }
 
   .body {
-    padding: 20px 14px 24px;
+    padding: var(--space-20) var(--space-16) var(--space-24);
   }
 
   .domainTag {
-    font-size: 0.72rem;
-    padding: 4px 12px;
-    margin-bottom: 14px;
+    font-size: var(--fs-xs);
+    padding: var(--space-4) var(--space-12);
+    margin-bottom: var(--space-16);
   }
 
   .description {
-    font-size: 0.82rem;
-    margin-bottom: 20px;
+    font-size: var(--fs-2);
+    margin-bottom: var(--space-20);
     line-height: 1.5;
   }
 
   .ctaBtn {
-    font-size: 0.88rem;
-    padding: 11px 16px;
+    font-size: var(--fs-3);
+    padding: var(--space-12) var(--space-16);
     min-height: 44px;
-    gap: 6px;
+    gap: var(--space-8);
   }
 
   .shell::before {
-    font-size: 60vw;
+    font-size: var(--fs-hero-watermark);
   }
 }

@@ -31,4 +31,17 @@ describe("FormField", () => {
 
     expect(markup).not.toContain('aria-invalid="true"');
   });
+
+  it("renders an optional label action and end adornment", () => {
+    const markup = renderToStaticMarkup(createElement(FormField, {
+      id: "password",
+      label: "Password",
+      labelAction: createElement("a", { href: "/forgot-password" }, "Forgot password?"),
+      endAdornment: createElement("button", { type: "button", "aria-label": "Show password" }, "Show"),
+      type: "password",
+    }));
+
+    expect(markup).toContain("Forgot password?");
+    expect(markup).toContain('aria-label="Show password"');
+  });
 });

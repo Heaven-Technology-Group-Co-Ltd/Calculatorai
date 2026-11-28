@@ -84,11 +84,11 @@ export function StatusClient() {
       <div className={styles.container}>
         <LiveRegion message={announcement} />
         <div className={`${styles.panel} ${styles.centerState}`}>
-          <AlertTriangle size={48} color="#ef4444" />
+          <AlertTriangle size={20} color="var(--error)" aria-hidden="true" focusable="false" />
           <h2 className={styles.stateText}>Unable to fetch status</h2>
           <p className={styles.stateText}>{statusError}</p>
           <button className={styles.retryBtn} onClick={refresh}>
-            <RefreshCw size={16} /> Retry
+            <RefreshCw size={16} aria-hidden="true" focusable="false" /> Retry
           </button>
         </div>
       </div>
@@ -96,10 +96,10 @@ export function StatusClient() {
   }
 
   const banners = {
-    maintenance: { color: "#eab308", title: "Maintenance Mode", icon: Wrench },
-    operational: { color: "#22c55e", title: "All Systems Operational", icon: CheckCircle },
-    outage: { color: "#ef4444", title: "Partial Outage", icon: AlertTriangle },
-    degraded: { color: "#eab308", title: "Degraded Performance", icon: AlertTriangle },
+    maintenance: { color: "var(--warning)", surface: "var(--warning-bg)", border: "var(--warning-border)", title: "Maintenance Mode", icon: Wrench },
+    operational: { color: "var(--success)", surface: "var(--success-bg)", border: "var(--success-border)", title: "All Systems Operational", icon: CheckCircle },
+    outage: { color: "var(--error)", surface: "var(--error-bg)", border: "var(--error-border)", title: "Partial Outage", icon: AlertTriangle },
+    degraded: { color: "var(--warning)", surface: "var(--warning-bg)", border: "var(--warning-border)", title: "Degraded Performance", icon: AlertTriangle },
   };
   const banner = banners[bannerState];
   const BannerIcon = banner.icon;
@@ -108,24 +108,12 @@ export function StatusClient() {
     <div className={styles.container}>
       <LiveRegion message={announcement} />
       {/* Header */}
-      <div style={{ marginBottom: 16 }}>
+      <div className={styles.backLinkWrap}>
         <Link
           href="/"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            fontSize: 13,
-            color: "var(--text-secondary)",
-            textDecoration: "none",
-            padding: "6px 12px",
-            borderRadius: "var(--radius-sm)",
-            border: "1px solid var(--border)",
-            background: "var(--surface)",
-            transition: "all var(--transition-fast)"
-          }}
+          className={styles.backLink}
         >
-          <ArrowLeft size={14} />
+          <ArrowLeft size={16} aria-hidden="true" focusable="false" />
           Back to App
         </Link>
       </div>
@@ -133,7 +121,7 @@ export function StatusClient() {
         <div>
           <h1 className={styles.title}>System Status</h1>
           <p className={styles.subtitle}>
-            <Clock size={13} />
+            <Clock size={16} aria-hidden="true" focusable="false" />
             Updated {lastUpdated?.toLocaleTimeString() ?? "—"}
             {refreshing ? " · refreshing…" : " · auto-refresh 1h"}
           </p>
@@ -176,7 +164,7 @@ export function StatusClient() {
             disabled={refreshing}
             aria-label="Refresh status"
           >
-            <RefreshCw size={15} className={refreshing ? styles.spin : ""} />
+            <RefreshCw size={16} className={refreshing ? styles.spin : ""} aria-hidden="true" focusable="false" />
             Refresh
           </button>
         </div>
@@ -185,7 +173,7 @@ export function StatusClient() {
       {/* Maintenance notice */}
       {status?.maintenanceMode && status.maintenanceMessage && (
         <div className={`${styles.maintenance} ${styles.fade}`}>
-          <Wrench size={18} style={{ flexShrink: 0 }} />
+          <Wrench size={16} aria-hidden="true" focusable="false" />
           <span>{status.maintenanceMessage}</span>
         </div>
       )}
@@ -195,18 +183,19 @@ export function StatusClient() {
         className={`${styles.banner} ${styles.fade}`}
         style={
           {
-            "--banner-color": `${banner.color}14`,
-            "--banner-border": `${banner.color}55`,
-            "--banner-glow": `${banner.color}18`,
+            "--banner-color": banner.color,
+            "--banner-surface": banner.surface,
+            "--banner-border": banner.border,
+            "--banner-glow": banner.surface,
           } as React.CSSProperties
         }
       >
         <span className={styles.bannerIcon}>
-          <BannerIcon size={40} color={banner.color} />
-          <span className={`${styles.bannerPulse} ${styles.pulse}`} style={{ background: banner.color }} />
+          <BannerIcon size={20} color={banner.color} aria-hidden="true" focusable="false" />
+          <span className={`${styles.bannerPulse} ${styles.pulse}`} style={{ background: banner.color }} aria-hidden="true" />
         </span>
-        <div style={{ minWidth: 0 }}>
-          <h2 className={styles.bannerTitle} style={{ color: banner.color }}>
+        <div className={styles.bannerText}>
+          <h2 className={styles.bannerTitle}>
             {banner.title}
           </h2>
           <p className={styles.bannerSubtitle}>

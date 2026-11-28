@@ -25,7 +25,7 @@ export function InvoiceTable() {
 
   return (
     <Panel>
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20, color: "var(--text)" }}>
+      <h3 className={`${tableStyles.sectionTitle} ${tableStyles.sectionTitleSpaced}`}>
         {t("dashboard.finance.invoices.title")}
       </h3>
       {loading && (

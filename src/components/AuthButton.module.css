@@ -13,19 +13,19 @@
 /* ── Auth Overlay / Modal (mobile bottom sheet + desktop centered) ── */
 
 
-@media (max-width: 767px) {
+@media (max-width: 900px) {
 
 }
 
 /* ── Loading Skeleton ── */
 .loadingSkeleton {
   justify-content: center;
-  padding: 12px 0;
+  padding: var(--space-12) 0;
 }
 
 .loadingRow {
   display: flex;
-  gap: 6px;
+  gap: var(--space-8);
   align-items: center;
 }
 
@@ -45,7 +45,7 @@
 .profileInfoRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-12);
 }
 
 .logoutBtn {
@@ -59,7 +59,7 @@
   border: 1px solid var(--border);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  transition: background var(--transition-base), border-color var(--transition-base), color var(--transition-base);
 }
 
 .logoutBtn:hover {

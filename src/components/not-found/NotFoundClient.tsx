@@ -73,7 +73,7 @@ export function NotFoundClient() {
             initial="hidden"
             animate="visible"
           >
-            <span aria-hidden="true" style={{ fontSize: "1.15em", lineHeight: 1 }}>!</span>
+            <span aria-hidden="true" className={styles.domainMark}>!</span>
             {" "}
             {t("notFoundDomain")}
           </motion.div>

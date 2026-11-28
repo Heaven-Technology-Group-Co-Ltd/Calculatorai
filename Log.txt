@@ -1063,3 +1063,4 @@ HANDOFF AUDIT #3 — รายการ | ผ่าน/ไม่ผ่าน | �
 
 [2026-11-28] WEB-TRUTH-5C draft: masked webhook projections, replaced finance sample figures with selected-range gross payment metrics, corrected status and user displays, retired dead controls, and retained legacy NPV history. Local gates pass; webhook duplicate races and refund ingestion completeness remain for review. — src
 [2026-11-28 21:12] WEB-UI-6A implementation complete — Ursa tokens, accessible Auth fields, dashboard toasts, 900px shells and mobile controls — src/app/globals.css, src/components/ui, dashboard and Auth UI
+[2026-11-28 23:23] WEB-UI-6B implementation: standardized module tokens, migrated Auth fields, added design-system CI ratchet, and extracted static JSX styles; final gates passed. — src, Log.txt

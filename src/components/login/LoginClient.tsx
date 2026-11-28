@@ -10,7 +10,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { apiPost, ClientApiError } from "@/lib/api-client";
 import { isValidEmailAddress } from "@/lib/validation/vocabulary";
 import styles from "./Login.module.css";
-import fieldStyles from "@/components/ui/FormField.module.css";
+import { FormField } from "@/components/ui/FormField";
 
 /* ─── animation presets ─── */
 const fadeSlideUp = {
@@ -186,13 +186,13 @@ export function LoginClient() {
                       initial="hidden"
                       animate="visible"
                     >
-                      <AlertCircle size={14} />
-                      <div style={{ display: "flex", flexDirection: "column", gap: 4, width: "100%" }}>
+                      <AlertCircle size={16} aria-hidden="true" focusable="false" />
+                      <div className={styles.messageActions}>
                         <span>{error}</span>
                         {showResend && (
-                          <div style={{ marginTop: 4 }}>
+                          <div className={styles.resendWrap}>
                             {resendSent ? (
-                              <span style={{ color: "var(--success)", fontWeight: 500 }}>
+                              <span className={styles.resendStatus}>
                                 {lang === "th" ? "ส่งอีเมลยืนยันใหม่แล้ว กรุณาตรวจสอบกล่องจดหมาย" : "Verification email resent! Check your inbox."}
                               </span>
                             ) : (
@@ -200,16 +200,7 @@ export function LoginClient() {
                                 type="button"
                                 onClick={handleResend}
                                 disabled={resendLoading}
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  color: "var(--primary)",
-                                  cursor: "pointer",
-                                  textDecoration: "underline",
-                                  padding: 0,
-                                  fontSize: 12,
-                                  fontWeight: 600,
-                                }}
+                                className={styles.resendButton}
                               >
                                 {resendLoading
                                   ? (lang === "th" ? "กำลังส่ง..." : "Sending...")
@@ -230,14 +221,13 @@ export function LoginClient() {
                     initial="hidden"
                     animate="visible"
                   >
-                    <label className={styles.label} htmlFor="login-email">
-                      {tr("loginEmailLabel")}
-                    </label>
-                    <input
+                    <FormField
                       id="login-email"
-                      className={`${styles.input} ${error ? `${styles.inputError} ${fieldStyles.inputError}` : ""}`}
-                      aria-invalid={Boolean(error)}
-                      aria-describedby={error ? "login-form-error" : undefined}
+                      label={tr("loginEmailLabel")}
+                      labelClassName={styles.label}
+                      className={styles.input}
+                      invalid={Boolean(error)}
+                      describedById={error ? "login-form-error" : undefined}
                       type="email"
                       placeholder="hello@example.com"
                       value={email}
@@ -255,64 +245,36 @@ export function LoginClient() {
                     initial="hidden"
                     animate="visible"
                   >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                      <label className={styles.label} htmlFor="login-password">
-                        {tr("loginPasswordLabel")}
-                      </label>
-                      <button
+                    <FormField
+                      id="login-password"
+                      label={tr("loginPasswordLabel")}
+                      labelClassName={styles.label}
+                      labelAction={<button
                         type="button"
-                        onClick={() => {
-                          setError(null);
-                          setMode("forgot");
-                        }}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color: "var(--primary, #E8B896)",
-                          cursor: "pointer",
-                          fontSize: "0.75rem",
-                          padding: 0,
-                        }}
+                        className={styles.forgotLink}
+                        onClick={() => { setError(null); setMode("forgot"); }}
                       >
                         {tr("loginForgotPassword")}
-                      </button>
-                    </div>
-                    <div style={{ position: "relative" }}>
-                      <input
-                        id="login-password"
-                        className={`${styles.input} ${error ? `${styles.inputError} ${fieldStyles.inputError}` : ""}`}
-                        aria-invalid={Boolean(error)}
-                        aria-describedby={error ? "login-form-error" : undefined}
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="current-password"
-                        disabled={loading || googleLoading}
-                        style={{ paddingRight: 36 }}
-                      />
-                      <button
+                      </button>}
+                      className={styles.input}
+                      invalid={Boolean(error)}
+                      describedById={error ? "login-form-error" : undefined}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                      disabled={loading || googleLoading}
+                      endAdornment={<button
                         type="button"
+                        className={styles.passwordToggle}
                         aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
                         aria-pressed={showPassword}
                         onClick={() => setShowPassword(!showPassword)}
-                        style={{
-                          position: "absolute",
-                          right: 8,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          background: "none",
-                          border: "none",
-                          color: "var(--text-secondary)",
-                          cursor: "pointer",
-                          padding: 4,
-                          display: "flex",
-                          alignItems: "center",
-                        }}
                       >
                         {showPassword ? <EyeOff size={16} aria-hidden="true" focusable="false" /> : <Eye size={16} aria-hidden="true" focusable="false" />}
-                      </button>
-                    </div>
+                      </button>}
+                    />
                   </motion.div>
 
                   {/* Submit */}
@@ -371,19 +333,19 @@ export function LoginClient() {
                     ) : (
                       <svg className={styles.googleIcon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <path
-                          fill="#4285F4"
+                          fill="currentColor"
                           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
                         />
                         <path
-                          fill="#34A853"
+                          fill="currentColor"
                           d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
                         />
                         <path
-                          fill="#FBBC05"
+                          fill="currentColor"
                           d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
                         />
                         <path
-                          fill="#EA4335"
+                          fill="currentColor"
                           d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                         />
                       </svg>
@@ -416,7 +378,7 @@ export function LoginClient() {
                 className={styles.forgotWrap}
               >
                 {forgotSent ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div className={styles.forgotSentWrap}>
                     <p className={styles.forgotSent}>
                       {tr("forgotPasswordSent")}
                     </p>
@@ -434,7 +396,7 @@ export function LoginClient() {
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleForgotSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <form onSubmit={handleForgotSubmit} noValidate className={styles.forgotForm}>
                     {error && (
                     <div id="forgot-form-error" role="alert" className={`${styles.messageBox} ${styles.messageError}`}>
                         <AlertCircle size={14} />
@@ -445,14 +407,13 @@ export function LoginClient() {
                       {tr("forgotPasswordDesc")}
                     </p>
                     <div className={styles.field}>
-                      <label className={styles.label} htmlFor="forgot-email">
-                        {tr("loginEmailLabel")}
-                      </label>
-                      <input
+                      <FormField
                         id="forgot-email"
-                        className={`${styles.input} ${error ? `${styles.inputError} ${fieldStyles.inputError}` : ""}`}
-                        aria-invalid={Boolean(error)}
-                        aria-describedby={error ? "forgot-form-error" : undefined}
+                        label={tr("loginEmailLabel")}
+                        labelClassName={styles.label}
+                        className={styles.input}
+                        invalid={Boolean(error)}
+                        describedById={error ? "forgot-form-error" : undefined}
                         type="email"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
