@@ -41,7 +41,7 @@ export function UserActionDialog({ user, action, onClose, onSuccess }: UserActio
     <dialog ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="user-action-title" className={styles.modal} {...dialogProps}>
       <div className={styles.header}>
         <span id="user-action-title" className={styles.title}>{title}</span>
-        <button type="button" className={styles.closeBtn} onClick={onClose} aria-label={t("dashboard.common.close")}>✕</button>
+        <button type="button" className={styles.closeBtn} onClick={onClose} aria-label={t("dashboard.common.close")}><span aria-hidden="true">✕</span></button>
       </div>
       <div className={styles.body}>
         {action === "ban" && <p>{isBanned ? t("dashboard.modal.ban.descriptionUnban", { name: user.name ?? user.email }) : t("dashboard.modal.ban.description", { name: user.name ?? user.email })}</p>}

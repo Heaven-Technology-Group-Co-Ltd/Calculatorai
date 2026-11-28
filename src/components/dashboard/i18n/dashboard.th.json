@@ -196,5 +196,21 @@
   "dashboard.error.invalidAction": "กรุณาตรวจสอบข้อมูลแล้วลองอีกครั้ง",
   "dashboard.error.network": "เกิดข้อผิดพลาดเครือข่าย กรุณาลองอีกครั้ง",
   "dashboard.settings.general.descriptionPlaceholder": "อธิบายเว็บไซต์ของคุณ",
-  "dashboard.status.unverified": "ยังไม่ยืนยัน"
+  "dashboard.status.unverified": "ยังไม่ยืนยัน",
+  "dashboard.users.table.scrollHint": "ตารางผู้ใช้ ปัดในแนวนอนเพื่อดูสถานะและการดำเนินการ",
+  "dashboard.toast.userBanned": "ระงับบัญชีผู้ใช้แล้ว",
+  "dashboard.toast.userUnbanned": "ยกเลิกการระงับบัญชีผู้ใช้แล้ว",
+  "dashboard.toast.planChanged": "เปลี่ยนแพ็กเกจผู้ใช้แล้ว",
+  "dashboard.toast.messageSent": "ส่งข้อความแล้ว",
+  "dashboard.toast.settingsSaved": "บันทึกการตั้งค่าแล้ว",
+  "dashboard.toast.webhookTested": "ส่งการทดสอบ Webhook แล้ว",
+  "dashboard.toast.webhookDeleted": "ลบ Webhook แล้ว",
+  "dashboard.toast.webhookAdded": "เพิ่ม Webhook แล้ว",
+  "dashboard.settings.webhooks.name": "ชื่อ",
+  "dashboard.settings.webhooks.add": "เพิ่ม Webhook",
+  "dashboard.settings.webhooks.adding": "กำลังเพิ่ม…",
+  "dashboard.settings.webhooks.backup": "สำรองข้อมูล",
+  "dashboard.settings.webhooks.analytics": "การวิเคราะห์",
+  "dashboard.settings.webhooks.errorAlert": "แจ้งเตือนข้อผิดพลาด",
+  "dashboard.settings.webhooks.custom": "กำหนดเอง"
 }

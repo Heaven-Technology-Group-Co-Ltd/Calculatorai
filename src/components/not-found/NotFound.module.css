@@ -76,7 +76,8 @@
 
 .displayResult {
   font-family: var(--font-title);
-  font-size: 4.5rem;
+  font-size: var(--fs-display-lg);
+  letter-spacing: var(--tracking-display);
   font-weight: 800;
   color: var(--primary);
   letter-spacing: -0.03em;
@@ -183,7 +184,7 @@
     padding: 40px 32px;
   }
   .displayResult {
-    font-size: 5rem;
+    font-size: var(--fs-display-lg);
   }
   .body {
     padding: 36px 36px 40px;
@@ -209,7 +210,7 @@
     padding: 28px 20px;
   }
   .displayResult {
-    font-size: 4rem;
+    font-size: var(--fs-display-sm);
   }
   .body {
     padding: 28px 28px 32px;
@@ -247,8 +248,8 @@
   }
 
   .displayResult {
-    font-size: 3rem;
-    letter-spacing: -0.02em;
+    font-size: var(--fs-display-sm);
+    letter-spacing: var(--tracking-display);
   }
 
   .displayResult::after {
@@ -310,7 +311,7 @@
   }
 
   .displayResult {
-    font-size: 2.4rem;
+    font-size: var(--fs-display-sm);
   }
 
   .displayErrTag {

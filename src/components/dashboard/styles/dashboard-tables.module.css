@@ -47,7 +47,12 @@
 .tableWrap {
   overflow-x: auto;
   width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--surface);
+  background: linear-gradient(90deg, transparent 82%, var(--surface-hover));
 }
+.tableWrap::-webkit-scrollbar { height: 8px; }
+.tableWrap::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 8px; }
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -110,6 +115,11 @@
 .actionBtn:hover {
   background: rgba(232, 184, 150, 0.15);
   color: var(--primary);
+}
+@media (max-width: 640px) {
+  .table { min-width: 700px; }
+  .actionBtn { min-width: var(--tap-target-mobile); min-height: var(--tap-target-mobile); display: inline-flex; align-items: center; justify-content: center; }
+  .pageBtn { min-height: var(--tap-target-mobile); }
 }
 
 /* ── Pagination ── */

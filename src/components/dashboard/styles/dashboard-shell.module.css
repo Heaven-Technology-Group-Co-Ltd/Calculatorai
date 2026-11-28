@@ -299,6 +299,11 @@
   cursor: pointer;
 }
 
+@media (max-width: 640px) {
+  .drawerClose, .hamburger { min-width: var(--tap-target-mobile); min-height: var(--tap-target-mobile); align-items: center; justify-content: center; }
+  .navItem, .bottomNavItem { min-height: var(--tap-target-mobile); }
+}
+
 .drawerClose:hover { background: rgba(232, 184, 150, 0.08); color: var(--text); }
 
 /* ── Responsive ── */

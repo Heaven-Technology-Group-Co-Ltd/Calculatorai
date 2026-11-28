@@ -160,7 +160,7 @@ function HistorySidebarInner({
               onClick={onClose}
               aria-label="Close history"
             >
-              <X size={16} />
+              <X size={16} aria-hidden="true" focusable="false" />
             </button>
           </div>
         </div>

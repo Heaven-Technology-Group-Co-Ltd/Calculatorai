@@ -227,4 +227,5 @@
   .body { padding: 14px 16px 18px; }
   .actions { flex-direction: column; }
   .actions button { width: 100%; }
+  .closeBtn { min-width: var(--tap-target-mobile); min-height: var(--tap-target-mobile); display: inline-flex; align-items: center; justify-content: center; }
 }

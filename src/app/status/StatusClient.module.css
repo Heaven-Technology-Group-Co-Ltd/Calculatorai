@@ -187,7 +187,7 @@
   font-weight: 800;
   color: var(--banner-color);
   margin: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-display);
 }
 .bannerSubtitle {
   font-size: 0.82rem;
@@ -201,7 +201,8 @@
 }
 .bannerUptimeValue {
   font-family: var(--font-title);
-  font-size: 2rem;
+  font-size: var(--fs-display-sm);
+  letter-spacing: var(--tracking-display);
   font-weight: 800;
   color: var(--primary);
   line-height: 1;
@@ -212,6 +213,11 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+  .banner { flex-direction: column; align-items: flex-start; }
+  .bannerUptime { margin-left: 0; text-align: left; }
 }
 
 /* ── KPI cards ── */

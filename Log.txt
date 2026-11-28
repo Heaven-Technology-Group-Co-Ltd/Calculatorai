@@ -1062,3 +1062,4 @@ HANDOFF AUDIT #3 — รายการ | ผ่าน/ไม่ผ่าน | �
 [2026-11-28] WEB-ARCH-5B-R1: restored standalone bot build with mirrored contract parity and independent HMAC golden vectors; localized user-action states and restored specific client error handling. Gates pass: 228 tests, web and bot builds, lint 0 errors/7 warnings, G11 and CSS hex 0; external re-sign-off pending. — src, discord-bot
 
 [2026-11-28] WEB-TRUTH-5C draft: masked webhook projections, replaced finance sample figures with selected-range gross payment metrics, corrected status and user displays, retired dead controls, and retained legacy NPV history. Local gates pass; webhook duplicate races and refund ingestion completeness remain for review. — src
+[2026-11-28 21:12] WEB-UI-6A implementation complete — Ursa tokens, accessible Auth fields, dashboard toasts, 900px shells and mobile controls — src/app/globals.css, src/components/ui, dashboard and Auth UI

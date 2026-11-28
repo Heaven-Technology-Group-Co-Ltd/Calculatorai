@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Eye, Mail, Ban, CreditCard } from "lucide-react";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { USER_STATUS_FILTERS, USER_STATUS_FILTER_LABELS } from "@/lib/validation/vocabulary";
 import { useUsers, type DashboardUser } from "../hooks/useUsers";
@@ -15,9 +15,11 @@ import { UserActionDialog } from "../modals/UserActionDialog";
 import { useDashboardT } from "../i18n/useDashboardT";
 import styles from "../styles/dashboard-tables.module.css";
 import blockStyles from "../styles/dashboard-blocks.module.css";
+import { useToast } from "@/components/ui/Toast";
 
 export function UsersPage() {
   const { t } = useDashboardT();
+  const { showToast } = useToast();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -71,7 +73,7 @@ export function UsersPage() {
 
       {/* Table */}
       <Panel padding="md">
-        <div className={styles.tableWrap}>
+        <div className={styles.tableWrap} role="region" tabIndex={0} aria-label={t("dashboard.users.table.scrollHint")}>
           <table className={styles.table}>
             <thead>
               <tr>
@@ -113,30 +115,34 @@ export function UsersPage() {
                         <button
                           className={styles.actionBtn}
                           title={t("dashboard.users.actions.view")}
+                          aria-label={t("dashboard.users.actions.view")}
                           onClick={() => { setSelectedUser(u); setActiveModal("detail"); }}
                         >
-                          👁
+                          <Eye size={16} aria-hidden="true" focusable="false" />
                         </button>
                         <button
                           className={styles.actionBtn}
                           title={t("dashboard.users.actions.message")}
+                          aria-label={t("dashboard.users.actions.message")}
                           onClick={() => { setSelectedUser(u); setActiveModal("message"); }}
                         >
-                          ✉
+                          <Mail size={16} aria-hidden="true" focusable="false" />
                         </button>
                         <button
                           className={styles.actionBtn}
                           title={u.status === "banned" ? t("dashboard.users.actions.unban") : t("dashboard.users.actions.ban")}
+                          aria-label={u.status === "banned" ? t("dashboard.users.actions.unban") : t("dashboard.users.actions.ban")}
                           onClick={() => { setSelectedUser(u); setActiveModal("ban"); }}
                         >
-                          🚫
+                          <Ban size={16} aria-hidden="true" focusable="false" />
                         </button>
                         <button
                           className={styles.actionBtn}
                           title={t("dashboard.users.actions.changePlan")}
+                          aria-label={t("dashboard.users.actions.changePlan")}
                           onClick={() => { setSelectedUser(u); setActiveModal("plan"); }}
                         >
-                          💳
+                          <CreditCard size={16} aria-hidden="true" focusable="false" />
                         </button>
                       </div>
                     </td>
@@ -184,7 +190,7 @@ export function UsersPage() {
         />
       )}
       {selectedUser && (activeModal === "message" || activeModal === "ban" || activeModal === "plan") && (
-        <UserActionDialog user={selectedUser} action={activeModal} onClose={() => { setSelectedUser(null); setActiveModal(null); }} onSuccess={() => { void mutate(); }} />
+        <UserActionDialog user={selectedUser} action={activeModal} onClose={() => { setSelectedUser(null); setActiveModal(null); }} onSuccess={() => { void mutate(); showToast(t(activeModal === "ban" ? (selectedUser.status === "banned" ? "dashboard.toast.userUnbanned" : "dashboard.toast.userBanned") : activeModal === "plan" ? "dashboard.toast.planChanged" : "dashboard.toast.messageSent")); }} />
       )}
     </div>
   );

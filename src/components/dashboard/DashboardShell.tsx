@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { LogOut } from "lucide-react";
 
-import { useState, useCallback, type ReactNode } from "react";
+import { useState, useCallback, useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -35,6 +35,13 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const adminInitial = adminName.charAt(0).toUpperCase();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 900px)");
+    const closeDrawer = () => setDrawerOpen(false);
+    mobileQuery.addEventListener("change", closeDrawer);
+    return () => mobileQuery.removeEventListener("change", closeDrawer);
+  }, []);
 
   const handleNav = useCallback(
     (tab: TabId) => {
