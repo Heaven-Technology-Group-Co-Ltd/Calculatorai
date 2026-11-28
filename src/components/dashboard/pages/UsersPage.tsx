@@ -32,7 +32,7 @@ export function UsersPage() {
     perPage: 25,
   });
 
-  const users = (data?.data ?? []).map((user) => ({ ...user, status: user.is_banned === undefined ? user.status : user.is_banned ? "banned" as const : "active" as const, last_seen_at: user.last_active_at ?? user.last_seen_at }));
+  const users = (data?.data ?? []).map((user) => ({ ...user, status: user.is_banned === undefined ? user.status : user.is_banned ? "banned" as const : user.email_verified === null ? "unverified" as const : "active" as const, last_seen_at: user.last_active_at ?? user.last_seen_at }));
   const total = data?.total ?? 0;
   const pageSize = data?.per_page ?? 25;
   const totalPages = Math.ceil(total / pageSize);
@@ -106,7 +106,7 @@ export function UsersPage() {
                       <span className={styles.planBadge}>{u.plan}</span>
                     </td>
                     <td>
-                      <StatusBadge status={u.status as "active" | "suspended" | "banned"} />
+                      <StatusBadge status={u.status} />
                     </td>
                     <td>
                       <div className={styles.actionBtns}>

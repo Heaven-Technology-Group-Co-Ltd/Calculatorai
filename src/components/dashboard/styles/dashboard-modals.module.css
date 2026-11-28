@@ -214,22 +214,6 @@
   font-size: 13px;
 }
 
-/* ── Status badge inside modal ── */
-.statusBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-}
-.statusDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-.statusActive .statusDot { background: var(--success); }
-.statusSuspended .statusDot { background: var(--warning); }
-.statusBanned .statusDot { background: var(--error); }
-
 .impersonateError {
   color: var(--error);
   font-size: var(--fs-2);

@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { apiPost } from "@/lib/api-client";
 import { fetcher } from "@/lib/fetcher";
+import { StatusBadge } from "../ui/StatusBadge";
 import { Skeleton } from "../ui/Skeleton";
 import { ErrorState } from "../ui/ErrorState";
 import type { DashboardUser } from "../hooks/useUsers";
@@ -21,6 +22,7 @@ interface DetailedUser {
   created_at: string;
   last_seen_at: string | null;
   is_banned?: boolean;
+  email_verified?: string | null;
   banned_reason?: string | null;
   banned_at?: string | null;
   subscription?: {
@@ -70,13 +72,6 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
     }
   };
 
-  const statusClass =
-    user.status === "active"
-      ? styles.statusActive
-      : user.status === "suspended"
-        ? styles.statusSuspended
-        : styles.statusBanned;
-
   return (
     <dialog
       ref={dialogRef}
@@ -113,10 +108,7 @@ export function UserDetailModal({ user, onClose }: UserDetailModalProps) {
             </div>
             <div className={styles.detailRow}>
               <span className={styles.detailLabel}>{t("dashboard.modal.userDetails.status")}</span>
-              <span className={`${styles.statusBadge} ${statusClass}`}>
-                <span className={styles.statusDot} />
-                {detail.status}
-              </span>
+              <StatusBadge status={detail.is_banned ? "banned" : detail.email_verified === null ? "unverified" : "active"} />
             </div>
             <div className={styles.detailRow}>
               <span className={styles.detailLabel}>{t("dashboard.modal.userDetails.plan")}</span>

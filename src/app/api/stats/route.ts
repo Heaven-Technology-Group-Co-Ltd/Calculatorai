@@ -1,4 +1,5 @@
 import { withAdmin } from "@/lib/admin/with-admin";
+import { loadPaymentRevenue, selectedRevenueDays } from "@/lib/finance/payment-revenue";
 import { computePercentages } from "./percentages";
 /**
  * Stats API — serves real data to the dashboard Overview page.
@@ -31,23 +32,25 @@ export async function GET(request: NextRequest) {
     chartStart.setHours(0, 0, 0, 0);
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-    const [users, recent, viewsTotal, viewRows, subscriptions, signupRows, latest] = await Promise.all([
+    const [users, recent, viewsTotal, viewRows, revenue, signupRows, latest, activeUsers] = await Promise.all([
       supabase.from("users").select("id", { count: "exact", head: true }),
       supabase.from("users").select("id", { count: "exact", head: true }).gte("created_at", yesterday),
       supabase.from("page_views").select("id", { count: "exact", head: true }).gte("created_at", sevenDaysAgo),
       supabase.from("page_views").select("session_id, user_agent, created_at").gte("created_at", sevenDaysAgo < chartStart.toISOString() ? sevenDaysAgo : chartStart.toISOString()).order("created_at", { ascending: false }).limit(10000),
-      supabase.from("subscriptions").select("amount_monthly").eq("status", "active"),
+      loadPaymentRevenue(supabase, selectedRevenueDays(new URL(request.url).searchParams)),
       supabase.from("users").select("created_at").gte("created_at", twelveMonthsAgo.toISOString()).order("created_at", { ascending: true }),
       supabase.from("users").select("name, created_at").order("created_at", { ascending: false }).limit(8),
+      supabase.from("users").select("id", { count: "exact", head: true }).gte("last_active_at", new Date(nowMs - selectedRevenueDays(new URL(request.url).searchParams) * 86_400_000).toISOString()),
     ]);
     if (users.error) throw new Error(`users: ${users.error.message}`);
+    if (activeUsers.error) throw new Error("Failed to load active users");
     if (viewRows.error) throw new Error(`page_views: ${viewRows.error.message}`);
     const totalUsers = users.count;
     const recentUsers = recent.count;
     const totalPageViews7d = viewsTotal.count;
     const signups = signupRows.data;
     const latestUsers = latest.data;
-    const monthlyRevenue = (subscriptions.data ?? []).reduce((sum, sub) => sum + (sub.amount_monthly || 0), 0) / 100;
+    const monthlyRevenue = revenue.total;
     const views = viewRows.data ?? [];
     const activeRows = views.filter((view) => new Date(view.created_at).getTime() >= nowMs - 300_000);
     const activeSessions = new Set(activeRows.filter((view) => view.session_id).map((view) => view.session_id)).size
@@ -85,12 +88,10 @@ export async function GET(request: NextRequest) {
     }
 
     const recentActivity = (latestUsers || []).map((u) => {
-      const minsAgo = Math.max(0, Math.floor((Date.now() - new Date(u.created_at).getTime()) / 60_000));
-      const timeLabel = minsAgo < 1 ? "Just now" : minsAgo < 60 ? `${minsAgo} min ago` : `${Math.floor(minsAgo / 60)}h ago`;
       return {
         user: u.name || "User",
         action: "New user registered",
-        time: timeLabel,
+        time: u.created_at,
         icon: "fa-user-plus",
         color: "#60a5fa",
       };
@@ -109,13 +110,14 @@ export async function GET(request: NextRequest) {
 
     return successResponse({
       totalUsers: totalUsers || 0,
+      activeUsers: activeUsers.count ?? 0,
       recentUsers: recentUsers || 0,
       activeSessions: activeSessions || 0,
       userGrowth,
       recentActivity,
       visitorChart,
       deviceData,
-      monthlyRevenue: Math.round(monthlyRevenue),
+      monthlyRevenue,
       totalPageViews7d: totalPageViews7d || 0,
       serverTime: new Date().toISOString(),
     });

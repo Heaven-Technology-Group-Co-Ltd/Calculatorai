@@ -33,7 +33,7 @@ export function SystemHealth() {
           <div className={styles.healthItem}>
             <DollarSign size={20} className={styles.healthIcon} />
             <div className={styles.healthItemValue}>
-              ${((data?.monthlyRevenue ?? 0) / 1000).toFixed(1)}k
+              ${(data?.monthlyRevenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div className={styles.healthItemLabel}>{t("dashboard.health.revenue")}</div>
           </div>

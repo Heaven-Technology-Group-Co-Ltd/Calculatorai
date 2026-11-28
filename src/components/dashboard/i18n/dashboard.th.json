@@ -21,7 +21,7 @@
   "dashboard.chart.devices.mobile": "มือถือ",
   "dashboard.chart.devices.tablet": "แท็บเล็ต",
 
-  "dashboard.chart.monthlyRevenue": "รายได้รายเดือน",
+  "dashboard.chart.monthlyRevenue": "ยอดชำระรวมตามช่วงที่เลือก",
   "dashboard.chart.monthlyRevenue.empty": "ยังไม่มีข้อมูลรายได้",
   "dashboard.chart.monthlyRevenue.tooltip": "รายได้",
 
@@ -46,7 +46,7 @@
   "dashboard.health.uptime": "Uptime",
   "dashboard.health.sessions": "เซสชันที่ใช้งาน",
   "dashboard.health.database": "ฐานข้อมูล",
-  "dashboard.health.revenue": "รายได้รายเดือน",
+  "dashboard.health.revenue": "ยอดชำระรวมตามช่วงที่เลือก",
   "dashboard.health.serverTime": "เวลาเซิร์ฟเวอร์",
 
   "dashboard.plan.breakdown": "แผนสมาชิก",
@@ -57,7 +57,7 @@
   "dashboard.formula.showAll": "แสดงทั้งหมด",
   "dashboard.formula.showTop50": "แสดง 50 อันดับแรก",
 
-  "dashboard.finance.mrr": "MRR",
+  "dashboard.finance.mrr": "ยอดชำระรวมตามช่วงที่เลือก",
   "dashboard.finance.arpu": "ARPU",
   "dashboard.finance.churn": "Churn",
   "dashboard.finance.refunds": "การคืนเงิน",
@@ -194,5 +194,7 @@
   "dashboard.error.forbidden": "คุณไม่มีสิทธิ์ดำเนินการนี้",
   "dashboard.error.rateLimited": "ส่งคำขอมากเกินไป กรุณาลองอีกครั้งภายหลัง",
   "dashboard.error.invalidAction": "กรุณาตรวจสอบข้อมูลแล้วลองอีกครั้ง",
-  "dashboard.error.network": "เกิดข้อผิดพลาดเครือข่าย กรุณาลองอีกครั้ง"
+  "dashboard.error.network": "เกิดข้อผิดพลาดเครือข่าย กรุณาลองอีกครั้ง",
+  "dashboard.settings.general.descriptionPlaceholder": "อธิบายเว็บไซต์ของคุณ",
+  "dashboard.status.unverified": "ยังไม่ยืนยัน"
 }

@@ -173,22 +173,6 @@
   gap: 8px;
 }
 
-.iconBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 150ms;
-}
-
-.iconBtn:hover { background: rgba(232, 184, 150, 0.08); color: var(--text); }
-
 /* Date range pill group */
 .datePills {
   display: flex;

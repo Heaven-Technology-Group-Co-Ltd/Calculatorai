@@ -15,7 +15,7 @@ export const levelMeta: Record<string, Translation> = {
 
 // ─── All 23 Formulas ──────────────────────────────────────────
 
-export const formulas: FormulaDef[] = [
+const registeredFormulas: FormulaDef[] = [
   // ── Elementary: Geometry ──
   {
     id: "geo_sq", level: "elementary",
@@ -186,7 +186,7 @@ export const formulas: FormulaDef[] = [
     id: "dot_product", level: "university",
     cat: { th: "พีชคณิตเชิงเส้น", en: "Linear Algebra", jp: "線形代数", ch: "线性代数", ko: "선형대수학" },
     subject: "algebra", icon: "fa-arrows-to-dot",
-    title: { th: "Dot Product 3D", en: "Dot Product 3D", jp: "内積 3D", ch: "点积 3D", ko: "내적 (3D)" },
+    title: { th: "ผลคูณจุด 3 มิติ", en: "Dot Product 3D", jp: "内積 3D", ch: "点积 3D", ko: "내적 (3D)" },
     fStr: "A·B = a₁b₁ + a₂b₂ + a₃b₃",
     vars: [
       { id: "a1", label: { th: "A1", en: "A1", jp: "A1", ch: "A1", ko: "A1" } },
@@ -306,7 +306,7 @@ export const formulas: FormulaDef[] = [
     id: "ce_euler_buckling", level: "university",
     cat: { th: "กลศาสตร์วัสดุ", en: "MECHANICS", jp: "材料力学", ch: "材料力学", ko: "재료역학" },
     subject: "mechanics", icon: "fa-grip-lines-vertical",
-    title: { th: "แรงโก่งเดาะของเสา (Euler)", en: "Euler's Buckling Load", jp: "オイラー座屈荷重", ch: "欧拉屈曲荷载", ko: "오일러 좌굴 하중" },
+    title: { th: "แรงโก่งเดาะวิกฤตของออยเลอร์", en: "Euler's Buckling Load", jp: "オイラー座屈荷重", ch: "欧拉屈曲荷载", ko: "오일러 좌굴 하중" },
     fStr: "Pcr = π²EI / (Le)²",
     vars: [
       { id: "e", label: { th: "โมดูลัสยัง (E)", en: "Young's Modulus (E)", jp: "ヤング率 (E)", ch: "弹性模量 (E)", ko: "영률 (E)" }, u: "Pa" },
@@ -741,6 +741,8 @@ export const formulas: FormulaDef[] = [
   },
 ];
 
+export const formulas: FormulaDef[] = registeredFormulas.filter((formula) => formula.id !== "fi_npv");
+
 // ─── Utility Functions ────────────────────────────────────────
 
 export function getFormulasByLevel(level: string): FormulaDef[] {
@@ -752,7 +754,7 @@ export function getFormulasByCategory(label: string): FormulaDef[] {
 }
 
 export function getFormulaById(id: string): FormulaDef | undefined {
-  return formulas.find((f) => f.id === id);
+  return registeredFormulas.find((f) => f.id === id);
 }
 
 /**

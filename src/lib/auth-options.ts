@@ -177,6 +177,18 @@ export const authOptions: NextAuthOptions = {
         if (typeof token.impersonatedBy === "string") {
           (session.user as { impersonatedBy?: string }).impersonatedBy = token.impersonatedBy;
         }
+        const profile = session.user as typeof session.user & { isAdmin?: boolean; plan?: string };
+        profile.isAdmin = false;
+        profile.plan = undefined;
+        try {
+          const { data: account, error } = await getSupabase().from("users").select("is_admin, plan").eq("id", token.sub).single();
+          if (!error && account) {
+            profile.isAdmin = account.is_admin === true;
+            profile.plan = account.plan ?? undefined;
+          }
+        } catch (failure) {
+          console.error("[Auth] Account profile unavailable", failure instanceof Error ? failure.name : "unknown");
+        }
       }
       return session;
     },

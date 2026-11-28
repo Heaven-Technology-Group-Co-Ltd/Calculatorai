@@ -11,6 +11,7 @@ interface HomeHeroProps {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   isMobile?: boolean;
+  formulaCount?: number;
   inputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
@@ -19,6 +20,7 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
   searchQuery,
   setSearchQuery,
   isMobile,
+  formulaCount = formulas.length,
   inputRef,
 }) => {
   const isThai = lang === "th";
@@ -71,7 +73,7 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
       </div>
       <div className="hero-stats">
         <div className="hero-stat">
-          <strong>{formulas.length}</strong>{" "}
+          <strong>{formulaCount}</strong>{" "}
           {isThai ? "สูตร" : "Formulas"}
         </div>
         <div className="hero-stat">

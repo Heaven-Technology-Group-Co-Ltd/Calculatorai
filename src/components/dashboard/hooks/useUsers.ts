@@ -10,11 +10,12 @@ export interface DashboardUser {
   id: string;
   email: string;
   name: string | null;
-  status: "active" | "suspended" | "banned";
+  status: "active" | "suspended" | "banned" | "unverified";
   plan: string;
   created_at: string;
   last_seen_at: string | null;
   is_banned?: boolean;
+  email_verified?: string | null;
   last_active_at?: string | null;
 }
 

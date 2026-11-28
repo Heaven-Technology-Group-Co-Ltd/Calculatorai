@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { signIn } from "next-auth/react";
+import React, { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,6 +27,8 @@ export function forgotPasswordError(failure: unknown, language: string): string 
 
 export function LoginClient() {
   const router = useRouter();
+  const { status: sessionStatus } = useSession();
+  useEffect(() => { if (sessionStatus === "authenticated") router.replace("/"); }, [router, sessionStatus]);
   const { language: lang, t: tr } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

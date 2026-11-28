@@ -11,9 +11,6 @@ export function BillingSettings() {
       <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: "var(--text)" }}>
         {t("dashboard.settings.billing.title")}
       </h3>
-      <div style={{ marginBottom: 16, padding: "8px 12px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", fontSize: 13, color: "var(--text-secondary)" }}>
-        ⚠️ ส่วนการตั้งค่านี้ยังไม่ได้เชื่อมต่อกับระบบหลังบ้าน (ตัวอย่างแสดงผล)
-      </div>
       <div className={styles.formGroup}>
         <label className={styles.formLabel} htmlFor="billing-stripe-key">{t("dashboard.settings.billing.stripeKey")}</label>
         <input
